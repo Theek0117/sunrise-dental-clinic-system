@@ -1,0 +1,344 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background:
+        radial-gradient(circle at 10% 10%, rgba(20, 170, 180, 0.08), transparent 30%),
+        radial-gradient(circle at 90% 80%, rgba(20, 170, 180, 0.08), transparent 30%),
+        #f4f8fa;
+    color: #173b4d;
+}
+
+.availability-page {
+    min-height: 100vh;
+    padding: 45px 30px;
+}
+
+.availability-container {
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+.page-header {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    margin-bottom: 30px;
+}
+
+.header-icon {
+    width: 58px;
+    height: 58px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #0e9ca8;
+    color: white;
+    font-size: 25px;
+    box-shadow: 0 10px 25px rgba(14, 156, 168, 0.20);
+}
+
+.page-header h1 {
+    margin: 0;
+    font-size: 28px;
+    font-weight: 700;
+}
+
+.page-header p {
+    margin: 5px 0 0;
+    color: #70899a;
+    font-size: 14px;
+}
+
+.availability-card {
+    background: rgba(255, 255, 255, 0.94);
+    border-radius: 18px;
+    padding: 28px;
+    margin-bottom: 22px;
+    border: 1px solid rgba(20, 70, 90, 0.07);
+    box-shadow: 0 15px 40px rgba(31, 67, 82, 0.08);
+}
+
+.section-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.section-title h2,
+.results-header h2 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.section-title h2 i {
+    margin-right: 8px;
+}
+
+.view-only {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 12px;
+    border-radius: 20px;
+    background: #edf8f9;
+    color: #078b96;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.availability-form {
+    display: grid;
+    grid-template-columns: 1fr 1fr auto;
+    gap: 18px;
+    align-items: end;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #294e61;
+}
+
+.form-group select,
+.form-group input {
+    width: 100%;
+    height: 48px;
+    border: 1px solid #d4e2e8;
+    border-radius: 10px;
+    padding: 0 14px;
+    background: #fbfdfe;
+    color: #284b5d;
+    font-family: 'Poppins', sans-serif;
+    outline: none;
+    transition: 0.2s;
+}
+
+.form-group select:focus,
+.form-group input:focus {
+    border-color: #12a5b2;
+    box-shadow: 0 0 0 3px rgba(18, 165, 178, 0.10);
+}
+
+.date-input-wrapper {
+    position: relative;
+}
+
+.date-input-wrapper i {
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #5d8190;
+    pointer-events: none;
+}
+
+.date-input-wrapper input {
+    padding-right: 45px;
+}
+
+.check-button {
+    height: 48px;
+    border: none;
+    border-radius: 10px;
+    padding: 0 22px;
+    background: #0e9ca8;
+    color: white;
+    font-family: 'Poppins', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+    white-space: nowrap;
+}
+
+.check-button:hover {
+    background: #087f89;
+    transform: translateY(-1px);
+}
+
+.check-button i {
+    margin-right: 7px;
+}
+
+.results-header {
+    margin-bottom: 22px;
+}
+
+.results-header p {
+    margin: 5px 0 0;
+    color: #8097a3;
+    font-size: 13px;
+}
+
+.availability-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+}
+
+.time-slot {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 17px;
+    border: 1px solid #dcecef;
+    border-radius: 13px;
+    background: #fbfefe;
+    transition: 0.2s;
+}
+
+.time-slot:hover {
+    border-color: #0eabb5;
+    box-shadow: 0 7px 20px rgba(20, 100, 110, 0.08);
+}
+
+.time-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 11px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #e8f7f8;
+    color: #0a9aa6;
+    font-size: 18px;
+}
+
+.time-information {
+    flex: 1;
+}
+
+.time-information strong {
+    display: block;
+    font-size: 14px;
+    color: #244b5c;
+}
+
+.time-information span {
+    display: block;
+    margin-top: 3px;
+    font-size: 11px;
+    color: #1b9c65;
+    font-weight: 600;
+}
+
+.available-indicator {
+    color: #20a66d;
+    font-size: 18px;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 50px 20px;
+}
+
+.empty-icon {
+    width: 58px;
+    height: 58px;
+    margin: 0 auto 15px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #eaf7f8;
+    color: #0e9ca8;
+    font-size: 23px;
+}
+
+.empty-icon.unavailable {
+    background: #fff1f1;
+    color: #d15b5b;
+}
+
+.empty-state h3 {
+    margin: 0 0 7px;
+    font-size: 16px;
+}
+
+.empty-state p {
+    margin: 0;
+    color: #8298a3;
+    font-size: 13px;
+}
+
+.availability-note {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 15px 18px;
+    border-radius: 12px;
+    background: #edf8fa;
+    color: #416675;
+    font-size: 12px;
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+
+.availability-note i {
+    color: #0c9ca8;
+    font-size: 16px;
+    margin-top: 2px;
+}
+
+.back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    color: #0a8f9b;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.back-link:hover {
+    color: #066f79;
+}
+
+@media (max-width: 800px) {
+
+    .availability-form {
+        grid-template-columns: 1fr;
+    }
+
+    .availability-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .availability-page {
+        padding: 25px 15px;
+    }
+
+    .availability-card {
+        padding: 20px;
+    }
+
+}
+
+@media (max-width: 500px) {
+
+    .page-header {
+        align-items: flex-start;
+    }
+
+    .page-header h1 {
+        font-size: 22px;
+    }
+
+    .section-title {
+        align-items: flex-start;
+        gap: 12px;
+        flex-direction: column;
+    }
+
+}

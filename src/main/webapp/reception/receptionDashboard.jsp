@@ -205,49 +205,51 @@
 
 
     <!-- DENTISTS -->
-    <div class="nav-dropdown">
+    <div class="nav-group">
 
-        <button type="button"
-                class="nav-item nav-dropdown-toggle"
-                data-target="dentistsMenu">
+    <button
+        type="button"
+        class="nav-item nav-toggle"
+        onclick="toggleNavGroup('dentistMenu', this)">
 
-            <span class="nav-item-left">
+        <span class="nav-item-left">
 
-                <i class="bi bi-person-badge"></i>
+            <i class="bi bi-person-badge"></i>
 
-                <span>Dentists</span>
+            <span>Dentists</span>
 
-            </span>
+        </span>
 
-            <i class="bi bi-chevron-down dropdown-arrow"></i>
+        <i class="bi bi-chevron-down nav-arrow"></i>
 
-        </button>
-
-
-        <div class="nav-submenu" id="dentistsMenu">
-
-            <a href="#"
-               class="nav-submenu-item">
-
-                <i class="bi bi-people"></i>
-
-                <span>View Dentists</span>
-
-            </a>
+    </button>
 
 
-            <a href="#"
-               class="nav-submenu-item">
+    <div
+        class="nav-submenu"
+        id="dentistMenu">
 
-                <i class="bi bi-clock"></i>
+        <a
+            href="${pageContext.request.contextPath}/reception/dentists">
 
-                <span>Availability</span>
+            <i class="bi bi-people"></i>
 
-            </a>
+            <span>View Dentists</span>
 
-        </div>
+        </a>
+
+        <a
+            href="${pageContext.request.contextPath}/reception/dentist-availability">
+
+            <i class="bi bi-calendar2-week"></i>
+
+            <span>Check Availability</span>
+
+        </a>
 
     </div>
+
+</div>
 
 
     <!-- HELP DESK -->
@@ -1019,6 +1021,38 @@
 
         }
     );
+
+</script>
+
+<script>
+
+function toggleNavGroup(menuId, button) {
+
+    const menu =
+        document.getElementById(menuId);
+
+    const isOpen =
+        menu.classList.contains("open");
+
+    document
+        .querySelectorAll(".nav-submenu")
+        .forEach(function(item) {
+            item.classList.remove("open");
+        });
+
+    document
+        .querySelectorAll(".nav-toggle")
+        .forEach(function(item) {
+            item.classList.remove("expanded");
+        });
+
+    if (!isOpen) {
+
+        menu.classList.add("open");
+
+        button.classList.add("expanded");
+    }
+}
 
 </script>
 
