@@ -14,13 +14,17 @@ public class DBConnection {
 
     private static final String USERNAME = "root";
 
-    private static final String PASSWORD = "password";
+    private static final String PASSWORD = "Theek@2004#0117";
 
     private DBConnection() {
     }
 
     public static Connection getConnection() throws SQLException {
-
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+        } catch (ClassNotFoundException e) {
+            throw new SQLException("MySQL JDBC Driver not found in classpath", e);
+        }
         return DriverManager.getConnection(
                 URL,
                 USERNAME,

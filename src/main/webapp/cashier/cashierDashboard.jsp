@@ -8,5 +8,7 @@
 </head>
 <body>
 
+<h1>Cashier</h1>
+
 </body>
 </html>

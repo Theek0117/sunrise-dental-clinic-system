@@ -37,6 +37,15 @@ public class PasswordUtil {
             String password,
             String storedPassword) {
 
+        if (password == null || storedPassword == null) {
+            return false;
+        }
+
+        // Direct plain-text comparison (support unhashed passwords)
+        if (password.equals(storedPassword)) {
+            return true;
+        }
+
         try {
 
             String[] parts = storedPassword.split(":");

@@ -21,9 +21,7 @@ public class LoginServlet extends HttpServlet {
 
     @Override
     public void init() {
-
-        authenticationService =
-                new AuthenticationService();
+        authenticationService = new AuthenticationService();
     }
 
     @Override
@@ -32,22 +30,20 @@ public class LoginServlet extends HttpServlet {
             HttpServletResponse response)
             throws ServletException, IOException {
 
-        String username =
-                request.getParameter("username");
+        String username = request.getParameter("username");
+        String password = request.getParameter("password");
 
-        String password =
-                request.getParameter("password");
-
-        Staff staff =
-                authenticationService.authenticate(
-                        username,
-                        password
-                );
+        Staff staff = authenticationService.authenticate(
+                username,
+                password
+        );
 
         if (staff != null) {
 
-            HttpSession session =
-                    request.getSession(true);
+            /*
+             * Create a new session after successful authentication.
+             */
+            HttpSession session = request.getSession(true);
 
             session.setAttribute(
                     "staffId",
@@ -69,14 +65,63 @@ public class LoginServlet extends HttpServlet {
                     staff.getRole()
             );
 
-            session.setMaxInactiveInterval(
-                    30 * 60
-            );
+            /*
+             * Session timeout:
+             * 30 minutes of inactivity.
+             */
+            session.setMaxInactiveInterval(30 * 60);
 
-            response.sendRedirect(
-                    request.getContextPath()
-                    + "/dashboard.jsp"
-            );
+            /*
+             * Role-based dashboard redirection.
+             */
+            String role = staff.getRole();
+
+            if ("ADMIN".equalsIgnoreCase(role)) {
+
+                response.sendRedirect(
+                        request.getContextPath()
+                        + "/admin/adminDashboard.jsp"
+                );
+
+            } else if ("RECEPTION".equalsIgnoreCase(role)
+                    || "RECEPTIONIST".equalsIgnoreCase(role)) {
+
+                response.sendRedirect(
+                        request.getContextPath()
+                        + "/reception/receptionDashboard.jsp"
+                );
+
+            } else if ("CASHIER".equalsIgnoreCase(role)) {
+
+                response.sendRedirect(
+                        request.getContextPath()
+                        + "/cashier/cashierDashboard.jsp"
+                );
+
+            } else if ("DENTIST".equalsIgnoreCase(role)) {
+
+                response.sendRedirect(
+                        request.getContextPath()
+                        + "/dentist/dentistDashboard.jsp"
+                );
+
+            } else {
+
+                /*
+                 * Unknown role.
+                 * Destroy the session and reject the login.
+                 */
+                session.invalidate();
+
+                request.setAttribute(
+                        "error",
+                        "Your account has an invalid role."
+                );
+
+                request.getRequestDispatcher(
+                        "/login.jsp"
+                ).forward(request, response);
+            }
 
         } else {
 
@@ -90,6 +135,7 @@ public class LoginServlet extends HttpServlet {
             ).forward(request, response);
         }
     }
+
 
     @Override
     protected void doGet(

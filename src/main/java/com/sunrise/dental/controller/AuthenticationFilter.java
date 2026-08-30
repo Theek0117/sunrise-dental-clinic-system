@@ -13,9 +13,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 @WebFilter(urlPatterns = {
-        "/dashboard.jsp",
         "/admin/*",
-        "/reception/*"
+        "/reception/*",
+        "/cashier/*",
+        "/dentist/*"
 })
 public class AuthenticationFilter implements Filter {
 
@@ -35,21 +36,164 @@ public class AuthenticationFilter implements Filter {
         HttpSession session =
                 httpRequest.getSession(false);
 
-        boolean loggedIn =
-                session != null
-                && session.getAttribute("staffId") != null;
+        /*
+         * No session means the user is not logged in.
+         */
+        if (session == null
+                || session.getAttribute("staffId") == null) {
 
-        if (loggedIn) {
+            httpResponse.sendRedirect(
+                    httpRequest.getContextPath()
+                    + "/login.jsp"
+            );
 
-            chain.doFilter(
-                    request,
-                    response
+            return;
+        }
+
+        String role =
+                (String) session.getAttribute("role");
+
+        if (role == null) {
+
+            session.invalidate();
+
+            httpResponse.sendRedirect(
+                    httpRequest.getContextPath()
+                    + "/login.jsp"
+            );
+
+            return;
+        }
+
+        String requestURI =
+                httpRequest.getRequestURI();
+
+        String contextPath =
+                httpRequest.getContextPath();
+
+        String requestedArea =
+                requestURI.substring(
+                        contextPath.length()
+                );
+
+
+        /*
+         * ADMIN AREA
+         */
+        if (requestedArea.startsWith("/admin/")
+                && !"ADMIN".equalsIgnoreCase(role)) {
+
+            redirectToOwnDashboard(
+                    httpRequest,
+                    httpResponse,
+                    role
+            );
+
+            return;
+        }
+
+
+        /*
+         * RECEPTION AREA
+         */
+        if (requestedArea.startsWith("/reception/")
+                && !("RECEPTION".equalsIgnoreCase(role)
+                || "RECEPTIONIST".equalsIgnoreCase(role))) {
+
+            redirectToOwnDashboard(
+                    httpRequest,
+                    httpResponse,
+                    role
+            );
+
+            return;
+        }
+
+
+        /*
+         * CASHIER AREA
+         */
+        if (requestedArea.startsWith("/cashier/")
+                && !"CASHIER".equalsIgnoreCase(role)) {
+
+            redirectToOwnDashboard(
+                    httpRequest,
+                    httpResponse,
+                    role
+            );
+
+            return;
+        }
+
+
+        /*
+         * DENTIST AREA
+         */
+        if (requestedArea.startsWith("/dentist/")
+                && !"DENTIST".equalsIgnoreCase(role)) {
+
+            redirectToOwnDashboard(
+                    httpRequest,
+                    httpResponse,
+                    role
+            );
+
+            return;
+        }
+
+
+        /*
+         * Access allowed.
+         */
+        chain.doFilter(
+                request,
+                response
+        );
+    }
+
+
+    private void redirectToOwnDashboard(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            String role)
+            throws IOException {
+
+        String contextPath =
+                request.getContextPath();
+
+        if ("ADMIN".equalsIgnoreCase(role)) {
+
+            response.sendRedirect(
+                    contextPath
+                    + "/admin/adminDashboard.jsp"
+            );
+
+        } else if ("RECEPTION".equalsIgnoreCase(role)
+                || "RECEPTIONIST".equalsIgnoreCase(role)) {
+
+            response.sendRedirect(
+                    contextPath
+                    + "/reception/receptionDashboard.jsp"
+            );
+
+        } else if ("CASHIER".equalsIgnoreCase(role)) {
+
+            response.sendRedirect(
+                    contextPath
+                    + "/cashier/cashierDashboard.jsp"
+            );
+
+        } else if ("DENTIST".equalsIgnoreCase(role)) {
+
+            response.sendRedirect(
+                    contextPath
+                    + "/dentist/dentistDashboard.jsp"
             );
 
         } else {
 
-            httpResponse.sendRedirect(
-                    httpRequest.getContextPath()
+            response.sendRedirect(
+                    contextPath
                     + "/login.jsp"
             );
         }
