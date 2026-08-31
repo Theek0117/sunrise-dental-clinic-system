@@ -2,7 +2,9 @@ package com.sunrise.dental.controller;
 
 import java.io.IOException;
 import java.sql.Date;
+import java.sql.Time;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 import jakarta.servlet.ServletException;
@@ -11,7 +13,11 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import com.sunrise.dental.dao.AppointmentDAO;
+import com.sunrise.dental.dao.AppointmentDAOImpl;
+import com.sunrise.dental.model.Dentist;
 import com.sunrise.dental.model.DentistAvailability;
+import com.sunrise.dental.service.AppointmentService;
 import com.sunrise.dental.service.DentistAvailabilityService;
 
 @WebServlet("/reception/dentist-availability")
@@ -20,12 +26,20 @@ public class DentistAvailabilityServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
     private DentistAvailabilityService availabilityService;
+    private AppointmentDAO appointmentDAO;
+    private AppointmentService appointmentService;
 
     @Override
     public void init() {
 
         availabilityService =
                 new DentistAvailabilityService();
+
+        appointmentDAO =
+                new AppointmentDAOImpl();
+
+        appointmentService =
+                new AppointmentService();
     }
 
     @Override
@@ -40,16 +54,19 @@ public class DentistAvailabilityServlet extends HttpServlet {
         String dateParameter =
                 request.getParameter("date");
 
+        String appointmentIdParameter =
+                request.getParameter("appointmentId");
+
         String ajaxParameter =
                 request.getParameter("ajax");
-
-        int dentistId = 0;
 
         /*
          * ==========================================
          * DENTIST ID
          * ==========================================
          */
+
+        int dentistId = 0;
 
         if (dentistIdParameter != null
                 && !dentistIdParameter.isBlank()) {
@@ -58,12 +75,39 @@ public class DentistAvailabilityServlet extends HttpServlet {
 
                 dentistId =
                         Integer.parseInt(
-                                dentistIdParameter
+                                dentistIdParameter.trim()
                         );
 
             } catch (NumberFormatException e) {
 
                 dentistId = 0;
+            }
+        }
+
+        /*
+         * ==========================================
+         * APPOINTMENT ID
+         *
+         * During rescheduling we exclude the
+         * current appointment from the count.
+         * ==========================================
+         */
+
+        int appointmentId = 0;
+
+        if (appointmentIdParameter != null
+                && !appointmentIdParameter.isBlank()) {
+
+            try {
+
+                appointmentId =
+                        Integer.parseInt(
+                                appointmentIdParameter.trim()
+                        );
+
+            } catch (NumberFormatException e) {
+
+                appointmentId = 0;
             }
         }
 
@@ -83,7 +127,7 @@ public class DentistAvailabilityServlet extends HttpServlet {
 
                 selectedDate =
                         LocalDate.parse(
-                                dateParameter
+                                dateParameter.trim()
                         );
 
             } catch (Exception e) {
@@ -113,27 +157,12 @@ public class DentistAvailabilityServlet extends HttpServlet {
 
         /*
          * ==========================================
-         * AJAX REQUEST
+         * AJAX RESPONSE
          * ==========================================
-         *
-         * The booking page expects JSON.
-         *
-         * Example:
-         *
-         * [
-         *   {
-         *      "availabilityId":1,
-         *      "dentistId":1,
-         *      "availableDate":"2026-09-01",
-         *      "startTime":"09:00:00",
-         *      "endTime":"12:00:00",
-         *      "status":"AVAILABLE"
-         *   }
-         * ]
-         *
          */
 
-        if ("true".equalsIgnoreCase(ajaxParameter)) {
+        if ("true".equalsIgnoreCase(
+                ajaxParameter)) {
 
             response.setContentType(
                     "application/json"
@@ -148,67 +177,258 @@ public class DentistAvailabilityServlet extends HttpServlet {
 
             json.append("[");
 
-            for (int i = 0;
-                 i < availabilityList.size();
-                 i++) {
+            boolean firstSlot = true;
 
-                DentistAvailability availability =
-                        availabilityList.get(i);
+            /*
+             * ==========================================
+             * DENTIST ROOM
+             * ==========================================
+             */
 
-                if (i > 0) {
+            Dentist dentist =
+                    appointmentService.getDentist(
+                            dentistId
+                    );
+
+            String roomNumber =
+                    dentist != null
+                            ? dentist.getRoomNumber()
+                            : "";
+
+            /*
+             * ==========================================
+             * CREATE 30 MINUTE SLOTS
+             * ==========================================
+             */
+
+            for (DentistAvailability availability
+                    : availabilityList) {
+
+                LocalTime slotStart =
+                        availability
+                                .getStartTime()
+                                .toLocalTime();
+
+                LocalTime availabilityEnd =
+                        availability
+                                .getEndTime()
+                                .toLocalTime();
+
+                while (
+                        slotStart
+                                .plusMinutes(30)
+                                .compareTo(
+                                        availabilityEnd
+                                ) <= 0
+                ) {
+
+                    LocalTime slotEnd =
+                            slotStart.plusMinutes(30);
+
+                    Time sqlStartTime =
+                            Time.valueOf(
+                                    slotStart
+                            );
+
+                    Time sqlEndTime =
+                            Time.valueOf(
+                                    slotEnd
+                            );
+
+                    /*
+                     * ======================================
+                     * BOOKING COUNT
+                     *
+                     * Exclude the current appointment
+                     * while rescheduling.
+                     * ======================================
+                     */
+
+                    int bookedCount;
+
+                    if (appointmentId > 0) {
+
+                        bookedCount =
+                                appointmentDAO
+                                        .getSlotBookingCountExcludingAppointment(
+                                                availability
+                                                        .getAvailabilityId(),
+                                                Date.valueOf(
+                                                        selectedDate
+                                                ),
+                                                sqlStartTime,
+                                                sqlEndTime,
+                                                appointmentId
+                                        );
+
+                    } else {
+
+                        bookedCount =
+                                appointmentDAO
+                                        .getSlotBookingCount(
+                                                availability
+                                                        .getAvailabilityId(),
+                                                Date.valueOf(
+                                                        selectedDate
+                                                ),
+                                                sqlStartTime,
+                                                sqlEndTime
+                                        );
+                    }
+
+                    /*
+                     * ======================================
+                     * CAPACITY
+                     * ======================================
+                     */
+
+                    int capacity =
+                            availability
+                                    .getSlotCapacity();
+
+                    boolean full =
+                            capacity <= 0
+                            || bookedCount >= capacity;
+
+                    /*
+                     * ======================================
+                     * PAST SLOT
+                     * ======================================
+                     */
+
+                    boolean past = false;
+
+                    if (selectedDate.equals(
+                            LocalDate.now())) {
+
+                        LocalTime now =
+                                LocalTime.now();
+
+                        past =
+                                !slotStart.isAfter(now);
+                    }
+
+                    /*
+                     * ======================================
+                     * JSON
+                     * ======================================
+                     */
+
+                    if (!firstSlot) {
+                        json.append(",");
+                    }
+
+                    firstSlot = false;
+
+                    json.append("{");
+
+                    json.append(
+                            "\"availabilityId\":"
+                    ).append(
+                            availability
+                                    .getAvailabilityId()
+                    );
+
                     json.append(",");
+
+                    json.append(
+                            "\"dentistId\":"
+                    ).append(
+                            availability
+                                    .getDentistId()
+                    );
+
+                    json.append(",");
+
+                    json.append(
+                            "\"availableDate\":\""
+                    ).append(
+                            availability
+                                    .getAvailableDate()
+                    ).append("\"");
+
+                    json.append(",");
+
+                    json.append(
+                            "\"startTime\":\""
+                    ).append(
+                            sqlStartTime
+                    ).append("\"");
+
+                    json.append(",");
+
+                    json.append(
+                            "\"endTime\":\""
+                    ).append(
+                            sqlEndTime
+                    ).append("\"");
+
+                    json.append(",");
+
+                    json.append(
+                            "\"slotCapacity\":"
+                    ).append(
+                            capacity
+                    );
+
+                    json.append(",");
+
+                    json.append(
+                            "\"bookedCount\":"
+                    ).append(
+                            bookedCount
+                    );
+
+                    json.append(",");
+
+                    json.append(
+                            "\"remainingCapacity\":"
+                    ).append(
+                            Math.max(
+                                    capacity - bookedCount,
+                                    0
+                            )
+                    );
+
+                    json.append(",");
+
+                    json.append(
+                            "\"full\":"
+                    ).append(
+                            full
+                    );
+
+                    json.append(",");
+
+                    json.append(
+                            "\"past\":"
+                    ).append(
+                            past
+                    );
+
+                    json.append(",");
+
+                    json.append(
+                            "\"roomNumber\":\""
+                    ).append(
+                            escapeJson(roomNumber)
+                    ).append("\"");
+
+                    json.append(",");
+
+                    json.append(
+                            "\"status\":\""
+                    ).append(
+                            escapeJson(
+                                    availability.getStatus()
+                            )
+                    ).append("\"");
+
+                    json.append("}");
+
+                    slotStart =
+                            slotEnd;
                 }
-
-                json.append("{");
-
-                json.append("\"availabilityId\":")
-                        .append(
-                                availability.getAvailabilityId()
-                        );
-
-                json.append(",");
-
-                json.append("\"dentistId\":")
-                        .append(
-                                availability.getDentistId()
-                        );
-
-                json.append(",");
-
-                json.append("\"availableDate\":\"")
-                        .append(
-                                availability.getAvailableDate()
-                                        .toLocalDate()
-                        )
-                        .append("\"");
-
-                json.append(",");
-
-                json.append("\"startTime\":\"")
-                        .append(
-                                availability.getStartTime()
-                        )
-                        .append("\"");
-
-                json.append(",");
-
-                json.append("\"endTime\":\"")
-                        .append(
-                                availability.getEndTime()
-                        )
-                        .append("\"");
-
-                json.append(",");
-
-                json.append("\"status\":\"")
-                        .append(
-                                escapeJson(
-                                        availability.getStatus()
-                                )
-                        )
-                        .append("\"");
-
-                json.append("}");
             }
 
             json.append("]");
@@ -224,9 +444,6 @@ public class DentistAvailabilityServlet extends HttpServlet {
          * ==========================================
          * NORMAL JSP REQUEST
          * ==========================================
-         *
-         * Keep this for direct browser access.
-         *
          */
 
         request.setAttribute(

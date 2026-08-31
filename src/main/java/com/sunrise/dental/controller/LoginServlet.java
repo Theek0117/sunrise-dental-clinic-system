@@ -88,7 +88,7 @@ public class LoginServlet extends HttpServlet {
 
                 response.sendRedirect(
                         request.getContextPath()
-                        + "/reception/receptionDashboard.jsp"
+                        + "/reception/dashboard"
                 );
 
             } else if ("CASHIER".equalsIgnoreCase(role)) {

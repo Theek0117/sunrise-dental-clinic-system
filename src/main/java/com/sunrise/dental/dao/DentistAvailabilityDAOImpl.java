@@ -24,6 +24,7 @@ public class DentistAvailabilityDAOImpl
                     available_date,
                     start_time,
                     end_time,
+                    slot_capacity,
                     status,
                     created_at
                 FROM dentist_availability
@@ -58,7 +59,6 @@ public class DentistAvailabilityDAOImpl
             }
 
         } catch (Exception e) {
-
             e.printStackTrace();
         }
 
@@ -82,6 +82,7 @@ public class DentistAvailabilityDAOImpl
                     available_date,
                     start_time,
                     end_time,
+                    slot_capacity,
                     status,
                     created_at
                 FROM dentist_availability
@@ -125,18 +126,11 @@ public class DentistAvailabilityDAOImpl
             }
 
         } catch (Exception e) {
-
             e.printStackTrace();
         }
 
         return availabilityList;
     }
-
-    /*
-     * ==========================================
-     * MAP RESULT
-     * ==========================================
-     */
 
     private DentistAvailability mapAvailability(
             ResultSet resultSet)
@@ -172,6 +166,12 @@ public class DentistAvailabilityDAOImpl
         availability.setEndTime(
                 resultSet.getTime(
                         "end_time"
+                )
+        );
+
+        availability.setSlotCapacity(
+                resultSet.getInt(
+                        "slot_capacity"
                 )
         );
 

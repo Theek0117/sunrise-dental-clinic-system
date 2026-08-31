@@ -6,6 +6,7 @@ public class Dentist {
     private int staffId;
     private String dentistNumber;
     private String name;
+    private String roomNumber;
     private String nic;
     private String specialization;
     private String contactNumber;
@@ -13,6 +14,7 @@ public class Dentist {
     private String status;
 
     public Dentist() {
+
     }
 
     public Dentist(
@@ -20,6 +22,7 @@ public class Dentist {
             int staffId,
             String dentistNumber,
             String name,
+            String roomNumber,
             String nic,
             String specialization,
             String contactNumber,
@@ -30,6 +33,7 @@ public class Dentist {
         this.staffId = staffId;
         this.dentistNumber = dentistNumber;
         this.name = name;
+        this.roomNumber = roomNumber;
         this.nic = nic;
         this.specialization = specialization;
         this.contactNumber = contactNumber;
@@ -67,6 +71,14 @@ public class Dentist {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getRoomNumber() {
+        return roomNumber;
+    }
+
+    public void setRoomNumber(String roomNumber) {
+        this.roomNumber = roomNumber;
     }
 
     public String getNic() {

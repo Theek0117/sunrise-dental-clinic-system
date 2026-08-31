@@ -2,6 +2,7 @@ package com.sunrise.dental.dao;
 
 import java.sql.Date;
 import java.sql.Time;
+import java.util.List;
 
 import com.sunrise.dental.model.Appointment;
 
@@ -16,5 +17,40 @@ public interface AppointmentDAO {
             Date appointmentDate,
             Time startTime,
             Time endTime
+    );
+
+    int getSlotBookingCount(
+            int availabilityId,
+            Date appointmentDate,
+            Time startTime,
+            Time endTime
+    );
+
+    List<Appointment> findAll();
+
+    List<Appointment> findActiveAppointments();
+
+    Appointment findById(int appointmentId);
+
+    boolean cancelAppointment(
+            int appointmentId
+    );
+
+    boolean rescheduleAppointment(
+            int appointmentId,
+            int dentistId,
+            int availabilityId,
+            Date appointmentDate,
+            Time startTime,
+            Time endTime,
+            String reason
+    );
+
+    int getSlotBookingCountExcludingAppointment(
+            int availabilityId,
+            Date appointmentDate,
+            Time startTime,
+            Time endTime,
+            int appointmentId
     );
 }

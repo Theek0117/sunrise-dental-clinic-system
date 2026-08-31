@@ -1,4 +1,6 @@
 
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+
      :root {
     --bg: #F7FAFC;
     --panel: #FFFFFF;
@@ -31,7 +33,7 @@
 	
 	body {
 	    margin: 0;
-	    font-family: "Manrope", sans-serif;
+	    font-family: 'Poppins', sans-serif;
 	    background: var(--bg);
 	    color: var(--text);
 	    overflow-x: hidden;

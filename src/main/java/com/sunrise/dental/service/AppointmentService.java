@@ -1,5 +1,10 @@
 package com.sunrise.dental.service;
 
+import java.sql.Date;
+import java.sql.Time;
+import java.time.LocalDateTime;
+import java.util.List;
+
 import com.sunrise.dental.dao.AppointmentDAO;
 import com.sunrise.dental.dao.AppointmentDAOImpl;
 import com.sunrise.dental.dao.DentistAvailabilityDAO;
@@ -22,16 +27,16 @@ public class AppointmentService {
 
     public AppointmentService() {
 
-        this.appointmentDAO =
+        appointmentDAO =
                 new AppointmentDAOImpl();
 
-        this.patientDAO =
+        patientDAO =
                 new PatientDAOImpl();
 
-        this.dentistDAO =
+        dentistDAO =
                 new DentistDAOImpl();
 
-        this.availabilityDAO =
+        availabilityDAO =
                 new DentistAvailabilityDAOImpl();
     }
 
@@ -42,69 +47,35 @@ public class AppointmentService {
             return false;
         }
 
-        if (appointment.getPatientId() <= 0) {
+        if (appointment.getPatientId() <= 0
+                || appointment.getDentistId() <= 0
+                || appointment.getAvailabilityId() <= 0) {
+
             return false;
         }
 
-        if (appointment.getDentistId() <= 0) {
-            return false;
-        }
-
-        if (appointment.getAvailabilityId() <= 0) {
-            return false;
-        }
-
-        if (appointment.getAppointmentDate() == null) {
-            return false;
-        }
-
-        if (appointment.getStartTime() == null
+        if (appointment.getAppointmentDate() == null
+                || appointment.getStartTime() == null
                 || appointment.getEndTime() == null) {
 
             return false;
         }
 
-        /*
-         * ==========================================
-         * TIME VALIDATION
-         * ==========================================
-         */
-
-        if (!appointment.getStartTime()
-                .before(
-                        appointment.getEndTime()
-                )) {
-
+        if (!isThirtyMinuteSlot(appointment)) {
             return false;
         }
-
-        /*
-         * ==========================================
-         * VERIFY PATIENT
-         * ==========================================
-         */
 
         Patient patient =
                 patientDAO.findById(
                         appointment.getPatientId()
                 );
 
-        if (patient == null) {
-            return false;
-        }
-
-        if (!"ACTIVE".equalsIgnoreCase(
-                patient.getStatus()
-        )) {
+        if (patient == null
+                || !"ACTIVE".equalsIgnoreCase(
+                        patient.getStatus())) {
 
             return false;
         }
-
-        /*
-         * ==========================================
-         * VERIFY DENTIST
-         * ==========================================
-         */
 
         Dentist dentist =
                 dentistDAO.findById(
@@ -115,116 +86,285 @@ public class AppointmentService {
             return false;
         }
 
-        /*
-         * ==========================================
-         * VERIFY AVAILABILITY
-         * ==========================================
-         */
-
         DentistAvailability availability =
                 availabilityDAO.findById(
                         appointment.getAvailabilityId()
                 );
 
-        if (availability == null) {
-            return false;
-        }
-
-        /*
-         * Availability must belong
-         * to selected dentist.
-         */
-
-        if (availability.getDentistId()
-                != appointment.getDentistId()) {
+        if (!validAvailability(
+                appointment,
+                availability)) {
 
             return false;
         }
 
-        /*
-         * ==========================================
-         * VERIFY DATE
-         * ==========================================
-         */
-
-        if (!availability.getAvailableDate()
-                .equals(
-                        appointment.getAppointmentDate()
-                )) {
-
-            return false;
-        }
-
-        /*
-         * ==========================================
-         * VERIFY TIME RANGE
-         * ==========================================
-         */
-
-        if (appointment.getStartTime()
-                .before(
-                        availability.getStartTime()
-                )) {
-
-            return false;
-        }
-
-        if (appointment.getEndTime()
-                .after(
-                        availability.getEndTime()
-                )) {
-
-            return false;
-        }
-
-        /*
-         * ==========================================
-         * PREVENT DOUBLE BOOKING
-         * ==========================================
-         */
-
-        if (appointmentDAO.isTimeSlotBooked(
-                appointment.getDentistId(),
+        if (!isFutureSlot(
                 appointment.getAppointmentDate(),
-                appointment.getStartTime(),
-                appointment.getEndTime()
-        )) {
+                appointment.getStartTime())) {
 
             return false;
         }
 
-        /*
-         * ==========================================
-         * GENERATE APPOINTMENT NUMBER
-         * ==========================================
-         */
+        int capacity =
+                availability.getSlotCapacity();
 
-        String appointmentNumber =
-                appointmentDAO
-                        .generateAppointmentNumber();
+        if (capacity <= 0) {
+            return false;
+        }
+
+        int currentBookings =
+                appointmentDAO.getSlotBookingCount(
+                        appointment.getAvailabilityId(),
+                        appointment.getAppointmentDate(),
+                        appointment.getStartTime(),
+                        appointment.getEndTime()
+                );
+
+        if (currentBookings >= capacity) {
+            return false;
+        }
 
         appointment.setAppointmentNumber(
-                appointmentNumber
+                appointmentDAO.generateAppointmentNumber()
         );
-
-        /*
-         * ==========================================
-         * STATUS
-         * ==========================================
-         */
 
         appointment.setStatus(
                 "CONFIRMED"
         );
 
+        return appointmentDAO.save(
+                appointment
+        );
+    }
+
+    public List<Appointment> getAllAppointments() {
+        return appointmentDAO.findAll();
+    }
+
+    public List<Appointment> getActiveAppointments() {
+        return appointmentDAO.findActiveAppointments();
+    }
+
+    public Appointment getAppointment(
+            int appointmentId) {
+
+        if (appointmentId <= 0) {
+            return null;
+        }
+
+        return appointmentDAO.findById(
+                appointmentId
+        );
+    }
+
+    public boolean cancelAppointment(
+            int appointmentId) {
+
+        if (appointmentId <= 0) {
+            return false;
+        }
+
+        Appointment appointment =
+                appointmentDAO.findById(
+                        appointmentId
+                );
+
+        if (appointment == null) {
+            return false;
+        }
+
+        if (!isActiveStatus(
+                appointment.getStatus())) {
+
+            return false;
+        }
+
+        return appointmentDAO.cancelAppointment(
+                appointmentId
+        );
+    }
+
+    public boolean rescheduleAppointment(
+            int appointmentId,
+            int dentistId,
+            int availabilityId,
+            Date appointmentDate,
+            Time startTime,
+            Time endTime,
+            String reason) {
+
         /*
          * ==========================================
-         * SAVE
+         * GET EXISTING APPOINTMENT
          * ==========================================
          */
 
-        return appointmentDAO.save(
-                appointment
+        Appointment existing =
+                appointmentDAO.findById(
+                        appointmentId
+                );
+
+        if (existing == null) {
+            return false;
+        }
+
+        /*
+         * ==========================================
+         * CHECK STATUS
+         * ==========================================
+         */
+
+        if (!isActiveStatus(
+                existing.getStatus())) {
+
+            return false;
+        }
+
+        /*
+         * ==========================================
+         * BASIC VALIDATION
+         * ==========================================
+         */
+
+        if (dentistId <= 0
+                || availabilityId <= 0
+                || appointmentDate == null
+                || startTime == null
+                || endTime == null) {
+
+            return false;
+        }
+
+        /*
+         * ==========================================
+         * MUST BE EXACTLY 30 MINUTES
+         * ==========================================
+         */
+
+        long duration =
+                endTime.getTime()
+                - startTime.getTime();
+
+        long minutes =
+                duration / (60 * 1000);
+
+        if (minutes != 30) {
+            return false;
+        }
+
+        /*
+         * ==========================================
+         * CHECK DENTIST
+         * ==========================================
+         */
+
+        Dentist dentist =
+                dentistDAO.findById(
+                        dentistId
+                );
+
+        if (dentist == null) {
+            return false;
+        }
+
+        /*
+         * ==========================================
+         * CHECK AVAILABILITY
+         * ==========================================
+         */
+
+        DentistAvailability availability =
+                availabilityDAO.findById(
+                        availabilityId
+                );
+
+        if (!validAvailability(
+                dentistId,
+                appointmentDate,
+                startTime,
+                endTime,
+                availability)) {
+
+            return false;
+        }
+
+        /*
+         * ==========================================
+         * CHECK FUTURE SLOT
+         * ==========================================
+         */
+
+        if (!isFutureSlot(
+                appointmentDate,
+                startTime)) {
+
+            return false;
+        }
+
+        /*
+         * ==========================================
+         * CAPACITY
+         * ==========================================
+         */
+
+        int capacity =
+                availability.getSlotCapacity();
+
+        if (capacity <= 0) {
+            return false;
+        }
+
+        /*
+         * ==========================================
+         * IMPORTANT
+         *
+         * Exclude the appointment currently being
+         * rescheduled.
+         * ==========================================
+         */
+
+        int currentBookings =
+                appointmentDAO
+                        .getSlotBookingCountExcludingAppointment(
+                                availabilityId,
+                                appointmentDate,
+                                startTime,
+                                endTime,
+                                appointmentId
+                        );
+
+        if (currentBookings >= capacity) {
+            return false;
+        }
+
+        /*
+         * ==========================================
+         * REASON
+         * ==========================================
+         */
+
+        if (reason == null || reason.isBlank()) {
+            reason = existing.getReason();
+        }
+
+        if (reason == null) {
+            reason = "";
+        }
+
+        /*
+         * ==========================================
+         * UPDATE
+         * ==========================================
+         */
+
+        return appointmentDAO.rescheduleAppointment(
+                appointmentId,
+                dentistId,
+                availabilityId,
+                appointmentDate,
+                startTime,
+                endTime,
+                reason.trim()
         );
     }
 
@@ -250,5 +390,129 @@ public class AppointmentService {
         return dentistDAO.findById(
                 dentistId
         );
+    }
+
+    private boolean isThirtyMinuteSlot(
+            Appointment appointment) {
+
+        long duration =
+                appointment.getEndTime().getTime()
+                - appointment.getStartTime().getTime();
+
+        return duration / (60 * 1000) == 30;
+    }
+
+    private boolean validAvailability(
+            Appointment appointment,
+            DentistAvailability availability) {
+
+        if (availability == null) {
+            return false;
+        }
+
+        return validAvailability(
+                appointment.getDentistId(),
+                appointment.getAppointmentDate(),
+                appointment.getStartTime(),
+                appointment.getEndTime(),
+                availability
+        );
+    }
+
+    private boolean validAvailability(
+            int dentistId,
+            Date date,
+            Time start,
+            Time end,
+            DentistAvailability availability) {
+
+        if (availability == null) {
+            return false;
+        }
+
+        /*
+         * Dentist must match availability
+         */
+
+        if (availability.getDentistId()
+                != dentistId) {
+
+            return false;
+        }
+
+        /*
+         * Date must match availability
+         */
+
+        if (availability.getAvailableDate() == null
+                || !availability.getAvailableDate()
+                        .equals(date)) {
+
+            return false;
+        }
+
+        /*
+         * Slot must be inside availability
+         */
+
+        if (start.before(
+                availability.getStartTime())) {
+
+            return false;
+        }
+
+        if (end.after(
+                availability.getEndTime())) {
+
+            return false;
+        }
+
+        /*
+         * Slot must start on a 30-minute boundary
+         * relative to the availability start.
+         */
+
+        int startMinutes =
+                start.toLocalTime().getHour() * 60
+                + start.toLocalTime().getMinute();
+
+        int availabilityStartMinutes =
+                availability.getStartTime()
+                        .toLocalTime()
+                        .getHour() * 60
+                + availability.getStartTime()
+                        .toLocalTime()
+                        .getMinute();
+
+        int relative =
+                startMinutes
+                - availabilityStartMinutes;
+
+        return relative >= 0
+                && relative % 30 == 0;
+    }
+
+    private boolean isFutureSlot(
+            Date date,
+            Time startTime) {
+
+        LocalDateTime now =
+                LocalDateTime.now();
+
+        LocalDateTime slot =
+                LocalDateTime.of(
+                        date.toLocalDate(),
+                        startTime.toLocalTime()
+                );
+
+        return slot.isAfter(now);
+    }
+
+    private boolean isActiveStatus(
+            String status) {
+
+        return "PENDING".equalsIgnoreCase(status)
+                || "CONFIRMED".equalsIgnoreCase(status)
+                || "RESCHEDULED".equalsIgnoreCase(status);
     }
 }

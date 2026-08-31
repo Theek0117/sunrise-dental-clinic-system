@@ -25,6 +25,10 @@
 
     <title>Receptionist Dashboard | Sunrise Dental Clinic</title>
 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
     <link rel="stylesheet"
           href="${pageContext.request.contextPath}/css/reception.css">
 
@@ -65,7 +69,7 @@
     <p class="navigation-title">MAIN</p>
 
     <!-- DASHBOARD -->
-    <a href="${pageContext.request.contextPath}/reception/receptionDashboard.jsp"
+    <a href="${pageContext.request.contextPath}/reception/dashboard"
        class="nav-item active">
 
         <i class="bi bi-grid-1x2-fill"></i>
@@ -76,7 +80,7 @@
 
 
     <!-- SCHEDULE -->
-    <a href="#"
+    <a href="${pageContext.request.contextPath}/reception/schedule"
        class="nav-item">
 
         <i class="bi bi-calendar3"></i>
@@ -91,7 +95,7 @@
 
     <button type="button"
             class="nav-item nav-dropdown-toggle"
-            id="appointmentsToggle">
+            onclick="this.parentElement.classList.toggle('open')">
 
         <span class="nav-item-left">
 
@@ -116,7 +120,7 @@
 
         </a>
 
-        <a href="#"
+        <a href="${pageContext.request.contextPath}/reception/view-appointments"
            class="nav-subitem">
 
             <i class="bi bi-calendar3"></i>
@@ -125,7 +129,7 @@
 
         </a>
 
-        <a href="#"
+        <a href="${pageContext.request.contextPath}/reception/view-appointments"
            class="nav-subitem">
 
             <i class="bi bi-calendar2-week"></i>
@@ -134,7 +138,7 @@
 
         </a>
 
-        <a href="#"
+        <a href="${pageContext.request.contextPath}/reception/view-appointments"
            class="nav-subitem">
 
             <i class="bi bi-calendar-x"></i>
@@ -154,7 +158,7 @@
     <button
         type="button"
         class="nav-item nav-parent"
-        id="patientsMenuButton">
+        onclick="this.parentElement.classList.toggle('open')">
 
         <span class="nav-item-left">
 
@@ -209,7 +213,7 @@
     <button
         type="button"
         class="nav-item nav-toggle"
-        onclick="toggleNavGroup('dentistMenu', this)">
+        onclick="this.parentElement.classList.toggle('open')">
 
         <span class="nav-item-left">
 
@@ -229,7 +233,8 @@
         id="dentistMenu">
 
         <a
-            href="${pageContext.request.contextPath}/reception/dentists">
+            href="${pageContext.request.contextPath}/reception/dentists"
+            class="nav-subitem">
 
             <i class="bi bi-people"></i>
 
@@ -238,7 +243,8 @@
         </a>
 
         <a
-            href="${pageContext.request.contextPath}/reception/dentist-availability">
+            href="${pageContext.request.contextPath}/reception/dentist-availability"
+            class="nav-subitem">
 
             <i class="bi bi-calendar2-week"></i>
 
@@ -252,7 +258,7 @@
 
 
     <!-- HELP DESK -->
-    <a href="#"
+    <a href="${pageContext.request.contextPath}/reception/helpdesk.jsp"
        class="nav-item">
 
         <i class="bi bi-question-circle"></i>
@@ -270,7 +276,7 @@
 
             <p class="navigation-title">ACCOUNT</p>
 
-            <a href="#" class="nav-item">
+            <a href="${pageContext.request.contextPath}/reception/profile" class="nav-item">
 
                 <i class="bi bi-person-circle"></i>
 
@@ -953,138 +959,6 @@
 
 </script>
 
-<script>
-
-    /* =====================================================
-       SIDEBAR DROPDOWN MENUS
-       ===================================================== */
-
-    const dropdownButtons =
-        document.querySelectorAll(".nav-dropdown-toggle");
-
-
-    dropdownButtons.forEach(function(button) {
-
-        button.addEventListener("click", function() {
-
-            const targetId =
-                button.getAttribute("data-target");
-
-            const targetMenu =
-                document.getElementById(targetId);
-
-            const currentDropdown =
-                button.closest(".nav-dropdown");
-
-
-            /*
-             * Close other dropdowns
-             */
-            document.querySelectorAll(".nav-dropdown")
-                .forEach(function(dropdown) {
-
-                    if (dropdown !== currentDropdown) {
-
-                        dropdown.classList.remove("open");
-
-                    }
-
-                });
-
-
-            /*
-             * Toggle current dropdown
-             */
-            currentDropdown.classList.toggle("open");
-
-        });
-
-    });
-    
-    
-    
-    const patientsMenuButton =
-        document.getElementById("patientsMenuButton");
-
-    const patientsNavGroup =
-        patientsMenuButton.closest(".nav-group");
-
-    patientsMenuButton.addEventListener(
-        "click",
-        function () {
-
-            patientsNavGroup.classList.toggle("open");
-
-        }
-    );
-
-</script>
-
-<script>
-
-function toggleNavGroup(menuId, button) {
-
-    const menu =
-        document.getElementById(menuId);
-
-    const isOpen =
-        menu.classList.contains("open");
-
-    document
-        .querySelectorAll(".nav-submenu")
-        .forEach(function(item) {
-            item.classList.remove("open");
-        });
-
-    document
-        .querySelectorAll(".nav-toggle")
-        .forEach(function(item) {
-            item.classList.remove("expanded");
-        });
-
-    if (!isOpen) {
-
-        menu.classList.add("open");
-
-        button.classList.add("expanded");
-    }
-}
-
-</script>
-
-<script>
-
-    /*
-     * ==========================================
-     * APPOINTMENTS DROPDOWN
-     * ==========================================
-     */
-
-    const appointmentsToggle =
-        document.getElementById("appointmentsToggle");
-
-    const appointmentsSubmenu =
-        document.getElementById("appointmentsSubmenu");
-
-    if (appointmentsToggle && appointmentsSubmenu) {
-
-        appointmentsToggle.addEventListener(
-            "click",
-            function () {
-
-                appointmentsToggle.classList.toggle(
-                    "dropdown-open"
-                );
-
-                appointmentsSubmenu.classList.toggle(
-                    "submenu-open"
-                );
-
-            }
-        );
-    }
-
-</script>
 
 </body>
 

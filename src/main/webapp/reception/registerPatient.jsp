@@ -59,7 +59,7 @@
 
         </div>
 
-        <a href="${pageContext.request.contextPath}/reception/receptionDashboard.jsp"
+        <a href="${pageContext.request.contextPath}/reception/dashboard"
            class="back-link">
 
             <i class="bi bi-arrow-left"></i>
@@ -303,7 +303,7 @@
                 <div class="form-actions">
 
                     <a
-                        href="${pageContext.request.contextPath}/reception/receptionDashboard.jsp"
+                        href="${pageContext.request.contextPath}/reception/dashboard"
                         class="cancel-button">
 
                         <i class="bi bi-x-lg"></i>

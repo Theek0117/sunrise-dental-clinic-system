@@ -11,10 +11,12 @@ public class DentistAvailability {
     private Date availableDate;
     private Time startTime;
     private Time endTime;
+    private int slotCapacity;
     private String status;
     private Timestamp createdAt;
 
     public DentistAvailability() {
+
     }
 
     public int getAvailabilityId() {
@@ -55,6 +57,14 @@ public class DentistAvailability {
 
     public void setEndTime(Time endTime) {
         this.endTime = endTime;
+    }
+
+    public int getSlotCapacity() {
+        return slotCapacity;
+    }
+
+    public void setSlotCapacity(int slotCapacity) {
+        this.slotCapacity = slotCapacity;
     }
 
     public String getStatus() {

@@ -22,6 +22,7 @@ public class DentistDAOImpl implements DentistDAO {
                     d.staff_id,
                     d.dentist_number,
                     d.name,
+                    d.room_number,
                     d.nic,
                     d.specialization,
                     d.contact_number,
@@ -45,18 +46,15 @@ public class DentistDAOImpl implements DentistDAO {
         ) {
 
             while (resultSet.next()) {
-
                 dentists.add(mapDentist(resultSet));
             }
 
         } catch (Exception e) {
-
             e.printStackTrace();
         }
 
         return dentists;
     }
-
 
     @Override
     public Dentist findById(int dentistId) {
@@ -67,6 +65,7 @@ public class DentistDAOImpl implements DentistDAO {
                     d.staff_id,
                     d.dentist_number,
                     d.name,
+                    d.room_number,
                     d.nic,
                     d.specialization,
                     d.contact_number,
@@ -92,19 +91,16 @@ public class DentistDAOImpl implements DentistDAO {
             try (ResultSet resultSet = statement.executeQuery()) {
 
                 if (resultSet.next()) {
-
                     return mapDentist(resultSet);
                 }
             }
 
         } catch (Exception e) {
-
             e.printStackTrace();
         }
 
         return null;
     }
-
 
     private Dentist mapDentist(ResultSet resultSet)
             throws Exception {
@@ -125,6 +121,10 @@ public class DentistDAOImpl implements DentistDAO {
 
         dentist.setName(
                 resultSet.getString("name")
+        );
+
+        dentist.setRoomNumber(
+                resultSet.getString("room_number")
         );
 
         dentist.setNic(

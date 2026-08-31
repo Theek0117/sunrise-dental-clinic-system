@@ -69,7 +69,7 @@
 
         <div class="header-left">
 
-            <a href="${pageContext.request.contextPath}/reception/receptionDashboard.jsp"
+            <a href="${pageContext.request.contextPath}/reception/dashboard"
                class="back-button">
 
                 <i class="bi bi-arrow-left"></i>

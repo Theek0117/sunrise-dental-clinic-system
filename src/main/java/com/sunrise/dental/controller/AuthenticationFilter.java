@@ -173,7 +173,7 @@ public class AuthenticationFilter implements Filter {
 
             response.sendRedirect(
                     contextPath
-                    + "/reception/receptionDashboard.jsp"
+                    + "/reception/dashboard"
             );
 
         } else if ("CASHIER".equalsIgnoreCase(role)) {

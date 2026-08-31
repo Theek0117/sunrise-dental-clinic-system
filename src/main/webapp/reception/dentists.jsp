@@ -25,6 +25,10 @@
 
     <title>View Dentists | Sunrise Dental Clinic</title>
 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
     <link rel="stylesheet"
           href="${pageContext.request.contextPath}/css/dentists.css">
 
@@ -59,7 +63,7 @@
 
         </div>
 
-        <a href="${pageContext.request.contextPath}/reception/receptionDashboard.jsp"
+        <a href="${pageContext.request.contextPath}/reception/dashboard"
            class="back-button">
 
             <i class="bi bi-arrow-left"></i>

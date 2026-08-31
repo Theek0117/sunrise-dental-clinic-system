@@ -50,12 +50,6 @@ public class BookAppointmentServlet
                 new EmailService();
     }
 
-    /*
-     * ==========================================
-     * OPEN BOOKING PAGE
-     * ==========================================
-     */
-
     @Override
     protected void doGet(
             HttpServletRequest request,
@@ -71,12 +65,6 @@ public class BookAppointmentServlet
                 response
         );
     }
-
-    /*
-     * ==========================================
-     * BOOK APPOINTMENT
-     * ==========================================
-     */
 
     @Override
     protected void doPost(
@@ -388,7 +376,8 @@ public class BookAppointmentServlet
                 request.setAttribute(
                         "error",
                         "Unable to book the appointment. "
-                        + "The selected time may already be unavailable."
+                        + "The selected 30-minute slot may already be full, "
+                        + "expired or unavailable."
                 );
             }
 
@@ -435,12 +424,6 @@ public class BookAppointmentServlet
                 response
         );
     }
-
-    /*
-     * ==========================================
-     * LOAD PATIENTS + DENTISTS
-     * ==========================================
-     */
 
     private void loadBookingData(
             HttpServletRequest request) {
