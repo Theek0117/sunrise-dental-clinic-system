@@ -12,7 +12,15 @@ public interface StaffDAO {
 
     List<Staff> findAllActive();
 
-    int countAll();
+    List<Staff> search(String keyword);
 
-    int countActive();
+    Staff findById(int staffId);
+
+    boolean existsByUsername(String username);
+
+    boolean save(Staff staff);
+
+    boolean update(Staff staff);
+
+    boolean updateStatus(int staffId, String status);
 }

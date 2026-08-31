@@ -15,14 +15,13 @@ public class StaffDAOImpl implements StaffDAO {
     public Staff findByUsername(String username) {
 
         String sql = """
-                SELECT
-                    staff_id,
-                    name,
-                    username,
-                    password,
-                    contact_number,
-                    role,
-                    status
+                SELECT staff_id,
+                       name,
+                       username,
+                       password,
+                       contact_number,
+                       role,
+                       status
                 FROM staff
                 WHERE username = ?
                 LIMIT 1
@@ -45,11 +44,6 @@ public class StaffDAOImpl implements StaffDAO {
             }
 
         } catch (Exception e) {
-
-            System.err.println(
-                    "ERROR: Unable to find staff by username."
-            );
-
             e.printStackTrace();
         }
 
@@ -62,14 +56,13 @@ public class StaffDAOImpl implements StaffDAO {
         List<Staff> staffList = new ArrayList<>();
 
         String sql = """
-                SELECT
-                    staff_id,
-                    name,
-                    username,
-                    password,
-                    contact_number,
-                    role,
-                    status
+                SELECT staff_id,
+                       name,
+                       username,
+                       password,
+                       contact_number,
+                       role,
+                       status
                 FROM staff
                 ORDER BY staff_id DESC
                 """;
@@ -83,17 +76,10 @@ public class StaffDAOImpl implements StaffDAO {
         ) {
 
             while (resultSet.next()) {
-                staffList.add(
-                        mapStaff(resultSet)
-                );
+                staffList.add(mapStaff(resultSet));
             }
 
         } catch (Exception e) {
-
-            System.err.println(
-                    "ERROR: Unable to retrieve staff."
-            );
-
             e.printStackTrace();
         }
 
@@ -106,14 +92,13 @@ public class StaffDAOImpl implements StaffDAO {
         List<Staff> staffList = new ArrayList<>();
 
         String sql = """
-                SELECT
-                    staff_id,
-                    name,
-                    username,
-                    password,
-                    contact_number,
-                    role,
-                    status
+                SELECT staff_id,
+                       name,
+                       username,
+                       password,
+                       contact_number,
+                       role,
+                       status
                 FROM staff
                 WHERE status = 'ACTIVE'
                 ORDER BY name
@@ -128,17 +113,10 @@ public class StaffDAOImpl implements StaffDAO {
         ) {
 
             while (resultSet.next()) {
-                staffList.add(
-                        mapStaff(resultSet)
-                );
+                staffList.add(mapStaff(resultSet));
             }
 
         } catch (Exception e) {
-
-            System.err.println(
-                    "ERROR: Unable to retrieve active staff."
-            );
-
             e.printStackTrace();
         }
 
@@ -146,68 +124,223 @@ public class StaffDAOImpl implements StaffDAO {
     }
 
     @Override
-    public int countAll() {
+    public List<Staff> search(String keyword) {
+
+        List<Staff> staffList = new ArrayList<>();
 
         String sql = """
-                SELECT COUNT(*)
+                SELECT staff_id,
+                       name,
+                       username,
+                       password,
+                       contact_number,
+                       role,
+                       status
                 FROM staff
+                WHERE name LIKE ?
+                   OR username LIKE ?
+                   OR contact_number LIKE ?
+                   OR role LIKE ?
+                ORDER BY staff_id DESC
                 """;
 
         try (
             Connection connection = DBConnection.getConnection();
             PreparedStatement statement =
-                    connection.prepareStatement(sql);
-            ResultSet resultSet =
-                    statement.executeQuery()
+                    connection.prepareStatement(sql)
         ) {
 
-            if (resultSet.next()) {
-                return resultSet.getInt(1);
+            String searchValue =
+                    "%" + keyword.trim() + "%";
+
+            statement.setString(1, searchValue);
+            statement.setString(2, searchValue);
+            statement.setString(3, searchValue);
+            statement.setString(4, searchValue);
+
+            try (ResultSet resultSet =
+                    statement.executeQuery()) {
+
+                while (resultSet.next()) {
+                    staffList.add(mapStaff(resultSet));
+                }
             }
 
         } catch (Exception e) {
-
-            System.err.println(
-                    "ERROR: Unable to count staff."
-            );
-
             e.printStackTrace();
         }
 
-        return 0;
+        return staffList;
     }
 
     @Override
-    public int countActive() {
+    public Staff findById(int staffId) {
 
         String sql = """
-                SELECT COUNT(*)
+                SELECT staff_id,
+                       name,
+                       username,
+                       password,
+                       contact_number,
+                       role,
+                       status
                 FROM staff
-                WHERE status = 'ACTIVE'
+                WHERE staff_id = ?
                 """;
 
         try (
             Connection connection = DBConnection.getConnection();
             PreparedStatement statement =
-                    connection.prepareStatement(sql);
-            ResultSet resultSet =
-                    statement.executeQuery()
+                    connection.prepareStatement(sql)
         ) {
 
-            if (resultSet.next()) {
-                return resultSet.getInt(1);
+            statement.setInt(1, staffId);
+
+            try (ResultSet resultSet =
+                    statement.executeQuery()) {
+
+                if (resultSet.next()) {
+                    return mapStaff(resultSet);
+                }
             }
 
         } catch (Exception e) {
-
-            System.err.println(
-                    "ERROR: Unable to count active staff."
-            );
-
             e.printStackTrace();
         }
 
-        return 0;
+        return null;
+    }
+
+    @Override
+    public boolean existsByUsername(String username) {
+
+        String sql = """
+                SELECT staff_id
+                FROM staff
+                WHERE LOWER(username) = LOWER(?)
+                LIMIT 1
+                """;
+
+        try (
+            Connection connection = DBConnection.getConnection();
+            PreparedStatement statement =
+                    connection.prepareStatement(sql)
+        ) {
+
+            statement.setString(1, username.trim());
+
+            try (ResultSet resultSet =
+                    statement.executeQuery()) {
+
+                return resultSet.next();
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
+    @Override
+    public boolean save(Staff staff) {
+
+        String sql = """
+                INSERT INTO staff
+                (
+                    name,
+                    username,
+                    password,
+                    contact_number,
+                    role,
+                    status
+                )
+                VALUES (?, ?, ?, ?, ?, ?)
+                """;
+
+        try (
+            Connection connection = DBConnection.getConnection();
+            PreparedStatement statement =
+                    connection.prepareStatement(sql)
+        ) {
+
+            statement.setString(1, staff.getName());
+            statement.setString(2, staff.getUsername());
+            statement.setString(3, staff.getPassword());
+            statement.setString(4, staff.getContactNumber());
+            statement.setString(5, staff.getRole());
+            statement.setString(6, staff.getStatus());
+
+            return statement.executeUpdate() > 0;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
+    @Override
+    public boolean update(Staff staff) {
+
+        String sql = """
+                UPDATE staff
+                SET
+                    name = ?,
+                    username = ?,
+                    contact_number = ?,
+                    role = ?
+                WHERE staff_id = ?
+                """;
+
+        try (
+            Connection connection = DBConnection.getConnection();
+            PreparedStatement statement =
+                    connection.prepareStatement(sql)
+        ) {
+
+            statement.setString(1, staff.getName());
+            statement.setString(2, staff.getUsername());
+            statement.setString(3, staff.getContactNumber());
+            statement.setString(4, staff.getRole());
+            statement.setInt(5, staff.getStaffId());
+
+            return statement.executeUpdate() > 0;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
+    @Override
+    public boolean updateStatus(
+            int staffId,
+            String status) {
+
+        String sql = """
+                UPDATE staff
+                SET status = ?
+                WHERE staff_id = ?
+                """;
+
+        try (
+            Connection connection = DBConnection.getConnection();
+            PreparedStatement statement =
+                    connection.prepareStatement(sql)
+        ) {
+
+            statement.setString(1, status);
+            statement.setInt(2, staffId);
+
+            return statement.executeUpdate() > 0;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return false;
     }
 
     private Staff mapStaff(ResultSet resultSet)

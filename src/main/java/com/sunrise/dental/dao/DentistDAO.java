@@ -11,4 +11,12 @@ public interface DentistDAO {
     Dentist findById(int dentistId);
 
     Dentist findByStaffId(int staffId);
+
+    String generateDentistNumber();
+
+    boolean save(Dentist dentist);
+
+    boolean update(Dentist dentist);
+
+    boolean updateStatus(int dentistId, String status);
 }

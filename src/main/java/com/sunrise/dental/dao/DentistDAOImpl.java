@@ -169,9 +169,9 @@ public class DentistDAOImpl implements DentistDAO {
                 INNER JOIN staff s
                     ON d.staff_id = s.staff_id
                 WHERE d.staff_id = ?
-                  AND d.status = 'ACTIVE'
+                  
                   AND s.role = 'DENTIST'
-                  AND s.status = 'ACTIVE'
+                  
                 """;
 
         try (
@@ -201,5 +201,229 @@ public class DentistDAOImpl implements DentistDAO {
         return null;
     }
     
+    
+    @Override
+    public String generateDentistNumber() {
+
+        String sql = """
+                SELECT dentist_number
+                FROM dentist
+                ORDER BY dentist_id DESC
+                LIMIT 1
+                """;
+
+        try (
+            Connection connection = DBConnection.getConnection();
+            PreparedStatement statement =
+                    connection.prepareStatement(sql);
+            ResultSet resultSet =
+                    statement.executeQuery()
+        ) {
+
+            if (resultSet.next()) {
+
+                String lastNumber =
+                        resultSet.getString("dentist_number");
+
+                if (lastNumber != null
+                        && lastNumber.matches("D\\d+")) {
+
+                    int number =
+                            Integer.parseInt(
+                                    lastNumber.substring(1)
+                            );
+
+                    return String.format(
+                            "D%03d",
+                            number + 1
+                    );
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return "D001";
+    }
+    
+    @Override
+    public boolean save(Dentist dentist) {
+
+        String sql = """
+                INSERT INTO dentist
+                (
+                    staff_id,
+                    dentist_number,
+                    name,
+                    room_number,
+                    nic,
+                    specialization,
+                    contact_number,
+                    email,
+                    status
+                )
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """;
+
+        try (
+            Connection connection = DBConnection.getConnection();
+            PreparedStatement statement =
+                    connection.prepareStatement(sql)
+        ) {
+
+            statement.setInt(
+                    1,
+                    dentist.getStaffId()
+            );
+
+            statement.setString(
+                    2,
+                    dentist.getDentistNumber()
+            );
+
+            statement.setString(
+                    3,
+                    dentist.getName()
+            );
+
+            statement.setString(
+                    4,
+                    dentist.getRoomNumber()
+            );
+
+            statement.setString(
+                    5,
+                    dentist.getNic()
+            );
+
+            statement.setString(
+                    6,
+                    dentist.getSpecialization()
+            );
+
+            statement.setString(
+                    7,
+                    dentist.getContactNumber()
+            );
+
+            statement.setString(
+                    8,
+                    dentist.getEmail()
+            );
+
+            statement.setString(
+                    9,
+                    dentist.getStatus()
+            );
+
+            return statement.executeUpdate() > 0;
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+
+        }
+
+        return false;
+    }
+    
+    @Override
+    public boolean update(Dentist dentist) {
+
+        String sql = """
+                UPDATE dentist
+                SET
+                    name = ?,
+                    room_number = ?,
+                    nic = ?,
+                    specialization = ?,
+                    contact_number = ?,
+                    email = ?
+                WHERE dentist_id = ?
+                """;
+
+        try (
+            Connection connection = DBConnection.getConnection();
+            PreparedStatement statement =
+                    connection.prepareStatement(sql)
+        ) {
+
+            statement.setString(
+                    1,
+                    dentist.getName()
+            );
+
+            statement.setString(
+                    2,
+                    dentist.getRoomNumber()
+            );
+
+            statement.setString(
+                    3,
+                    dentist.getNic()
+            );
+
+            statement.setString(
+                    4,
+                    dentist.getSpecialization()
+            );
+
+            statement.setString(
+                    5,
+                    dentist.getContactNumber()
+            );
+
+            statement.setString(
+                    6,
+                    dentist.getEmail()
+            );
+
+            statement.setInt(
+                    7,
+                    dentist.getDentistId()
+            );
+
+            return statement.executeUpdate() > 0;
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+
+        }
+
+        return false;
+    }
+    
+    @Override
+    public boolean updateStatus(
+            int dentistId,
+            String status) {
+
+        String sql = """
+                UPDATE dentist
+                SET status = ?
+                WHERE dentist_id = ?
+                """;
+
+        try (
+            Connection connection = DBConnection.getConnection();
+            PreparedStatement statement =
+                    connection.prepareStatement(sql)
+        ) {
+
+            statement.setString(1, status);
+            statement.setInt(2, dentistId);
+
+            return statement.executeUpdate() > 0;
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+
+        }
+
+        return false;
+    }
     
 }

@@ -140,15 +140,11 @@
                 <span>Dashboard</span>
             </a>
 
-            <a href="<%= contextPath %>/admin/dashboard" class="nav-item">
-                <i class="bi bi-people-fill"></i>
-                <span>Staff Management</span>
-            </a>
+            <a href="<%= contextPath %>/admin/staff" class="nav-item">
+			    <i class="bi bi-people-fill"></i>
+			    <span>Staff Management</span>
+			</a>
 
-            <a href="<%= contextPath %>/admin/dashboard" class="nav-item">
-                <i class="bi bi-hospital"></i>
-                <span>Dentists</span>
-            </a>
 
             <a href="<%= contextPath %>/admin/dashboard" class="nav-item">
                 <i class="bi bi-person-lines-fill"></i>
@@ -297,7 +293,7 @@
                 </div>
 
                 <div class="quick-actions-grid">
-                    <a href="<%= contextPath %>/admin/dashboard" class="quick-action-card">
+                    <a href="<%= contextPath %>/admin/staff" class="quick-action-card">
                         <div class="quick-action-icon">
                             <i class="bi bi-people-fill"></i>
                         </div>
