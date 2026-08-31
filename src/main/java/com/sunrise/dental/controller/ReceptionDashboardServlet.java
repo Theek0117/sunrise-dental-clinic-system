@@ -2,8 +2,9 @@ package com.sunrise.dental.controller;
 
 import java.io.IOException;
 import java.sql.Date;
+import java.sql.Time;
 import java.time.LocalDate;
-import java.time.ZoneId;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -16,69 +17,42 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import com.sunrise.dental.dao.AppointmentDAO;
+import com.sunrise.dental.dao.AppointmentDAOImpl;
+import com.sunrise.dental.dao.PatientDAO;
+import com.sunrise.dental.dao.PatientDAOImpl;
 import com.sunrise.dental.model.Appointment;
 import com.sunrise.dental.model.Dentist;
+import com.sunrise.dental.model.DentistAvailability;
 import com.sunrise.dental.model.Patient;
-import com.sunrise.dental.service.AppointmentService;
-
-
-/**
- * ============================================================
- * RECEPTION DASHBOARD SERVLET
- * ============================================================
- *
- * URL:
- *
- *     /reception/dashboard
- *
- * Responsibilities:
- *
- *     1. Load today's appointments
- *     2. Calculate appointment statistics
- *     3. Load patient information
- *     4. Load dentist information
- *     5. Send all information to receptionDashboard.jsp
- *
- * ============================================================
- */
+import com.sunrise.dental.service.DentistAvailabilityService;
+import com.sunrise.dental.service.DentistService;
 
 @WebServlet("/reception/dashboard")
 public class ReceptionDashboardServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
 
-
-    /*
-     * ========================================================
-     * SERVICES
-     * ========================================================
-     */
-
-    private AppointmentService appointmentService;
-
-
-
-    /*
-     * ========================================================
-     * INITIALIZE SERVLET
-     * ========================================================
-     */
+    private AppointmentDAO appointmentDAO;
+    private PatientDAO patientDAO;
+    private DentistService dentistService;
+    private DentistAvailabilityService availabilityService;
 
     @Override
-    public void init() throws ServletException {
+    public void init() {
 
-        appointmentService =
-                new AppointmentService();
+        appointmentDAO =
+                new AppointmentDAOImpl();
 
+        patientDAO =
+                new PatientDAOImpl();
+
+        dentistService =
+                new DentistService();
+
+        availabilityService =
+                new DentistAvailabilityService();
     }
-
-
-
-    /*
-     * ========================================================
-     * GET DASHBOARD
-     * ========================================================
-     */
 
     @Override
     protected void doGet(
@@ -86,410 +60,192 @@ public class ReceptionDashboardServlet extends HttpServlet {
             HttpServletResponse response)
             throws ServletException, IOException {
 
-
         try {
 
-
             /*
-             * =================================================
-             * 1. GET TODAY
-             * =================================================
-             *
-             * Use Sri Lanka time explicitly.
-             *
-             * This prevents the server timezone from causing
-             * appointments to appear under the wrong date.
+             * ==========================================
+             * CURRENT DATE
+             * ==========================================
              */
 
             LocalDate today =
-                    LocalDate.now(
-                            ZoneId.of("Asia/Colombo")
-                    );
+                    LocalDate.now();
 
-
-            Date todayDate =
+            Date sqlToday =
                     Date.valueOf(today);
 
 
-
             /*
-             * =================================================
-             * 2. GET ALL APPOINTMENTS
-             * =================================================
+             * ==========================================
+             * GET ALL APPOINTMENTS
+             * ==========================================
              */
 
             List<Appointment> allAppointments =
-                    appointmentService.getAllAppointments();
+                    appointmentDAO.findAll();
 
 
             /*
-             * Never allow a null list to break the dashboard.
-             */
-
-            if (allAppointments == null) {
-
-                allAppointments =
-                        new ArrayList<>();
-
-            }
-
-
-
-            /*
-             * =================================================
-             * 3. FILTER TODAY'S APPOINTMENTS
-             * =================================================
-             *
-             * IMPORTANT:
-             *
-             * Do NOT use:
-             *
-             *     appointmentDate.equals(todayDate)
-             *
-             * Instead convert the database date to LocalDate
-             * and compare LocalDate values.
+             * ==========================================
+             * TODAY'S APPOINTMENTS
+             * ==========================================
              */
 
             List<Appointment> todayAppointments =
                     new ArrayList<>();
 
+            int confirmedCount = 0;
 
-            for (
-                    Appointment appointment
-                    : allAppointments
-            ) {
+            for (Appointment appointment
+                    : allAppointments) {
 
-
-                if (appointment == null) {
+                if (appointment.getAppointmentDate() == null) {
                     continue;
                 }
 
-
-                Date appointmentDate =
-                        appointment.getAppointmentDate();
-
-
-                if (appointmentDate == null) {
+                if (!appointment.getAppointmentDate()
+                        .equals(sqlToday)) {
                     continue;
                 }
 
+                todayAppointments.add(appointment);
 
-                LocalDate appointmentLocalDate =
-                        appointmentDate.toLocalDate();
+                if ("CONFIRMED".equalsIgnoreCase(
+                        appointment.getStatus())) {
 
-
-                if (
-                        appointmentLocalDate.equals(today)
-                ) {
-
-                    todayAppointments.add(
-                            appointment
-                    );
-
+                    confirmedCount++;
                 }
-
             }
 
 
-
             /*
-             * =================================================
-             * 4. SORT BY START TIME
-             * =================================================
+             * ==========================================
+             * SORT TODAY'S APPOINTMENTS
+             * ==========================================
              */
 
             todayAppointments.sort(
-
                     Comparator.comparing(
                             Appointment::getStartTime,
                             Comparator.nullsLast(
                                     Comparator.naturalOrder()
                             )
                     )
-
             );
 
 
-
             /*
-             * =================================================
-             * 5. STATISTICS
-             * =================================================
+             * ==========================================
+             * TOTAL PATIENTS
+             * ==========================================
              */
 
-            int totalToday =
-                    todayAppointments.size();
+            List<Patient> activePatients =
+                    patientDAO.findAllActive();
 
-
-            int confirmedToday =
-                    0;
-
-
-            int rescheduledToday =
-                    0;
-
-
-            int cancelledToday =
-                    0;
-
-
-            int pendingToday =
-                    0;
-
+            int totalPatients =
+                    activePatients != null
+                            ? activePatients.size()
+                            : 0;
 
 
             /*
-             * =================================================
-             * COUNT STATUSES
-             * =================================================
+             * ==========================================
+             * AVAILABLE APPOINTMENT SLOTS TODAY
+             * ==========================================
+             *
+             * Count each available 30-minute slot
+             * that still has capacity.
              */
 
-            for (
-                    Appointment appointment
-                    : todayAppointments
-            ) {
-
-
-                String status =
-                        appointment.getStatus();
-
-
-                if (
-                        status == null
-                        || status.isBlank()
-                ) {
-
-                    continue;
-
-                }
-
-
-                /*
-                 * Normalize status.
-                 *
-                 * Example:
-                 *
-                 * "confirmed"
-                 * "Confirmed"
-                 * " CONFIRMED "
-                 *
-                 * all become:
-                 *
-                 * CONFIRMED
-                 */
-
-                status =
-                        status
-                                .trim()
-                                .toUpperCase();
-
-
-                switch (status) {
-
-
-                    case "CONFIRMED":
-
-                        confirmedToday++;
-
-                        break;
-
-
-
-                    case "RESCHEDULED":
-
-                        rescheduledToday++;
-
-                        break;
-
-
-
-                    case "CANCELLED":
-
-                        cancelledToday++;
-
-                        break;
-
-
-
-                    case "CANCELED":
-
-                        /*
-                         * Support both spellings.
-                         */
-
-                        cancelledToday++;
-
-                        break;
-
-
-
-                    case "PENDING":
-
-                        pendingToday++;
-
-                        break;
-
-
-
-                    default:
-
-                        /*
-                         * Unknown status.
-                         *
-                         * Do not crash the dashboard.
-                         */
-
-                        break;
-
-                }
-
-            }
-
+            int availableSlots =
+                    calculateAvailableSlotsToday(
+                            today
+                    );
 
 
             /*
-             * =================================================
-             * 6. PATIENT CACHE
-             * =================================================
-             *
-             * Key:
-             *
-             *     patientId
-             *
-             * Value:
-             *
-             *     Patient object
+             * ==========================================
+             * PATIENT CACHE
+             * ==========================================
              */
 
             Map<Integer, Patient> patients =
                     new HashMap<>();
 
-
-
             /*
-             * =================================================
-             * 7. DENTIST CACHE
-             * =================================================
+             * ==========================================
+             * DENTIST CACHE
+             * ==========================================
              */
 
             Map<Integer, Dentist> dentists =
                     new HashMap<>();
 
 
-
             /*
-             * =================================================
-             * 8. LOAD PATIENTS AND DENTISTS
-             * =================================================
+             * ==========================================
+             * LOAD PATIENT + DENTIST DETAILS
+             * ==========================================
              */
 
-            for (
-                    Appointment appointment
-                    : todayAppointments
-            ) {
-
-
-                /*
-                 * ---------------------------------------------
-                 * PATIENT
-                 * ---------------------------------------------
-                 */
+            for (Appointment appointment
+                    : todayAppointments) {
 
                 int patientId =
                         appointment.getPatientId();
-
-
-                if (
-                        patientId > 0
-                        && !patients.containsKey(
-                                patientId
-                        )
-                ) {
-
-
-                    try {
-
-                        Patient patient =
-                                appointmentService.getPatient(
-                                        patientId
-                                );
-
-
-                        if (patient != null) {
-
-                            patients.put(
-                                    patientId,
-                                    patient
-                            );
-
-                        }
-
-                    } catch (Exception patientException) {
-
-                        /*
-                         * Do not allow one missing patient
-                         * record to destroy the dashboard.
-                         */
-
-                        patientException.printStackTrace();
-
-                    }
-
-                }
-
-
-
-                /*
-                 * ---------------------------------------------
-                 * DENTIST
-                 * ---------------------------------------------
-                 */
 
                 int dentistId =
                         appointment.getDentistId();
 
 
-                if (
-                        dentistId > 0
-                        && !dentists.containsKey(
-                                dentistId
-                        )
-                ) {
+                /*
+                 * Patient
+                 */
 
+                if (!patients.containsKey(patientId)) {
 
-                    try {
-
-                        Dentist dentist =
-                                appointmentService.getDentist(
-                                        dentistId
-                                );
-
-
-                        if (dentist != null) {
-
-                            dentists.put(
-                                    dentistId,
-                                    dentist
+                    Patient patient =
+                            patientDAO.findById(
+                                    patientId
                             );
 
-                        }
+                    if (patient != null) {
 
-                    } catch (Exception dentistException) {
-
-                        dentistException.printStackTrace();
-
+                        patients.put(
+                                patientId,
+                                patient
+                        );
                     }
-
                 }
 
+
+                /*
+                 * Dentist
+                 */
+
+                if (!dentists.containsKey(dentistId)) {
+
+                    Dentist dentist =
+                            dentistService.getDentistById(
+                                    dentistId
+                            );
+
+                    if (dentist != null) {
+
+                        dentists.put(
+                                dentistId,
+                                dentist
+                        );
+                    }
+                }
             }
 
 
-
             /*
-             * =================================================
-             * 9. SEND DATA TO JSP
-             * =================================================
+             * ==========================================
+             * DASHBOARD ATTRIBUTES
+             * ==========================================
              */
 
             request.setAttribute(
@@ -497,72 +253,46 @@ public class ReceptionDashboardServlet extends HttpServlet {
                     todayAppointments
             );
 
-
-            request.setAttribute(
-                    "totalToday",
-                    totalToday
-            );
-
-
-            request.setAttribute(
-                    "confirmedToday",
-                    confirmedToday
-            );
-
-
-            request.setAttribute(
-                    "rescheduledToday",
-                    rescheduledToday
-            );
-
-
-            request.setAttribute(
-                    "cancelledToday",
-                    cancelledToday
-            );
-
-
-            request.setAttribute(
-                    "pendingToday",
-                    pendingToday
-            );
-
-
-            request.setAttribute(
-                    "todayDate",
-                    todayDate
-            );
-
-
             request.setAttribute(
                     "patients",
                     patients
             );
-
 
             request.setAttribute(
                     "dentists",
                     dentists
             );
 
+            request.setAttribute(
+                    "todayAppointmentCount",
+                    todayAppointments.size()
+            );
 
+            request.setAttribute(
+                    "confirmedAppointmentCount",
+                    confirmedCount
+            );
 
-            /*
-             * =================================================
-             * 10. CLEAR OLD ERROR
-             * =================================================
-             */
+            request.setAttribute(
+                    "availableSlotCount",
+                    availableSlots
+            );
 
-            request.removeAttribute(
-                    "dashboardError"
+            request.setAttribute(
+                    "totalPatientCount",
+                    totalPatients
+            );
+
+            request.setAttribute(
+                    "dashboardDate",
+                    sqlToday.toString()
             );
 
 
-
             /*
-             * =================================================
-             * 11. FORWARD TO JSP
-             * =================================================
+             * ==========================================
+             * FORWARD TO DASHBOARD
+             * ==========================================
              */
 
             request.getRequestDispatcher(
@@ -572,37 +302,13 @@ public class ReceptionDashboardServlet extends HttpServlet {
                     response
             );
 
-
         } catch (Exception e) {
-
-
-            /*
-             * =================================================
-             * ERROR HANDLING
-             * =================================================
-             */
 
             e.printStackTrace();
 
-
             /*
-             * Send a real error message to JSP.
-             *
-             * This is much better than silently displaying
-             * zero appointments.
-             */
-
-            request.setAttribute(
-                    "dashboardError",
-                    "Unable to load dashboard information. "
-                    + e.getClass().getSimpleName()
-                    + ": "
-                    + e.getMessage()
-            );
-
-
-            /*
-             * Send empty values so JSP does not crash.
+             * Prevent dashboard from completely
+             * crashing if one database operation fails.
              */
 
             request.setAttribute(
@@ -610,52 +316,35 @@ public class ReceptionDashboardServlet extends HttpServlet {
                     new ArrayList<Appointment>()
             );
 
-
             request.setAttribute(
                     "patients",
                     new HashMap<Integer, Patient>()
             );
-
 
             request.setAttribute(
                     "dentists",
                     new HashMap<Integer, Dentist>()
             );
 
-
             request.setAttribute(
-                    "totalToday",
+                    "todayAppointmentCount",
                     0
             );
 
-
             request.setAttribute(
-                    "confirmedToday",
+                    "confirmedAppointmentCount",
                     0
             );
 
-
             request.setAttribute(
-                    "rescheduledToday",
+                    "availableSlotCount",
                     0
             );
 
-
             request.setAttribute(
-                    "cancelledToday",
+                    "totalPatientCount",
                     0
             );
-
-
-            request.setAttribute(
-                    "pendingToday",
-                    0
-            );
-
-
-            /*
-             * Forward to dashboard.
-             */
 
             request.getRequestDispatcher(
                     "/reception/receptionDashboard.jsp"
@@ -663,9 +352,168 @@ public class ReceptionDashboardServlet extends HttpServlet {
                     request,
                     response
             );
-
         }
-
     }
 
+
+    /*
+     * =========================================================
+     * CALCULATE TODAY'S AVAILABLE SLOTS
+     * =========================================================
+     */
+
+    private int calculateAvailableSlotsToday(
+            LocalDate today) {
+
+        int availableSlots = 0;
+
+        LocalTime now =
+                LocalTime.now();
+
+        try {
+
+            /*
+             * Get all active dentists.
+             */
+
+            List<Dentist> dentists =
+                    dentistService.getActiveDentists();
+
+            if (dentists == null
+                    || dentists.isEmpty()) {
+
+                return 0;
+            }
+
+
+            /*
+             * Check every active dentist.
+             */
+
+            for (Dentist dentist : dentists) {
+
+                if (dentist == null) {
+                    continue;
+                }
+
+                List<DentistAvailability> availabilityList =
+                        availabilityService.getAvailability(
+                                dentist.getDentistId(),
+                                Date.valueOf(today)
+                        );
+
+                if (availabilityList == null
+                        || availabilityList.isEmpty()) {
+
+                    continue;
+                }
+
+
+                /*
+                 * Check every availability period.
+                 */
+
+                for (DentistAvailability availability
+                        : availabilityList) {
+
+                    if (availability == null
+                            || availability.getStartTime() == null
+                            || availability.getEndTime() == null) {
+
+                        continue;
+                    }
+
+                    LocalTime slotStart =
+                            availability
+                                    .getStartTime()
+                                    .toLocalTime();
+
+                    LocalTime availabilityEnd =
+                            availability
+                                    .getEndTime()
+                                    .toLocalTime();
+
+
+                    /*
+                     * Create 30-minute slots.
+                     */
+
+                    while (
+                            slotStart
+                                    .plusMinutes(30)
+                                    .compareTo(
+                                            availabilityEnd
+                                    ) <= 0
+                    ) {
+
+                        LocalTime slotEnd =
+                                slotStart.plusMinutes(30);
+
+
+                        /*
+                         * Ignore slots that have already
+                         * started.
+                         */
+
+                        if (slotStart.isAfter(now)) {
+
+                            Time sqlStart =
+                                    Time.valueOf(
+                                            slotStart
+                                    );
+
+                            Time sqlEnd =
+                                    Time.valueOf(
+                                            slotEnd
+                                    );
+
+
+                            /*
+                             * Get existing bookings.
+                             */
+
+                            int bookedCount =
+                                    appointmentDAO
+                                            .getSlotBookingCount(
+                                                    availability
+                                                            .getAvailabilityId(),
+                                                    Date.valueOf(today),
+                                                    sqlStart,
+                                                    sqlEnd
+                                            );
+
+
+                            /*
+                             * Check capacity.
+                             */
+
+                            int capacity =
+                                    availability
+                                            .getSlotCapacity();
+
+
+                            if (capacity > bookedCount) {
+
+                                availableSlots++;
+                            }
+                        }
+
+
+                        /*
+                         * Move to next 30-minute slot.
+                         */
+
+                        slotStart =
+                                slotEnd;
+                    }
+                }
+            }
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+        }
+
+        return availableSlots;
+    }
 }

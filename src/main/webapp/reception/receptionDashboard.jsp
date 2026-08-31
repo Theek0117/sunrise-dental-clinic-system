@@ -1,19 +1,141 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
-<%
-    String staffName = (String) session.getAttribute("staffName");
-    String role = (String) session.getAttribute("role");
+<%@ page import="java.util.List" %>
+<%@ page import="java.util.Map" %>
 
-    if (staffName == null) {
+<%@ page import="com.sunrise.dental.model.Appointment" %>
+<%@ page import="com.sunrise.dental.model.Patient" %>
+<%@ page import="com.sunrise.dental.model.Dentist" %>
+
+<%
+
+    /*
+     * =========================================================
+     * SESSION INFORMATION
+     * =========================================================
+     */
+
+    String staffName =
+            (String) session.getAttribute("staffName");
+
+    String role =
+            (String) session.getAttribute("role");
+
+    if (staffName == null || staffName.isBlank()) {
         staffName = "Receptionist";
     }
 
-    if (role == null) {
+    if (role == null || role.isBlank()) {
         role = "RECEPTION";
+    }
+
+
+    /*
+     * =========================================================
+     * DASHBOARD DATA
+     * =========================================================
+     */
+
+    List<Appointment> todayAppointments =
+            (List<Appointment>) request.getAttribute(
+                    "todayAppointments"
+            );
+
+    Map<Integer, Patient> patients =
+            (Map<Integer, Patient>) request.getAttribute(
+                    "patients"
+            );
+
+    Map<Integer, Dentist> dentists =
+            (Map<Integer, Dentist>) request.getAttribute(
+                    "dentists"
+            );
+
+
+    if (todayAppointments == null) {
+        todayAppointments = java.util.Collections.emptyList();
+    }
+
+    if (patients == null) {
+        patients = java.util.Collections.emptyMap();
+    }
+
+    if (dentists == null) {
+        dentists = java.util.Collections.emptyMap();
+    }
+
+
+    Integer todayAppointmentCount =
+            (Integer) request.getAttribute(
+                    "todayAppointmentCount"
+            );
+
+    Integer confirmedAppointmentCount =
+            (Integer) request.getAttribute(
+                    "confirmedAppointmentCount"
+            );
+
+    Integer availableSlotCount =
+            (Integer) request.getAttribute(
+                    "availableSlotCount"
+            );
+
+    Integer totalPatientCount =
+            (Integer) request.getAttribute(
+                    "totalPatientCount"
+            );
+
+
+    if (todayAppointmentCount == null) {
+        todayAppointmentCount = 0;
+    }
+
+    if (confirmedAppointmentCount == null) {
+        confirmedAppointmentCount = 0;
+    }
+
+    if (availableSlotCount == null) {
+        availableSlotCount = 0;
+    }
+
+    if (totalPatientCount == null) {
+        totalPatientCount = 0;
+    }
+
+%>
+
+<%!
+    private String formatTime(java.sql.Time time) {
+
+        if (time == null) {
+            return "-";
+        }
+
+        java.time.LocalTime localTime = time.toLocalTime();
+
+        int hour = localTime.getHour();
+        int minute = localTime.getMinute();
+
+        String suffix = hour >= 12 ? "PM" : "AM";
+
+        int displayHour = hour % 12;
+
+        if (displayHour == 0) {
+            displayHour = 12;
+        }
+
+        return String.format(
+            "%02d:%02d %s",
+            displayHour,
+            minute,
+            suffix
+        );
     }
 %>
 
+
 <!DOCTYPE html>
+
 <html lang="en">
 
 <head>
@@ -23,28 +145,44 @@
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0">
 
-    <title>Receptionist Dashboard | Sunrise Dental Clinic</title>
+    <title>
+        Receptionist Dashboard | Sunrise Dental Clinic
+    </title>
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="preconnect"
+          href="https://fonts.googleapis.com">
+
+    <link rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
 
     <link rel="stylesheet"
           href="${pageContext.request.contextPath}/css/reception.css">
 
-    <!-- Bootstrap Icons -->
     <link rel="stylesheet"
           href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
 </head>
 
+
 <body>
 
+
 <div class="dashboard-container">
+
 
     <!-- ================================================= -->
     <!-- SIDEBAR -->
     <!-- ================================================= -->
+
+    <!--
+         SIDEBAR IS LEFT UNCHANGED
+         KEEP YOUR EXISTING SIDEBAR HERE
+    -->
 
     <aside class="sidebar" id="sidebar">
 
@@ -55,228 +193,245 @@
                 alt="Sunrise Dental Clinic Logo">
 
             <div class="brand-text">
+
                 <h2>Sunrise</h2>
+
                 <span>Dental Clinic</span>
+
             </div>
 
         </div>
 
 
-        <!-- MAIN NAVIGATION -->
-
         <nav class="sidebar-navigation">
 
-    <p class="navigation-title">MAIN</p>
+            <p class="navigation-title">
+                MAIN
+            </p>
 
-    <!-- DASHBOARD -->
-    <a href="${pageContext.request.contextPath}/reception/dashboard"
-       class="nav-item active">
 
-        <i class="bi bi-grid-1x2-fill"></i>
+            <a
+                href="${pageContext.request.contextPath}/reception/dashboard"
+                class="nav-item active">
 
-        <span>Dashboard</span>
+                <i class="bi bi-grid-1x2-fill"></i>
 
-    </a>
+                <span>Dashboard</span>
 
+            </a>
 
-    <!-- SCHEDULE -->
-    <a href="${pageContext.request.contextPath}/reception/schedule"
-       class="nav-item">
 
-        <i class="bi bi-calendar3"></i>
+            <a
+                href="${pageContext.request.contextPath}/reception/schedule"
+                class="nav-item">
 
-        <span>Schedule</span>
+                <i class="bi bi-calendar3"></i>
 
-    </a>
+                <span>Schedule</span>
 
+            </a>
 
-    <!-- APPOINTMENTS MENU -->
-    <div class="nav-dropdown">
 
-    <button type="button"
-            class="nav-item nav-dropdown-toggle"
-            onclick="this.parentElement.classList.toggle('open')">
+            <div class="nav-dropdown">
 
-        <span class="nav-item-left">
+                <button
+                    type="button"
+                    class="nav-item nav-dropdown-toggle"
+                    onclick="this.parentElement.classList.toggle('open')">
 
-            <i class="bi bi-calendar-check"></i>
+                    <span class="nav-item-left">
 
-            <span>Appointments</span>
+                        <i class="bi bi-calendar-check"></i>
 
-        </span>
+                        <span>Appointments</span>
 
-        <i class="bi bi-chevron-down dropdown-arrow"></i>
+                    </span>
 
-    </button>
+                    <i class="bi bi-chevron-down dropdown-arrow"></i>
 
-    <div class="nav-submenu" id="appointmentsSubmenu">
+                </button>
 
-        <a href="${pageContext.request.contextPath}/reception/book-appointment"
-           class="nav-subitem">
 
-            <i class="bi bi-calendar-plus"></i>
+                <div
+                    class="nav-submenu"
+                    id="appointmentsSubmenu">
 
-            <span>Book Appointment</span>
+                    <a
+                        href="${pageContext.request.contextPath}/reception/book-appointment"
+                        class="nav-subitem">
 
-        </a>
+                        <i class="bi bi-calendar-plus"></i>
 
-        <a href="${pageContext.request.contextPath}/reception/view-appointments"
-           class="nav-subitem">
+                        <span>Book Appointment</span>
 
-            <i class="bi bi-calendar3"></i>
+                    </a>
 
-            <span>View Appointments</span>
 
-        </a>
+                    <a
+                        href="${pageContext.request.contextPath}/reception/view-appointments"
+                        class="nav-subitem">
 
-        <a href="${pageContext.request.contextPath}/reception/view-appointments"
-           class="nav-subitem">
+                        <i class="bi bi-calendar3"></i>
 
-            <i class="bi bi-calendar2-week"></i>
+                        <span>View Appointments</span>
 
-            <span>Reschedule Appointment</span>
+                    </a>
 
-        </a>
 
-        <a href="${pageContext.request.contextPath}/reception/view-appointments"
-           class="nav-subitem">
+                    <a
+                        href="${pageContext.request.contextPath}/reception/view-appointments"
+                        class="nav-subitem">
 
-            <i class="bi bi-calendar-x"></i>
+                        <i class="bi bi-calendar2-week"></i>
 
-            <span>Cancel Appointment</span>
+                        <span>Reschedule Appointment</span>
 
-        </a>
+                    </a>
 
-    </div>
 
-</div>
+                    <a
+                        href="${pageContext.request.contextPath}/reception/view-appointments"
+                        class="nav-subitem">
 
+                        <i class="bi bi-calendar-x"></i>
 
-    <!-- PATIENTS MENU -->
-    <div class="nav-group">
+                        <span>Cancel Appointment</span>
 
-    <button
-        type="button"
-        class="nav-item nav-parent"
-        onclick="this.parentElement.classList.toggle('open')">
+                    </a>
 
-        <span class="nav-item-left">
+                </div>
 
-            <i class="bi bi-people"></i>
+            </div>
 
-            <span>Patients</span>
 
-        </span>
+            <div class="nav-group">
 
-        <i class="bi bi-chevron-down nav-chevron"></i>
+                <button
+                    type="button"
+                    class="nav-item nav-parent"
+                    onclick="this.parentElement.classList.toggle('open')">
 
-    </button>
+                    <span class="nav-item-left">
 
+                        <i class="bi bi-people"></i>
 
-    <div
-        class="nav-submenu"
-        id="patientsSubmenu">
+                        <span>Patients</span>
 
-        <a
-            href="${pageContext.request.contextPath}/reception/register-patient"
-            class="nav-subitem">
+                    </span>
 
-            <i class="bi bi-person-plus"></i>
+                    <i class="bi bi-chevron-down nav-chevron"></i>
 
-            <span>Register New Patient</span>
+                </button>
 
-        </a>
 
+                <div
+                    class="nav-submenu"
+                    id="patientsSubmenu">
 
-        <a
-            href="${pageContext.request.contextPath}/reception/manage-patients"
-            class="nav-subitem">
+                    <a
+                        href="${pageContext.request.contextPath}/reception/register-patient"
+                        class="nav-subitem">
 
-            <i class="bi bi-person-lines-fill"></i>
+                        <i class="bi bi-person-plus"></i>
 
-            <span>Manage Patients</span>
+                        <span>Register New Patient</span>
 
-        </a>
+                    </a>
 
-    </div>
 
-</div>
+                    <a
+                        href="${pageContext.request.contextPath}/reception/manage-patients"
+                        class="nav-subitem">
 
-    <p class="navigation-title clinic-title">
-        CLINIC
-    </p>
+                        <i class="bi bi-person-lines-fill"></i>
 
+                        <span>Manage Patients</span>
 
-    <!-- DENTISTS -->
-    <div class="nav-group">
+                    </a>
 
-    <button
-        type="button"
-        class="nav-item nav-toggle"
-        onclick="this.parentElement.classList.toggle('open')">
+                </div>
 
-        <span class="nav-item-left">
+            </div>
 
-            <i class="bi bi-person-badge"></i>
 
-            <span>Dentists</span>
+            <p class="navigation-title clinic-title">
+                CLINIC
+            </p>
 
-        </span>
 
-        <i class="bi bi-chevron-down nav-arrow"></i>
+            <div class="nav-group">
 
-    </button>
+                <button
+                    type="button"
+                    class="nav-item nav-toggle"
+                    onclick="this.parentElement.classList.toggle('open')">
 
+                    <span class="nav-item-left">
 
-    <div
-        class="nav-submenu"
-        id="dentistMenu">
+                        <i class="bi bi-person-badge"></i>
 
-        <a
-            href="${pageContext.request.contextPath}/reception/dentists"
-            class="nav-subitem">
+                        <span>Dentists</span>
 
-            <i class="bi bi-people"></i>
+                    </span>
 
-            <span>View Dentists</span>
+                    <i class="bi bi-chevron-down nav-arrow"></i>
 
-        </a>
+                </button>
 
-        <a
-            href="${pageContext.request.contextPath}/reception/dentist-availability"
-            class="nav-subitem">
 
-            <i class="bi bi-calendar2-week"></i>
+                <div
+                    class="nav-submenu"
+                    id="dentistMenu">
 
-            <span>Check Availability</span>
+                    <a
+                        href="${pageContext.request.contextPath}/reception/dentists"
+                        class="nav-subitem">
 
-        </a>
+                        <i class="bi bi-people"></i>
 
-    </div>
+                        <span>View Dentists</span>
 
-</div>
+                    </a>
 
 
-    <!-- HELP DESK -->
-    <a href="${pageContext.request.contextPath}/reception/helpdesk.jsp"
-       class="nav-item">
+                    <a
+                        href="${pageContext.request.contextPath}/reception/dentist-availability"
+                        class="nav-subitem">
 
-        <i class="bi bi-question-circle"></i>
+                        <i class="bi bi-calendar2-week"></i>
 
-        <span>Help Desk</span>
+                        <span>Check Availability</span>
 
-    </a>
+                    </a>
 
-</nav>
+                </div>
 
+            </div>
 
-        <!-- ACCOUNT -->
+
+            <a
+                href="${pageContext.request.contextPath}/reception/helpdesk.jsp"
+                class="nav-item">
+
+                <i class="bi bi-question-circle"></i>
+
+                <span>Help Desk</span>
+
+            </a>
+
+        </nav>
+
 
         <div class="sidebar-bottom">
 
-            <p class="navigation-title">ACCOUNT</p>
+            <p class="navigation-title">
+                ACCOUNT
+            </p>
 
-            <a href="${pageContext.request.contextPath}/reception/profile" class="nav-item">
+
+            <a
+                href="${pageContext.request.contextPath}/reception/profile"
+                class="nav-item">
 
                 <i class="bi bi-person-circle"></i>
 
@@ -285,8 +440,9 @@
             </a>
 
 
-            <a href="${pageContext.request.contextPath}/logout"
-               class="nav-item logout-item">
+            <a
+                href="${pageContext.request.contextPath}/logout"
+                class="nav-item logout-item">
 
                 <i class="bi bi-box-arrow-right"></i>
 
@@ -299,11 +455,13 @@
     </aside>
 
 
+
     <!-- ================================================= -->
     <!-- MAIN CONTENT -->
     <!-- ================================================= -->
 
     <main class="main-content">
+
 
         <!-- TOP BAR -->
 
@@ -320,11 +478,16 @@
 
                 </button>
 
+
                 <div>
 
-                    <h1>Dashboard</h1>
+                    <h1>
+                        Dashboard
+                    </h1>
 
-                    <p>Reception Management</p>
+                    <p>
+                        Reception Management
+                    </p>
 
                 </div>
 
@@ -333,7 +496,6 @@
 
             <div class="topbar-right">
 
-                <!-- Notification -->
 
                 <button
                     type="button"
@@ -347,8 +509,6 @@
                 </button>
 
 
-                <!-- User -->
-
                 <div class="user-profile">
 
                     <div class="user-avatar">
@@ -356,6 +516,7 @@
                         <i class="bi bi-person-fill"></i>
 
                     </div>
+
 
                     <div class="user-information">
 
@@ -369,6 +530,7 @@
 
                     </div>
 
+
                     <i class="bi bi-chevron-down profile-arrow"></i>
 
                 </div>
@@ -378,6 +540,7 @@
         </header>
 
 
+
         <!-- ================================================= -->
         <!-- PAGE CONTENT -->
         <!-- ================================================= -->
@@ -385,21 +548,25 @@
         <section class="dashboard-content">
 
 
+            <!-- ================================================= -->
             <!-- WELCOME -->
+            <!-- ================================================= -->
 
             <div class="welcome-section">
 
                 <div>
 
-                    <h2>
-                        Good Morning, <%= staffName %>
+                    <h2 id="welcomeMessage">
+                        Welcome, <%= staffName %>
                     </h2>
 
                     <p>
-                        Here's what's happening at Sunrise Dental Clinic today.
+                        Here's what's happening at
+                        Sunrise Dental Clinic today.
                     </p>
 
                 </div>
+
 
                 <div class="current-date">
 
@@ -410,6 +577,7 @@
                 </div>
 
             </div>
+
 
 
             <!-- ================================================= -->
@@ -429,11 +597,16 @@
 
                     </div>
 
+
                     <div class="stat-information">
 
-                        <span>Today's Appointments</span>
+                        <span>
+                            Today's Appointments
+                        </span>
 
-                        <strong>12</strong>
+                        <strong>
+                            <%= todayAppointmentCount %>
+                        </strong>
 
                         <small>
                             Scheduled today
@@ -442,6 +615,7 @@
                     </div>
 
                 </div>
+
 
 
                 <!-- Confirmed -->
@@ -454,19 +628,25 @@
 
                     </div>
 
+
                     <div class="stat-information">
 
-                        <span>Confirmed</span>
+                        <span>
+                            Confirmed
+                        </span>
 
-                        <strong>8</strong>
+                        <strong>
+                            <%= confirmedAppointmentCount %>
+                        </strong>
 
                         <small>
-                            Confirmed appointments
+                            Confirmed appointments today
                         </small>
 
                     </div>
 
                 </div>
+
 
 
                 <!-- Available Slots -->
@@ -479,19 +659,25 @@
 
                     </div>
 
+
                     <div class="stat-information">
 
-                        <span>Available Slots</span>
+                        <span>
+                            Available Slots
+                        </span>
 
-                        <strong>6</strong>
+                        <strong>
+                            <%= availableSlotCount %>
+                        </strong>
 
                         <small>
-                            Dentist slots available
+                            Remaining slots today
                         </small>
 
                     </div>
 
                 </div>
+
 
 
                 <!-- Total Patients -->
@@ -504,14 +690,19 @@
 
                     </div>
 
+
                     <div class="stat-information">
 
-                        <span>Total Patients</span>
+                        <span>
+                            Total Patients
+                        </span>
 
-                        <strong>248</strong>
+                        <strong>
+                            <%= totalPatientCount %>
+                        </strong>
 
                         <small>
-                            Registered patients
+                            Active registered patients
                         </small>
 
                     </div>
@@ -519,6 +710,7 @@
                 </div>
 
             </section>
+
 
 
             <!-- ================================================= -->
@@ -531,7 +723,9 @@
 
                     <div>
 
-                        <h3>Quick Actions</h3>
+                        <h3>
+                            Quick Actions
+                        </h3>
 
                         <p>
                             Common receptionist tasks
@@ -545,80 +739,98 @@
                 <div class="quick-actions-grid">
 
 
-                    <a href="${pageContext.request.contextPath}/reception/register-patient"
-						    class="quick-action-card">
-						
-						    <div class="quick-action-icon">
-						
-						        <i class="bi bi-person-plus"></i>
-						
-						    </div>
-						
-						    <div>
-						
-						        <strong>
-						            Register New Patient
-						        </strong>
-						
-						        <span>
-						            Add a new patient
-						        </span>
-						
-						    </div>
-						
-						    <i class="bi bi-arrow-right"></i>
-						
-						</a>
+                    <a
+                        href="${pageContext.request.contextPath}/reception/register-patient"
+                        class="quick-action-card">
+
+                        <div class="quick-action-icon">
+
+                            <i class="bi bi-person-plus"></i>
+
+                        </div>
 
 
-                   <a href="${pageContext.request.contextPath}/reception/book-appointment"
-					   class="quick-action-card">
-					
-					    <div class="quick-action-icon">
-					        <i class="bi bi-calendar-plus"></i>
-					    </div>
-					
-					    <div>
-					        <strong>Book Appointment</strong>
-					
-					        <span>
-					            Schedule an appointment
-					        </span>
-					    </div>
-					
-					    <i class="bi bi-arrow-right"></i>
-					
-					</a>
+                        <div>
+
+                            <strong>
+                                Register New Patient
+                            </strong>
+
+                            <span>
+                                Add a new patient
+                            </span>
+
+                        </div>
 
 
-                   <a href="${pageContext.request.contextPath}/reception/manage-patients"
-					    class="quick-action-card">
-					
-					    <div class="quick-action-icon">
-					
-					        <i class="bi bi-people"></i>
-					
-					    </div>
-					
-					    <div>
-					
-					        <strong>
-					            Manage Patients
-					        </strong>
-					
-					        <span>
-					            Search and update patient records
-					        </span>
-					
-					    </div>
-					
-					    <i class="bi bi-arrow-right"></i>
-					
-					</a>
+                        <i class="bi bi-arrow-right"></i>
+
+                    </a>
+
+
+
+                    <a
+                        href="${pageContext.request.contextPath}/reception/book-appointment"
+                        class="quick-action-card">
+
+                        <div class="quick-action-icon">
+
+                            <i class="bi bi-calendar-plus"></i>
+
+                        </div>
+
+
+                        <div>
+
+                            <strong>
+                                Book Appointment
+                            </strong>
+
+                            <span>
+                                Schedule an appointment
+                            </span>
+
+                        </div>
+
+
+                        <i class="bi bi-arrow-right"></i>
+
+                    </a>
+
+
+
+                    <a
+                        href="${pageContext.request.contextPath}/reception/manage-patients"
+                        class="quick-action-card">
+
+                        <div class="quick-action-icon">
+
+                            <i class="bi bi-people"></i>
+
+                        </div>
+
+
+                        <div>
+
+                            <strong>
+                                Manage Patients
+                            </strong>
+
+                            <span>
+                                Search and update patient records
+                            </span>
+
+                        </div>
+
+
+                        <i class="bi bi-arrow-right"></i>
+
+                    </a>
 
                 </div>
 
             </section>
+
 
 
             <!-- ================================================= -->
@@ -627,11 +839,14 @@
 
             <section class="appointments-section">
 
+
                 <div class="section-heading">
 
                     <div>
 
-                        <h3>Today's Appointments</h3>
+                        <h3>
+                            Today's Appointments
+                        </h3>
 
                         <p>
                             Overview of today's scheduled appointments
@@ -639,7 +854,10 @@
 
                     </div>
 
-                    <a href="#" class="view-all-link">
+
+                    <a
+                        href="${pageContext.request.contextPath}/reception/view-appointments"
+                        class="view-all-link">
 
                         View All
 
@@ -650,248 +868,276 @@
                 </div>
 
 
+
                 <div class="table-container">
 
                     <table class="appointments-table">
+
 
                         <thead>
 
                         <tr>
 
-                            <th>Time</th>
+                            <th>
+                                Time
+                            </th>
 
-                            <th>Patient</th>
+                            <th>
+                                Patient
+                            </th>
 
-                            <th>Dentist</th>
+                            <th>
+                                Dentist
+                            </th>
 
-                            <th>Treatment</th>
+                            <th>
+                                Treatment
+                            </th>
 
-                            <th>Status</th>
+                            <th>
+                                Status
+                            </th>
 
-                            <th>Action</th>
+                            <th>
+                                Action
+                            </th>
 
                         </tr>
 
                         </thead>
 
 
+
                         <tbody>
 
 
-                        <tr>
+                        <% if (todayAppointments.isEmpty()) { %>
 
-                            <td>
-                                <strong>09:00 AM</strong>
-                            </td>
 
-                            <td>
+                            <tr>
 
-                                <div class="patient-cell">
-
-                                    <div class="patient-avatar">
-                                        RT
-                                    </div>
+                                <td
+                                    colspan="6"
+                                    style="text-align:center; padding:35px;">
 
                                     <div>
-                                        <strong>Riko Tanaka</strong>
-                                        <span>PT-0001</span>
+
+                                        <i
+                                            class="bi bi-calendar-x"
+                                            style="font-size:28px; display:block; margin-bottom:8px;">
+                                        </i>
+
+                                        <strong>
+                                            No appointments scheduled for today.
+                                        </strong>
+
+                                        <div style="margin-top:5px;">
+
+                                            Your schedule is currently clear.
+
+                                        </div>
+
                                     </div>
 
-                                </div>
+                                </td>
 
-                            </td>
-
-                            <td>
-                                Dr. Shin Tamu
-                            </td>
-
-                            <td>
-                                Root Canal Treatment
-                            </td>
-
-                            <td>
-
-                                <span class="status confirmed">
-                                    Confirmed
-                                </span>
-
-                            </td>
-
-                            <td>
-
-                                <button
-                                    class="table-action"
-                                    title="View appointment">
-
-                                    <i class="bi bi-three-dots"></i>
-
-                                </button>
-
-                            </td>
-
-                        </tr>
+                            </tr>
 
 
-                        <tr>
+                        <% } else { %>
 
-                            <td>
-                                <strong>10:00 AM</strong>
-                            </td>
 
-                            <td>
+                            <% for (Appointment appointment
+                                    : todayAppointments) {
 
-                                <div class="patient-cell">
 
-                                    <div class="patient-avatar">
-                                        AK
+                                Patient patient =
+                                        patients.get(
+                                                appointment.getPatientId()
+                                        );
+
+
+                                Dentist dentist =
+                                        dentists.get(
+                                                appointment.getDentistId()
+                                        );
+
+
+                                String patientName =
+                                        patient != null
+                                                && patient.getName() != null
+                                                ? patient.getName()
+                                                : "Unknown Patient";
+
+
+                                String patientNumber =
+                                        patient != null
+                                                && patient.getPatientNumber() != null
+                                                ? patient.getPatientNumber()
+                                                : "-";
+
+
+                                String dentistName =
+                                        dentist != null
+                                                && dentist.getName() != null
+                                                ? dentist.getName()
+                                                : "Unknown Dentist";
+
+
+                                String reason =
+                                        appointment.getReason() != null
+                                                && !appointment.getReason().isBlank()
+                                                ? appointment.getReason()
+                                                : "Appointment";
+
+
+                                String status =
+                                        appointment.getStatus() != null
+                                                ? appointment.getStatus()
+                                                : "UNKNOWN";
+
+
+                                String initials = "P";
+
+
+                                if (patientName.length() >= 2) {
+
+                                    String[] nameParts =
+                                            patientName.trim().split("\\s+");
+
+                                    if (nameParts.length >= 2) {
+
+                                        initials =
+                                                (
+                                                    nameParts[0].substring(0, 1)
+                                                    +
+                                                    nameParts[nameParts.length - 1]
+                                                            .substring(0, 1)
+                                                ).toUpperCase();
+
+                                    } else {
+
+                                        initials =
+                                                patientName
+                                                        .substring(0, 2)
+                                                        .toUpperCase();
+                                    }
+                                }
+
+
+                                String statusClass =
+                                        status.toLowerCase();
+
+                            %>
+
+
+                            <tr>
+
+
+                                <!-- TIME -->
+
+                                <td>
+
+                                    <strong>
+                                        <%= formatTime(appointment.getStartTime()) %>
+                                    </strong>
+
+                                </td>
+
+
+
+                                <!-- PATIENT -->
+
+                                <td>
+
+                                    <div class="patient-cell">
+
+
+                                        <div class="patient-avatar">
+
+                                            <%= initials %>
+
+                                        </div>
+
+
+                                        <div>
+
+                                            <strong>
+                                                <%= patientName %>
+                                            </strong>
+
+                                            <span>
+                                                <%= patientNumber %>
+                                            </span>
+
+                                        </div>
+
+
                                     </div>
 
-                                    <div>
-                                        <strong>Akiko Takahashi</strong>
-                                        <span>PT-0002</span>
-                                    </div>
-
-                                </div>
-
-                            </td>
-
-                            <td>
-                                Dr. Sarah Fernando
-                            </td>
-
-                            <td>
-                                Scaling
-                            </td>
-
-                            <td>
-
-                                <span class="status waiting">
-                                    Waiting
-                                </span>
-
-                            </td>
-
-                            <td>
-
-                                <button
-                                    class="table-action"
-                                    title="View appointment">
-
-                                    <i class="bi bi-three-dots"></i>
-
-                                </button>
-
-                            </td>
-
-                        </tr>
+                                </td>
 
 
-                        <tr>
 
-                            <td>
-                                <strong>11:30 AM</strong>
-                            </td>
+                                <!-- DENTIST -->
 
-                            <td>
+                                <td>
 
-                                <div class="patient-cell">
+                                    Dr.
+                                    <%= dentistName %>
 
-                                    <div class="patient-avatar">
-                                        HC
-                                    </div>
-
-                                    <div>
-                                        <strong>Hiroki Kimura</strong>
-                                        <span>PT-0003</span>
-                                    </div>
-
-                                </div>
-
-                            </td>
-
-                            <td>
-                                Dr. Shin Tamu
-                            </td>
-
-                            <td>
-                                Consultation
-                            </td>
-
-                            <td>
-
-                                <span class="status confirmed">
-                                    Confirmed
-                                </span>
-
-                            </td>
-
-                            <td>
-
-                                <button
-                                    class="table-action"
-                                    title="View appointment">
-
-                                    <i class="bi bi-three-dots"></i>
-
-                                </button>
-
-                            </td>
-
-                        </tr>
+                                </td>
 
 
-                        <tr>
 
-                            <td>
-                                <strong>02:00 PM</strong>
-                            </td>
+                                <!-- TREATMENT -->
 
-                            <td>
+                                <td>
 
-                                <div class="patient-cell">
+                                    <%= reason %>
 
-                                    <div class="patient-avatar">
-                                        JC
-                                    </div>
+                                </td>
 
-                                    <div>
-                                        <strong>John Cooper</strong>
-                                        <span>PT-0004</span>
-                                    </div>
 
-                                </div>
 
-                            </td>
+                                <!-- STATUS -->
 
-                            <td>
-                                Dr. Sarah Fernando
-                            </td>
+                                <td>
 
-                            <td>
-                                Dental Cleaning
-                            </td>
+                                    <span
+                                        class="status <%= statusClass %>">
 
-                            <td>
+                                        <%= status %>
 
-                                <span class="status cancelled">
-                                    Cancelled
-                                </span>
+                                    </span>
 
-                            </td>
+                                </td>
 
-                            <td>
 
-                                <button
-                                    class="table-action"
-                                    title="View appointment">
 
-                                    <i class="bi bi-three-dots"></i>
+                                <!-- ACTION -->
 
-                                </button>
+                                <td>
 
-                            </td>
+                                    <a
+                                        class="table-action"
+                                        title="View appointment"
+                                        href="${pageContext.request.contextPath}/reception/view-appointment?appointmentId=<%= appointment.getAppointmentId() %>">
 
-                        </tr>
+                                        <i class="bi bi-three-dots"></i>
+
+                                    </a>
+
+                                </td>
+
+
+                            </tr>
+
+
+                            <% } %>
+
+
+                        <% } %>
 
 
                         </tbody>
@@ -902,11 +1148,13 @@
 
             </section>
 
+
         </section>
 
     </main>
 
 </div>
+
 
 
 <!-- ================================================= -->
@@ -915,21 +1163,37 @@
 
 <script>
 
+
     /*
-     * Display current date
+     * =========================================================
+     * CURRENT DATE
+     * =========================================================
      */
 
     const currentDateElement =
         document.getElementById("currentDate");
 
-    const today = new Date();
+
+    const welcomeMessage =
+        document.getElementById("welcomeMessage");
+
+
+    const today =
+        new Date();
+
 
     const dateOptions = {
+
         weekday: "long",
+
         year: "numeric",
+
         month: "long",
+
         day: "numeric"
+
     };
+
 
     currentDateElement.textContent =
         today.toLocaleDateString(
@@ -938,26 +1202,71 @@
         );
 
 
+
     /*
-     * Mobile sidebar
+     * =========================================================
+     * GREETING
+     * =========================================================
+     */
+
+    const hour =
+        today.getHours();
+
+
+    let greeting;
+
+
+    if (hour < 12) {
+
+        greeting = "Good Morning";
+
+    } else if (hour < 17) {
+
+        greeting = "Good Afternoon";
+
+    } else {
+
+        greeting = "Good Evening";
+
+    }
+
+
+    welcomeMessage.textContent =
+        greeting + ", <%= staffName %>";
+
+
+
+    /*
+     * =========================================================
+     * MOBILE SIDEBAR
+     * =========================================================
      */
 
     const menuButton =
         document.getElementById("menuButton");
 
+
     const sidebar =
         document.getElementById("sidebar");
 
-    menuButton.addEventListener(
-        "click",
-        function () {
 
-            sidebar.classList.toggle("sidebar-open");
+    if (menuButton && sidebar) {
 
-        }
-    );
+        menuButton.addEventListener(
+            "click",
+            function () {
+
+                sidebar.classList.toggle(
+                    "sidebar-open"
+                );
+
+            }
+        );
+
+    }
 
 </script>
+
 
 
 </body>
