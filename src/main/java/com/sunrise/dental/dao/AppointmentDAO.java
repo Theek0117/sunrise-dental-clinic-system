@@ -67,4 +67,11 @@ public interface AppointmentDAO {
             int appointmentId,
             int dentistId
     );
+    
+    
+    boolean updateStatus(
+            int appointmentId,
+            int dentistId,
+            String status
+    );
 }

@@ -18,12 +18,18 @@ import com.sunrise.dental.model.Dentist;
 import com.sunrise.dental.model.DentistAvailability;
 import com.sunrise.dental.model.Patient;
 
+import com.sunrise.dental.dao.TreatmentDAO;
+import com.sunrise.dental.dao.TreatmentDAOImpl;
+import com.sunrise.dental.model.Treatment;
+
 public class AppointmentService {
 
+	private final TreatmentDAO treatmentDAO;
     private final AppointmentDAO appointmentDAO;
     private final PatientDAO patientDAO;
     private final DentistDAO dentistDAO;
     private final DentistAvailabilityDAO availabilityDAO;
+    
 
     public AppointmentService() {
 
@@ -38,6 +44,9 @@ public class AppointmentService {
 
         availabilityDAO =
                 new DentistAvailabilityDAOImpl();
+        
+        treatmentDAO =
+                new TreatmentDAOImpl();
     }
 
     public boolean bookAppointment(
@@ -626,5 +635,119 @@ public class AppointmentService {
         }
 
         return count;
+    }
+    
+    
+    public Treatment getTreatmentForAppointment(
+            int appointmentId,
+            int dentistId) {
+
+        if (appointmentId <= 0
+                || dentistId <= 0) {
+
+            return null;
+        }
+
+        return treatmentDAO.findByAppointmentId(
+                appointmentId,
+                dentistId
+        );
+    }
+    
+    public boolean saveTreatment(
+            Treatment treatment) {
+
+        if (treatment == null) {
+            return false;
+        }
+
+        if (treatment.getAppointmentId() <= 0
+                || treatment.getPatientId() <= 0
+                || treatment.getDentistId() <= 0) {
+
+            return false;
+        }
+
+        return treatmentDAO.saveOrUpdate(
+                treatment
+        );
+    }
+    
+    public List<Treatment> getPatientTreatmentHistory(
+            int patientId) {
+
+        if (patientId <= 0) {
+            return List.of();
+        }
+
+        return treatmentDAO.findByPatientId(
+                patientId
+        );
+    }
+    
+    public List<Treatment> getDentistPatientTreatmentHistory(
+            int patientId,
+            int dentistId) {
+
+        if (patientId <= 0
+                || dentistId <= 0) {
+
+            return List.of();
+        }
+
+        return treatmentDAO.findByPatientIdAndDentist(
+                patientId,
+                dentistId
+        );
+    }
+    
+    public boolean updateAppointmentStatus(
+            int appointmentId,
+            int dentistId,
+            String status) {
+
+        if (appointmentId <= 0
+                || dentistId <= 0
+                || status == null
+                || status.isBlank()) {
+
+            return false;
+        }
+
+        String normalizedStatus =
+                status.trim().toUpperCase();
+
+        if (!isValidDentistStatus(
+                normalizedStatus)) {
+
+            return false;
+        }
+
+        Appointment appointment =
+                appointmentDAO.findByIdAndDentist(
+                        appointmentId,
+                        dentistId
+                );
+
+        if (appointment == null) {
+            return false;
+        }
+
+        return appointmentDAO.updateStatus(
+                appointmentId,
+                dentistId,
+                normalizedStatus
+        );
+    }
+
+    private boolean isValidDentistStatus(
+            String status) {
+
+        return "PENDING".equals(status)
+                || "CONFIRMED".equals(status)
+                || "IN-PROGRESS".equals(status)
+                || "COMPLETED".equals(status)
+                || "RESCHEDULED".equals(status)
+                || "CANCELLED".equals(status);
     }
 }

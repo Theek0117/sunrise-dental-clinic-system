@@ -905,4 +905,50 @@ public class AppointmentDAOImpl implements AppointmentDAO {
 
         return null;
     }
+    
+    @Override
+    public boolean updateStatus(
+            int appointmentId,
+            int dentistId,
+            String status) {
+
+        String sql = """
+                UPDATE appointment
+                SET status = ?
+                WHERE appointment_id = ?
+                  AND dentist_id = ?
+                """;
+
+        try (
+                Connection connection =
+                        DBConnection.getConnection();
+
+                PreparedStatement statement =
+                        connection.prepareStatement(sql)
+        ) {
+
+            statement.setString(
+                    1,
+                    status
+            );
+
+            statement.setInt(
+                    2,
+                    appointmentId
+            );
+
+            statement.setInt(
+                    3,
+                    dentistId
+            );
+
+            return statement.executeUpdate() > 0;
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+
+            return false;
+        }
+    }
 }
