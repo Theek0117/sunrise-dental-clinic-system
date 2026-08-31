@@ -78,11 +78,11 @@ public class LoginServlet extends HttpServlet {
 
             if ("ADMIN".equalsIgnoreCase(role)) {
 
-                response.sendRedirect(
-                        request.getContextPath()
-                        + "/admin/adminDashboard.jsp"
-                );
-
+            	response.sendRedirect(
+            	        request.getContextPath()
+            	        + "/admin/dashboard"
+            	);
+            	            	
             } else if ("RECEPTION".equalsIgnoreCase(role)
                     || "RECEPTIONIST".equalsIgnoreCase(role)) {
 
@@ -95,7 +95,7 @@ public class LoginServlet extends HttpServlet {
 
                 response.sendRedirect(
                         request.getContextPath()
-                        + "/cashier/cashierDashboard.jsp"
+                        + "/cashier/cashier"
                 );
 
             } else if ("DENTIST".equalsIgnoreCase(role)) {

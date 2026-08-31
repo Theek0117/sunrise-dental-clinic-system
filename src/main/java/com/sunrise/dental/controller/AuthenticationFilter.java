@@ -165,7 +165,7 @@ public class AuthenticationFilter implements Filter {
 
             response.sendRedirect(
                     contextPath
-                    + "/admin/adminDashboard.jsp"
+                    + "/admin/admin"
             );
 
         } else if ("RECEPTION".equalsIgnoreCase(role)
@@ -180,7 +180,7 @@ public class AuthenticationFilter implements Filter {
 
             response.sendRedirect(
                     contextPath
-                    + "/cashier/cashierDashboard.jsp"
+                    + "/cashier/cashier"
             );
 
         } else if ("DENTIST".equalsIgnoreCase(role)) {
