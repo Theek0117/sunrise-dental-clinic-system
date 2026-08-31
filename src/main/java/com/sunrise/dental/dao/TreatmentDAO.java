@@ -23,4 +23,8 @@ public interface TreatmentDAO {
             int patientId,
             int dentistId
     );
+    
+    List<Treatment> findByDentistId(
+            int dentistId
+    );
 }

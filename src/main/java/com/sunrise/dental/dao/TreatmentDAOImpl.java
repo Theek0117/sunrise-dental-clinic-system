@@ -391,4 +391,65 @@ public class TreatmentDAOImpl implements TreatmentDAO {
 
         return treatment;
     }
+    
+    @Override
+    public List<Treatment> findByDentistId(
+            int dentistId) {
+
+        List<Treatment> treatments =
+                new ArrayList<>();
+
+        String sql =
+                "SELECT t.*, " +
+                "p.name AS patient_name, " +
+                "d.name AS dentist_name, " +
+                "a.appointment_number " +
+                "FROM treatment t " +
+                "INNER JOIN patient p " +
+                "ON t.patient_id = p.patient_id " +
+                "INNER JOIN dentist d " +
+                "ON t.dentist_id = d.dentist_id " +
+                "INNER JOIN appointment a " +
+                "ON t.appointment_id = a.appointment_id " +
+                "WHERE t.dentist_id = ? " +
+                "ORDER BY t.created_at DESC";
+
+        try (
+
+                Connection connection =
+                        DBConnection.getConnection();
+
+                PreparedStatement statement =
+                        connection.prepareStatement(sql)
+
+        ) {
+
+            statement.setInt(
+                    1,
+                    dentistId
+            );
+
+            try (
+                    ResultSet rs =
+                            statement.executeQuery()
+            ) {
+
+                while (rs.next()) {
+
+                    treatments.add(
+                            mapResultSet(rs)
+                    );
+
+                }
+
+            }
+
+        } catch (SQLException e) {
+
+            e.printStackTrace();
+
+        }
+
+        return treatments;
+    }
 }

@@ -389,6 +389,16 @@ public class AppointmentService {
         );
     }
 
+    public List<com.sunrise.dental.model.Patient> getAllPatients() {
+
+        try {
+            return patientDAO.findAll();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return List.of();
+        }
+    }
+    
     public Dentist getDentist(
             int dentistId) {
 
@@ -638,68 +648,106 @@ public class AppointmentService {
     }
     
     
-    public Treatment getTreatmentForAppointment(
-            int appointmentId,
-            int dentistId) {
+ // =========================================================
+ // TREATMENT
+ // =========================================================
 
-        if (appointmentId <= 0
-                || dentistId <= 0) {
+ public Treatment getTreatmentForAppointment(
+         int appointmentId,
+         int dentistId) {
 
-            return null;
-        }
+     if (appointmentId <= 0 || dentistId <= 0) {
+         return null;
+     }
 
-        return treatmentDAO.findByAppointmentId(
-                appointmentId,
-                dentistId
-        );
-    }
-    
-    public boolean saveTreatment(
-            Treatment treatment) {
+     try {
+         return treatmentDAO.findByAppointmentId(
+                 appointmentId,
+                 dentistId
+         );
+     } catch (Exception e) {
+         e.printStackTrace();
+         return null;
+     }
+ }
 
-        if (treatment == null) {
-            return false;
-        }
 
-        if (treatment.getAppointmentId() <= 0
-                || treatment.getPatientId() <= 0
-                || treatment.getDentistId() <= 0) {
+ // =========================================================
+ // SAVE / UPDATE TREATMENT
+ // =========================================================
 
-            return false;
-        }
+ public boolean saveTreatment(
+         Treatment treatment) {
 
-        return treatmentDAO.saveOrUpdate(
-                treatment
-        );
-    }
-    
-    public List<Treatment> getPatientTreatmentHistory(
-            int patientId) {
+     if (treatment == null) {
+         return false;
+     }
 
-        if (patientId <= 0) {
-            return List.of();
-        }
+     if (treatment.getAppointmentId() <= 0
+             || treatment.getPatientId() <= 0
+             || treatment.getDentistId() <= 0) {
 
-        return treatmentDAO.findByPatientId(
-                patientId
-        );
-    }
-    
-    public List<Treatment> getDentistPatientTreatmentHistory(
-            int patientId,
-            int dentistId) {
+         return false;
+     }
 
-        if (patientId <= 0
-                || dentistId <= 0) {
+     try {
+         return treatmentDAO.saveOrUpdate(
+                 treatment
+         );
 
-            return List.of();
-        }
+     } catch (Exception e) {
+         e.printStackTrace();
+         return false;
+     }
+ }
 
-        return treatmentDAO.findByPatientIdAndDentist(
-                patientId,
-                dentistId
-        );
-    }
+
+ // =========================================================
+ // PATIENT TREATMENT HISTORY
+ // =========================================================
+
+ public List<Treatment> getPatientTreatmentHistory(
+         int patientId) {
+
+     if (patientId <= 0) {
+         return List.of();
+     }
+
+     try {
+         return treatmentDAO.findByPatientId(
+                 patientId
+         );
+
+     } catch (Exception e) {
+         e.printStackTrace();
+         return List.of();
+     }
+ }
+
+
+ // =========================================================
+ // DENTIST PATIENT TREATMENT HISTORY
+ // =========================================================
+
+ public List<Treatment> getDentistPatientTreatmentHistory(
+         int patientId,
+         int dentistId) {
+
+     if (patientId <= 0 || dentistId <= 0) {
+         return List.of();
+     }
+
+     try {
+         return treatmentDAO.findByPatientIdAndDentist(
+                 patientId,
+                 dentistId
+         );
+
+     } catch (Exception e) {
+         e.printStackTrace();
+         return List.of();
+     }
+ }
     
     public boolean updateAppointmentStatus(
             int appointmentId,
