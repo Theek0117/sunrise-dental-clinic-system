@@ -156,7 +156,7 @@
                 <span>Appointments</span>
             </a>
 
-            <a href="<%= contextPath %>/admin/dashboard" class="nav-item">
+            <a href="<%= contextPath %>/admin/treatments" class="nav-item">
                 <i class="bi bi-journal-medical"></i>
                 <span>Treatments</span>
             </a>
@@ -304,23 +304,35 @@
                         <i class="bi bi-arrow-right"></i>
                     </a>
 
-                    <a href="<%= contextPath %>/admin/dashboard" class="quick-action-card">
-                        <div class="quick-action-icon">
-                            <i class="bi bi-hospital"></i>
-                        </div>
-                        <div>
-                            <strong>Manage Dentists</strong>
-                            <span>Doctor profiles and specialties</span>
-                        </div>
-                        <i class="bi bi-arrow-right"></i>
-                    </a>
+                    <a href="<%= contextPath %>/admin/treatments"
+						   class="quick-action-card">
+						
+						    <div class="quick-action-icon">
+						
+						        <i class="bi bi-journal-medical"></i>
+						
+						    </div>
+						
+						    <div>
+						
+						        <strong>Manage Treatments</strong>
+						
+						        <span>
+						            Treatment types and standard pricing
+						        </span>
+						
+						    </div>
+						
+						    <i class="bi bi-arrow-right"></i>
+						
+						</a>
 
                     <a href="<%= contextPath %>/admin/dashboard" class="quick-action-card">
                         <div class="quick-action-icon">
                             <i class="bi bi-person-lines-fill"></i>
                         </div>
                         <div>
-                            <strong>Manage Patients</strong>
+                            <strong>Manage Patients Records</strong>
                             <span>Patient files and records</span>
                         </div>
                         <i class="bi bi-arrow-right"></i>
