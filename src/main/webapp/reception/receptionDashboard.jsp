@@ -89,64 +89,63 @@
     <!-- APPOINTMENTS MENU -->
     <div class="nav-dropdown">
 
-        <button type="button"
-                class="nav-item nav-dropdown-toggle"
-                data-target="appointmentsMenu">
+    <button type="button"
+            class="nav-item nav-dropdown-toggle"
+            id="appointmentsToggle">
 
-            <span class="nav-item-left">
+        <span class="nav-item-left">
 
-                <i class="bi bi-calendar-check"></i>
+            <i class="bi bi-calendar-check"></i>
 
-                <span>Appointments</span>
+            <span>Appointments</span>
 
-            </span>
+        </span>
 
-            <i class="bi bi-chevron-down dropdown-arrow"></i>
+        <i class="bi bi-chevron-down dropdown-arrow"></i>
 
-        </button>
+    </button>
 
+    <div class="nav-submenu" id="appointmentsSubmenu">
 
-        <div class="nav-submenu" id="appointmentsMenu">
+        <a href="${pageContext.request.contextPath}/reception/book-appointment"
+           class="nav-subitem">
 
-            <a href="#"
-               class="nav-submenu-item">
+            <i class="bi bi-calendar-plus"></i>
 
-                <i class="bi bi-list-ul"></i>
+            <span>Book Appointment</span>
 
-                <span>View Appointments</span>
+        </a>
 
-            </a>
+        <a href="#"
+           class="nav-subitem">
 
-            <a href="#"
-               class="nav-submenu-item">
+            <i class="bi bi-calendar3"></i>
 
-                <i class="bi bi-calendar-plus"></i>
+            <span>View Appointments</span>
 
-                <span>Book Appointment</span>
+        </a>
 
-            </a>
+        <a href="#"
+           class="nav-subitem">
 
-            <a href="#"
-               class="nav-submenu-item">
+            <i class="bi bi-calendar2-week"></i>
 
-                <i class="bi bi-calendar2-event"></i>
+            <span>Reschedule Appointment</span>
 
-                <span>Reschedule Appointment</span>
+        </a>
 
-            </a>
+        <a href="#"
+           class="nav-subitem">
 
-            <a href="#"
-               class="nav-submenu-item">
+            <i class="bi bi-calendar-x"></i>
 
-                <i class="bi bi-calendar-x"></i>
+            <span>Cancel Appointment</span>
 
-                <span>Cancel Appointment</span>
-
-            </a>
-
-        </div>
+        </a>
 
     </div>
+
+</div>
 
 
     <!-- PATIENTS MENU -->
@@ -566,27 +565,24 @@
 						</a>
 
 
-                    <a href="#" class="quick-action-card">
-
-                        <div class="quick-action-icon">
-
-                            <i class="bi bi-calendar-plus"></i>
-
-                        </div>
-
-                        <div>
-
-                            <strong>Book Appointment</strong>
-
-                            <span>
-                                Schedule an appointment
-                            </span>
-
-                        </div>
-
-                        <i class="bi bi-arrow-right"></i>
-
-                    </a>
+                   <a href="${pageContext.request.contextPath}/reception/book-appointment"
+					   class="quick-action-card">
+					
+					    <div class="quick-action-icon">
+					        <i class="bi bi-calendar-plus"></i>
+					    </div>
+					
+					    <div>
+					        <strong>Book Appointment</strong>
+					
+					        <span>
+					            Schedule an appointment
+					        </span>
+					    </div>
+					
+					    <i class="bi bi-arrow-right"></i>
+					
+					</a>
 
 
                    <a href="${pageContext.request.contextPath}/reception/manage-patients"
@@ -1053,6 +1049,40 @@ function toggleNavGroup(menuId, button) {
         button.classList.add("expanded");
     }
 }
+
+</script>
+
+<script>
+
+    /*
+     * ==========================================
+     * APPOINTMENTS DROPDOWN
+     * ==========================================
+     */
+
+    const appointmentsToggle =
+        document.getElementById("appointmentsToggle");
+
+    const appointmentsSubmenu =
+        document.getElementById("appointmentsSubmenu");
+
+    if (appointmentsToggle && appointmentsSubmenu) {
+
+        appointmentsToggle.addEventListener(
+            "click",
+            function () {
+
+                appointmentsToggle.classList.toggle(
+                    "dropdown-open"
+                );
+
+                appointmentsSubmenu.classList.toggle(
+                    "submenu-open"
+                );
+
+            }
+        );
+    }
 
 </script>
 

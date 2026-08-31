@@ -16,6 +16,8 @@ public interface PatientDAO {
     );
 
     List<Patient> findAll();
+    
+    List<Patient> findAllActive();
 
     List<Patient> search(String keyword);
 

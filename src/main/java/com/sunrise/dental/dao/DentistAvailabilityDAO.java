@@ -12,4 +12,7 @@ public interface DentistAvailabilityDAO {
             Date availableDate
     );
 
+    DentistAvailability findById(
+            int availabilityId
+    );
 }

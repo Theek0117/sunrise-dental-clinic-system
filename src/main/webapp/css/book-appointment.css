@@ -1,0 +1,1881 @@
+/* =========================================================
+   SUNRISE DENTAL CLINIC
+   BOOK APPOINTMENT
+   ========================================================= */
+
+
+/* =========================================================
+   GOOGLE FONT
+   ========================================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+
+/* =========================================================
+   GLOBAL
+   ========================================================= */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    color: #1e293b;
+    background: #f4f8fc;
+    min-height: 100vh;
+}
+
+
+/* =========================================================
+   PAGE BACKGROUND
+   ========================================================= */
+
+.booking-page {
+    min-height: 100vh;
+
+    background:
+        radial-gradient(
+            circle at 10% 10%,
+            rgba(37, 99, 235, 0.07),
+            transparent 28%
+        ),
+        radial-gradient(
+            circle at 90% 15%,
+            rgba(14, 165, 233, 0.07),
+            transparent 30%
+        ),
+        linear-gradient(
+            135deg,
+            #f8fbff 0%,
+            #eef5fb 50%,
+            #f8fbff 100%
+        );
+}
+
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.booking-header {
+    width: 100%;
+
+    min-height: 86px;
+
+    padding: 0 42px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    background: rgba(255, 255, 255, 0.94);
+
+    border-bottom: 1px solid #e5edf5;
+
+    box-shadow:
+        0 2px 12px rgba(15, 23, 42, 0.04);
+
+    position: sticky;
+    top: 0;
+
+    z-index: 100;
+}
+
+
+/* =========================================================
+   HEADER LEFT
+   ========================================================= */
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 17px;
+}
+
+.header-left > div {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.header-left h1 {
+    font-size: 23px;
+    font-weight: 600;
+    color: #172033;
+    letter-spacing: -0.3px;
+}
+
+.header-left p {
+    font-size: 13px;
+    color: #7a8798;
+}
+
+
+/* =========================================================
+   BACK BUTTON
+   ========================================================= */
+
+.back-button {
+    width: 42px;
+    height: 42px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    text-decoration: none;
+
+    border-radius: 12px;
+
+    background: #f1f5f9;
+
+    color: #475569;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.back-button i {
+    font-size: 18px;
+}
+
+.back-button:hover {
+    background: #e2e8f0;
+    color: #2563eb;
+    transform: translateX(-2px);
+}
+
+
+/* =========================================================
+   HEADER USER
+   ========================================================= */
+
+.header-user {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+}
+
+.user-avatar {
+    width: 42px;
+    height: 42px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #eaf2ff;
+
+    color: #2563eb;
+
+    font-size: 18px;
+}
+
+.header-user > div:last-child {
+    display: flex;
+    flex-direction: column;
+}
+
+.header-user strong {
+    font-size: 13px;
+    font-weight: 600;
+    color: #263449;
+}
+
+.header-user span {
+    font-size: 11px;
+    color: #8a96a6;
+}
+
+
+/* =========================================================
+   MAIN CONTENT
+   ========================================================= */
+
+.booking-content {
+    width: min(1120px, calc(100% - 48px));
+
+    margin: 0 auto;
+
+    padding: 38px 0 55px;
+}
+
+
+/* =========================================================
+   PAGE INTRODUCTION
+   ========================================================= */
+
+.page-introduction {
+    display: flex;
+    align-items: center;
+
+    gap: 17px;
+
+    margin-bottom: 25px;
+}
+
+.intro-icon {
+    width: 54px;
+    height: 54px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    border-radius: 15px;
+
+    background: linear-gradient(
+        135deg,
+        #2563eb,
+        #3b82f6
+    );
+
+    color: white;
+
+    box-shadow:
+        0 8px 20px rgba(37, 99, 235, 0.18);
+}
+
+.intro-icon i {
+    font-size: 23px;
+}
+
+.page-introduction h2 {
+    font-size: 21px;
+    font-weight: 600;
+    color: #172033;
+    margin-bottom: 3px;
+}
+
+.page-introduction p {
+    font-size: 13px;
+    color: #7b8797;
+}
+
+
+/* =========================================================
+   MESSAGES
+   ========================================================= */
+
+.message {
+    width: 100%;
+
+    display: flex;
+    align-items: flex-start;
+
+    gap: 13px;
+
+    padding: 16px 18px;
+
+    margin-bottom: 22px;
+
+    border-radius: 13px;
+
+    border: 1px solid transparent;
+}
+
+.message > i {
+    font-size: 20px;
+
+    margin-top: 1px;
+}
+
+.message strong {
+    display: block;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    margin-bottom: 3px;
+}
+
+.message p {
+    font-size: 12px;
+
+    line-height: 1.6;
+}
+
+.success-message {
+    background: #f0fdf4;
+    border-color: #bbf7d0;
+    color: #166534;
+}
+
+.error-message {
+    background: #fff7f7;
+    border-color: #fecaca;
+    color: #b91c1c;
+}
+
+.appointment-number {
+    display: inline-block;
+
+    margin-top: 8px;
+
+    padding: 5px 10px;
+
+    border-radius: 7px;
+
+    background: rgba(22, 101, 52, 0.08);
+
+    font-size: 11px;
+}
+
+
+/* =========================================================
+   BOOKING FORM
+   ========================================================= */
+
+.booking-form {
+    display: flex;
+    flex-direction: column;
+
+    gap: 20px;
+}
+
+
+/* =========================================================
+   FORM SECTION
+   ========================================================= */
+
+.form-section {
+    background: rgba(255, 255, 255, 0.96);
+
+    border: 1px solid #e5edf5;
+
+    border-radius: 17px;
+
+    padding: 25px 27px;
+
+    box-shadow:
+        0 5px 20px rgba(15, 23, 42, 0.035);
+}
+
+
+/* =========================================================
+   SECTION TITLE
+   ========================================================= */
+
+.section-title {
+    display: flex;
+    align-items: center;
+
+    gap: 13px;
+
+    margin-bottom: 24px;
+}
+
+.step-number {
+    width: 34px;
+    height: 34px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    border-radius: 10px;
+
+    background: #eaf2ff;
+
+    color: #2563eb;
+
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.section-title h3 {
+    font-size: 15px;
+
+    font-weight: 600;
+
+    color: #243147;
+
+    margin-bottom: 2px;
+}
+
+.section-title p {
+    font-size: 11px;
+
+    color: #8995a5;
+}
+
+
+/* =========================================================
+   FORM GROUP
+   ========================================================= */
+
+.form-group {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 8px;
+}
+
+.form-group label {
+    font-size: 12px;
+
+    font-weight: 600;
+
+    color: #344257;
+}
+
+.required {
+    color: #ef4444;
+
+    margin-left: 2px;
+}
+
+.form-group small {
+    font-size: 10px;
+
+    color: #929dad;
+
+    margin-top: -2px;
+}
+
+
+/* =========================================================
+   SELECT WRAPPER
+   ========================================================= */
+
+.select-wrapper {
+    position: relative;
+}
+
+.select-wrapper > i {
+    position: absolute;
+
+    left: 14px;
+
+    top: 50%;
+
+    transform: translateY(-50%);
+
+    color: #7c8a9d;
+
+    font-size: 15px;
+
+    pointer-events: none;
+
+    z-index: 2;
+}
+
+.select-wrapper select {
+    width: 100%;
+
+    height: 48px;
+
+    padding: 0 42px 0 43px;
+
+    appearance: none;
+
+    border: 1px solid #dce5ef;
+
+    border-radius: 11px;
+
+    background:
+        #ffffff
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E")
+        no-repeat right 16px center;
+
+    color: #334155;
+
+    font-family: 'Poppins', sans-serif;
+
+    font-size: 12px;
+
+    outline: none;
+
+    cursor: pointer;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.select-wrapper select:focus {
+    border-color: #60a5fa;
+
+    box-shadow:
+        0 0 0 3px rgba(37, 99, 235, 0.08);
+}
+
+
+/* =========================================================
+   DATE INPUT
+   ========================================================= */
+
+.date-input-wrapper {
+    position: relative;
+}
+
+.date-input-wrapper > i {
+    position: absolute;
+
+    left: 14px;
+
+    top: 50%;
+
+    transform: translateY(-50%);
+
+    color: #7c8a9d;
+
+    font-size: 15px;
+
+    pointer-events: none;
+
+    z-index: 2;
+}
+
+.date-input-wrapper input {
+    width: 100%;
+
+    height: 48px;
+
+    padding: 0 43px;
+
+    border: 1px solid #dce5ef;
+
+    border-radius: 11px;
+
+    background: #ffffff;
+
+    color: #334155;
+
+    font-family: 'Poppins', sans-serif;
+
+    font-size: 12px;
+
+    outline: none;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.date-input-wrapper input:focus {
+    border-color: #60a5fa;
+
+    box-shadow:
+        0 0 0 3px rgba(37, 99, 235, 0.08);
+}
+
+
+/* =========================================================
+   PATIENT PREVIEW
+   ========================================================= */
+
+.patient-preview {
+    display: grid;
+
+    grid-template-columns: repeat(2, 1fr);
+
+    gap: 12px;
+
+    margin-top: 15px;
+
+    padding: 14px;
+
+    background: #f8fafc;
+
+    border: 1px solid #edf2f7;
+
+    border-radius: 11px;
+}
+
+.preview-item {
+    display: flex;
+
+    align-items: center;
+
+    gap: 11px;
+}
+
+.preview-item > i {
+    width: 32px;
+    height: 32px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 8px;
+
+    background: #eaf2ff;
+
+    color: #2563eb;
+
+    font-size: 14px;
+}
+
+.preview-item div {
+    display: flex;
+
+    flex-direction: column;
+
+    min-width: 0;
+}
+
+.preview-item span {
+    font-size: 9px;
+
+    color: #929dad;
+
+    margin-bottom: 1px;
+}
+
+.preview-item strong {
+    font-size: 11px;
+
+    font-weight: 500;
+
+    color: #455468;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+
+    white-space: nowrap;
+}
+
+
+/* =========================================================
+   AVAILABILITY MESSAGE
+   ========================================================= */
+
+.availability-message {
+    display: flex;
+
+    align-items: center;
+
+    gap: 9px;
+
+    padding: 12px 14px;
+
+    border-radius: 10px;
+
+    background: #f8fafc;
+
+    border: 1px solid #e8eef5;
+
+    color: #718096;
+
+    font-size: 11px;
+}
+
+.availability-message i {
+    font-size: 15px;
+}
+
+.availability-message.loading {
+    background: #eff6ff;
+
+    border-color: #dbeafe;
+
+    color: #2563eb;
+}
+
+.availability-message.available {
+    background: #f0fdf4;
+
+    border-color: #dcfce7;
+
+    color: #15803d;
+}
+
+.availability-message.warning {
+    background: #fffbeb;
+
+    border-color: #fef3c7;
+
+    color: #b45309;
+}
+
+.availability-message.error {
+    background: #fff7f7;
+
+    border-color: #fee2e2;
+
+    color: #dc2626;
+}
+
+
+/* =========================================================
+   LOADING ICON
+   ========================================================= */
+
+.loading-icon {
+    animation: rotateLoading 1s linear infinite;
+}
+
+@keyframes rotateLoading {
+
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+
+}
+
+
+/* =========================================================
+   TIME SLOTS
+   ========================================================= */
+
+.time-slots {
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            auto-fill,
+            minmax(170px, 1fr)
+        );
+
+    gap: 12px;
+
+    margin-top: 15px;
+}
+
+
+/* =========================================================
+   TIME SLOT BUTTON
+   ========================================================= */
+
+.time-slot {
+    min-height: 54px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 9px;
+
+    padding: 10px 15px;
+
+    border: 1px solid #dce6f0;
+
+    border-radius: 11px;
+
+    background: #ffffff;
+
+    color: #475569;
+
+    font-family: 'Poppins', sans-serif;
+
+    font-size: 11px;
+
+    font-weight: 500;
+
+    cursor: pointer;
+
+    transition:
+        border-color 0.2s ease,
+        background 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.time-slot i {
+    color: #2563eb;
+
+    font-size: 15px;
+
+    transition: color 0.2s ease;
+}
+
+.time-slot:hover {
+    border-color: #93c5fd;
+
+    background: #f8fbff;
+
+    color: #2563eb;
+
+    transform: translateY(-1px);
+
+    box-shadow:
+        0 5px 13px rgba(37, 99, 235, 0.08);
+}
+
+.time-slot.selected {
+    border-color: #2563eb;
+
+    background: #2563eb;
+
+    color: #ffffff;
+
+    box-shadow:
+        0 6px 15px rgba(37, 99, 235, 0.18);
+}
+
+.time-slot.selected i {
+    color: #ffffff;
+}
+
+
+/* =========================================================
+   REASON SELECT
+   ========================================================= */
+
+.form-group > select {
+    width: 100%;
+
+    height: 48px;
+
+    padding: 0 43px 0 14px;
+
+    appearance: none;
+
+    border: 1px solid #dce5ef;
+
+    border-radius: 11px;
+
+    background:
+        #ffffff
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E")
+        no-repeat right 16px center;
+
+    color: #334155;
+
+    font-family: 'Poppins', sans-serif;
+
+    font-size: 12px;
+
+    outline: none;
+
+    cursor: pointer;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.form-group > select:focus {
+    border-color: #60a5fa;
+
+    box-shadow:
+        0 0 0 3px rgba(37, 99, 235, 0.08);
+}
+
+
+/* =========================================================
+   OTHER REASON
+   ========================================================= */
+
+.other-reason-group {
+    display: none;
+
+    margin-top: 15px;
+}
+
+.other-reason-group.visible {
+    display: flex;
+}
+
+.other-reason-group textarea {
+    width: 100%;
+
+    resize: vertical;
+
+    min-height: 90px;
+
+    padding: 13px 14px;
+
+    border: 1px solid #dce5ef;
+
+    border-radius: 11px;
+
+    background: #ffffff;
+
+    color: #334155;
+
+    font-family: 'Poppins', sans-serif;
+
+    font-size: 12px;
+
+    outline: none;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.other-reason-group textarea::placeholder {
+    color: #a1aab7;
+}
+
+.other-reason-group textarea:focus {
+    border-color: #60a5fa;
+
+    box-shadow:
+        0 0 0 3px rgba(37, 99, 235, 0.08);
+}
+
+
+/* =========================================================
+   BOOKING SUMMARY
+   ========================================================= */
+
+.booking-summary {
+    background:
+        linear-gradient(
+            135deg,
+            #f8fbff,
+            #ffffff
+        );
+
+    border: 1px solid #dce8f5;
+
+    border-radius: 17px;
+
+    padding: 23px 27px;
+
+    box-shadow:
+        0 5px 20px rgba(15, 23, 42, 0.035);
+}
+
+.summary-header {
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    margin-bottom: 20px;
+}
+
+.summary-header > i {
+    width: 38px;
+    height: 38px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 10px;
+
+    background: #eaf2ff;
+
+    color: #2563eb;
+
+    font-size: 17px;
+}
+
+.summary-header h3 {
+    font-size: 14px;
+
+    font-weight: 600;
+
+    color: #263449;
+
+    margin-bottom: 2px;
+}
+
+.summary-header p {
+    font-size: 10px;
+
+    color: #8b97a7;
+}
+
+
+/* =========================================================
+   SUMMARY GRID
+   ========================================================= */
+
+.summary-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, 1fr);
+
+    gap: 12px;
+}
+
+.summary-item {
+    padding: 13px 14px;
+
+    border-radius: 10px;
+
+    background: #ffffff;
+
+    border: 1px solid #e9eff6;
+
+    min-width: 0;
+}
+
+.summary-item span {
+    display: block;
+
+    font-size: 9px;
+
+    color: #8b97a7;
+
+    margin-bottom: 5px;
+}
+
+.summary-item strong {
+    display: block;
+
+    font-size: 11px;
+
+    font-weight: 500;
+
+    color: #344257;
+
+    overflow: hidden;
+
+    white-space: nowrap;
+
+    text-overflow: ellipsis;
+}
+
+
+/* =========================================================
+   FORM ACTIONS
+   ========================================================= */
+
+.form-actions {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: flex-end;
+
+    gap: 12px;
+
+    padding-top: 2px;
+}
+
+
+/* =========================================================
+   CANCEL BUTTON
+   ========================================================= */
+
+.cancel-button {
+    min-width: 110px;
+
+    height: 45px;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 0 20px;
+
+    border-radius: 10px;
+
+    border: 1px solid #dbe3ec;
+
+    background: #ffffff;
+
+    color: #64748b;
+
+    text-decoration: none;
+
+    font-size: 11px;
+
+    font-weight: 500;
+
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease,
+        color 0.2s ease;
+}
+
+.cancel-button:hover {
+    background: #f8fafc;
+
+    border-color: #cbd5e1;
+
+    color: #334155;
+}
+
+
+/* =========================================================
+   BOOK BUTTON
+   ========================================================= */
+
+.book-button {
+    min-width: 175px;
+
+    height: 45px;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 8px;
+
+    padding: 0 22px;
+
+    border: none;
+
+    border-radius: 10px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #2563eb,
+            #3b82f6
+        );
+
+    color: #ffffff;
+
+    font-family: 'Poppins', sans-serif;
+
+    font-size: 11px;
+
+    font-weight: 500;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 7px 17px rgba(37, 99, 235, 0.18);
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        opacity 0.2s ease;
+}
+
+.book-button i {
+    font-size: 14px;
+}
+
+.book-button:hover {
+    transform: translateY(-1px);
+
+    box-shadow:
+        0 10px 22px rgba(37, 99, 235, 0.24);
+}
+
+.book-button:active {
+    transform: translateY(0);
+}
+
+.book-button:focus-visible {
+    outline: 3px solid rgba(37, 99, 235, 0.2);
+
+    outline-offset: 2px;
+}
+
+
+/* =========================================================
+   DISABLED STATE
+   ========================================================= */
+
+.book-button:disabled {
+    opacity: 0.55;
+
+    cursor: not-allowed;
+
+    transform: none;
+
+    box-shadow: none;
+}
+
+
+/* =========================================================
+   INPUT PLACEHOLDER
+   ========================================================= */
+
+input::placeholder,
+textarea::placeholder {
+    color: #a1aab7;
+}
+
+
+/* =========================================================
+   SCROLLBAR
+   ========================================================= */
+
+::-webkit-scrollbar {
+    width: 7px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f5f9;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+    .booking-header {
+        padding: 0 25px;
+    }
+
+    .booking-content {
+        width: min(
+            100% - 34px,
+            800px
+        );
+
+        padding-top: 30px;
+    }
+
+    .summary-grid {
+        grid-template-columns:
+            repeat(2, 1fr);
+    }
+
+}
+
+
+@media (max-width: 650px) {
+
+    .booking-header {
+        min-height: 75px;
+
+        padding: 0 17px;
+    }
+
+    .header-left {
+        gap: 11px;
+    }
+
+    .header-left h1 {
+        font-size: 18px;
+    }
+
+    .header-left p {
+        display: none;
+    }
+
+    .header-user > div:last-child {
+        display: none;
+    }
+
+    .user-avatar {
+        width: 38px;
+        height: 38px;
+    }
+
+    .booking-content {
+        width: calc(100% - 24px);
+
+        padding-top: 23px;
+
+        padding-bottom: 35px;
+    }
+
+    .page-introduction {
+        margin-bottom: 19px;
+    }
+
+    .intro-icon {
+        width: 46px;
+        height: 46px;
+    }
+
+    .page-introduction h2 {
+        font-size: 18px;
+    }
+
+    .page-introduction p {
+        font-size: 11px;
+    }
+
+    .form-section,
+    .booking-summary {
+        padding: 20px 17px;
+
+        border-radius: 14px;
+    }
+
+    .patient-preview {
+        grid-template-columns: 1fr;
+    }
+
+    .summary-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .time-slots {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .form-actions {
+        flex-direction: column-reverse;
+
+        width: 100%;
+    }
+
+    .cancel-button,
+    .book-button {
+        width: 100%;
+    }
+
+}
+
+
+@media (max-width: 420px) {
+
+    .time-slots {
+        grid-template-columns: 1fr;
+    }
+
+    .section-title {
+        align-items: flex-start;
+    }
+
+    .step-number {
+        width: 30px;
+        height: 30px;
+
+        border-radius: 8px;
+    }
+
+    .section-title h3 {
+        font-size: 14px;
+    }
+
+}
+
+
+/* =========================================================
+   SEARCHABLE PATIENT / DENTIST SELECT
+   ========================================================= */
+
+.search-select {
+    position: relative;
+    width: 100%;
+}
+
+
+/* =========================================================
+   SEARCH INPUT
+   ========================================================= */
+
+.search-input-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.search-input-wrapper > i:first-child {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #7c8a9d;
+    font-size: 15px;
+    pointer-events: none;
+    z-index: 2;
+}
+
+.search-input-wrapper input {
+    width: 100%;
+    height: 48px;
+    padding: 0 45px 0 43px;
+
+    border: 1px solid #dce5ef;
+    border-radius: 11px;
+
+    background: #ffffff;
+
+    color: #334155;
+
+    font-family: 'Poppins', sans-serif;
+    font-size: 12px;
+
+    outline: none;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.search-input-wrapper input::placeholder {
+    color: #9aa6b5;
+}
+
+.search-input-wrapper input:focus {
+    border-color: #60a5fa;
+
+    box-shadow:
+        0 0 0 3px rgba(37, 99, 235, 0.08);
+}
+
+
+/* =========================================================
+   SEARCH ARROW
+   ========================================================= */
+
+.search-arrow {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+
+    transform: translateY(-50%);
+
+    color: #64748b;
+    font-size: 12px;
+
+    pointer-events: none;
+
+    transition:
+        transform 0.2s ease,
+        color 0.2s ease;
+}
+
+.search-select.active .search-arrow {
+    transform:
+        translateY(-50%)
+        rotate(180deg);
+
+    color: #2563eb;
+}
+
+
+/* =========================================================
+   SEARCH RESULTS
+   ========================================================= */
+
+.search-results {
+    position: absolute;
+
+    left: 0;
+    right: 0;
+
+    top: calc(100% + 7px);
+
+    max-height: 300px;
+
+    overflow-y: auto;
+
+    background: #ffffff;
+
+    border: 1px solid #dce5ef;
+
+    border-radius: 12px;
+
+    box-shadow:
+        0 12px 30px rgba(15, 23, 42, 0.10);
+
+    padding: 6px;
+
+    opacity: 0;
+    visibility: hidden;
+
+    transform: translateY(-5px);
+
+    transition:
+        opacity 0.18s ease,
+        visibility 0.18s ease,
+        transform 0.18s ease;
+
+    z-index: 50;
+}
+
+.search-select.active .search-results {
+    opacity: 1;
+    visibility: visible;
+
+    transform: translateY(0);
+}
+
+
+/* =========================================================
+   SEARCH RESULT
+   ========================================================= */
+
+.search-result {
+    width: 100%;
+
+    display: flex;
+    align-items: center;
+
+    gap: 12px;
+
+    padding: 11px 12px;
+
+    border-radius: 9px;
+
+    cursor: pointer;
+
+    transition:
+        background 0.18s ease,
+        transform 0.18s ease;
+}
+
+.search-result:hover {
+    background: #f5f9ff;
+}
+
+.search-result:active {
+    transform: scale(0.99);
+}
+
+
+/* =========================================================
+   RESULT ICON
+   ========================================================= */
+
+.result-icon {
+    width: 37px;
+    height: 37px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 10px;
+
+    background: #eaf2ff;
+
+    color: #2563eb;
+
+    font-size: 16px;
+}
+
+.dentist-result-icon {
+    background: #eef2ff;
+    color: #4f46e5;
+}
+
+
+/* =========================================================
+   RESULT INFORMATION
+   ========================================================= */
+
+.result-information {
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 3px;
+}
+
+.result-information strong {
+    display: block;
+
+    color: #27364d;
+
+    font-size: 12px;
+
+    font-weight: 600;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+}
+
+.result-information span {
+    display: block;
+
+    color: #8a96a6;
+
+    font-size: 10px;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+}
+
+
+/* =========================================================
+   NO SEARCH RESULTS
+   ========================================================= */
+
+.no-results {
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 9px;
+
+    padding: 20px 12px;
+
+    color: #8b97a7;
+
+    font-size: 11px;
+
+    text-align: center;
+}
+
+.no-results i {
+    font-size: 15px;
+    color: #94a3b8;
+}
+
+
+/* =========================================================
+   SELECTED RECORD
+   ========================================================= */
+
+.selected-record {
+    display: none;
+
+    align-items: center;
+
+    gap: 12px;
+
+    margin-top: 13px;
+
+    padding: 12px 13px;
+
+    background: #f0f7ff;
+
+    border: 1px solid #dbeafe;
+
+    border-radius: 11px;
+}
+
+.selected-record.visible {
+    display: flex;
+}
+
+.selected-record-icon {
+    width: 34px;
+    height: 34px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 9px;
+
+    background: #2563eb;
+
+    color: #ffffff;
+
+    font-size: 14px;
+}
+
+.selected-record-info {
+    min-width: 0;
+
+    flex: 1;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 2px;
+}
+
+.selected-record-info span {
+    font-size: 9px;
+    color: #7b8797;
+}
+
+.selected-record-info strong {
+    font-size: 11px;
+    font-weight: 600;
+
+    color: #344257;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+}
+
+
+/* =========================================================
+   CLEAR BUTTON
+   ========================================================= */
+
+.clear-selection {
+    width: 28px;
+    height: 28px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: none;
+
+    border-radius: 8px;
+
+    background: #ffffff;
+
+    color: #64748b;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease;
+}
+
+.clear-selection:hover {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+
+/* =========================================================
+   PATIENT PREVIEW
+   ========================================================= */
+
+.patient-preview {
+    display: none;
+
+    grid-template-columns: repeat(2, 1fr);
+
+    gap: 12px;
+
+    margin-top: 12px;
+
+    padding: 14px;
+
+    background: #f8fafc;
+
+    border: 1px solid #edf2f7;
+
+    border-radius: 11px;
+}
+
+.patient-preview.visible {
+    display: grid;
+}
+
+.preview-item {
+    display: flex;
+
+    align-items: center;
+
+    gap: 11px;
+}
+
+.preview-item > i {
+    width: 32px;
+    height: 32px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 8px;
+
+    background: #eaf2ff;
+
+    color: #2563eb;
+
+    font-size: 14px;
+}
+
+.preview-item div {
+    display: flex;
+    flex-direction: column;
+
+    min-width: 0;
+}
+
+.preview-item span {
+    font-size: 9px;
+    color: #929dad;
+
+    margin-bottom: 1px;
+}
+
+.preview-item strong {
+    font-size: 11px;
+    font-weight: 500;
+
+    color: #455468;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+
+    white-space: nowrap;
+}
+
+
+/* =========================================================
+   SEARCH RESULT SCROLLBAR
+   ========================================================= */
+
+.search-results::-webkit-scrollbar {
+    width: 5px;
+}
+
+.search-results::-webkit-scrollbar-track {
+    background: #f8fafc;
+}
+
+.search-results::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 10px;
+}
+
+.search-results::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+
+
+
+@media (max-width: 650px) {
+
+    .patient-preview {
+        grid-template-columns: 1fr;
+    }
+
+    .search-results {
+        max-height: 250px;
+    }
+
+    .search-input-wrapper input {
+        font-size: 11px;
+    }
+
+    .result-information strong {
+        font-size: 11px;
+    }
+
+}

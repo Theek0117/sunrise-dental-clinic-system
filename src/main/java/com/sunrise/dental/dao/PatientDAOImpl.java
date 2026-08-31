@@ -218,6 +218,49 @@ public class PatientDAOImpl implements PatientDAO {
 
         return patients;
     }
+    
+    
+    @Override
+    public List<Patient> findAllActive() {
+
+        List<Patient> patients = new ArrayList<>();
+
+        String sql = """
+                SELECT
+                    patient_id,
+                    patient_number,
+                    name,
+                    address,
+                    contact_number,
+                    email,
+                    status
+                FROM patient
+                WHERE status = 'ACTIVE'
+                ORDER BY name
+                """;
+
+        try (
+            Connection connection = DBConnection.getConnection();
+            PreparedStatement statement =
+                    connection.prepareStatement(sql);
+            ResultSet resultSet =
+                    statement.executeQuery()
+        ) {
+
+            while (resultSet.next()) {
+
+                patients.add(
+                        mapPatient(resultSet)
+                );
+            }
+
+        } catch (SQLException e) {
+
+            e.printStackTrace();
+        }
+
+        return patients;
+    }
 
 
     @Override

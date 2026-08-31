@@ -12,6 +12,7 @@ public class DentistAvailabilityService {
     private final DentistAvailabilityDAO availabilityDAO;
 
     public DentistAvailabilityService() {
+
         this.availabilityDAO =
                 new DentistAvailabilityDAOImpl();
     }
@@ -20,13 +21,32 @@ public class DentistAvailabilityService {
             int dentistId,
             Date availableDate) {
 
-        if (dentistId <= 0 || availableDate == null) {
+        if (dentistId <= 0) {
+
+            return List.of();
+        }
+
+        if (availableDate == null) {
+
             return List.of();
         }
 
         return availabilityDAO.findByDentistAndDate(
                 dentistId,
                 availableDate
+        );
+    }
+
+    public DentistAvailability getAvailabilityById(
+            int availabilityId) {
+
+        if (availabilityId <= 0) {
+
+            return null;
+        }
+
+        return availabilityDAO.findById(
+                availabilityId
         );
     }
 }
