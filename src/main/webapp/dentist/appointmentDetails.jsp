@@ -1518,7 +1518,7 @@
                     </h1>
 
                     <p>
-                        Clinical Appointment Management
+                        Review the patient's appointment and clinical information.
                     </p>
 
                 </div>
@@ -1563,29 +1563,7 @@
 
         <section class="dashboard-content details-page">
 
-            <div class="details-header">
-
-                <div>
-
-                    <h2>
-                        Appointment Details
-                    </h2>
-
-                    <p>
-                        Review the patient's appointment and clinical information.
-                    </p>
-
-                </div>
-
-                <a
-                    href="${pageContext.request.contextPath}/dentist/appointments"
-                    class="back-button"
-                >
-                    <i class="bi bi-arrow-left"></i>
-                    Back to Appointments
-                </a>
-
-            </div>
+           
 
             <% if ("status".equalsIgnoreCase(success)) { %>
 

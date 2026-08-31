@@ -1,783 +1,437 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-
 <%@ page import="java.util.List" %>
 <%@ page import="java.text.SimpleDateFormat" %>
-
 <%@ page import="com.sunrise.dental.model.Dentist" %>
 <%@ page import="com.sunrise.dental.model.Treatment" %>
 
 <%
-    String staffName =
-            (String) session.getAttribute("staffName");
-
+    String contextPath = request.getContextPath();
+    String staffName = (String) session.getAttribute("staffName");
     if (staffName == null || staffName.isBlank()) {
         staffName = "Dentist";
     }
 
-    Dentist loggedInDentist =
-            (Dentist) request.getAttribute(
-                    "loggedInDentist"
-            );
+    Dentist loggedInDentist = (Dentist) request.getAttribute("loggedInDentist");
+    String dentistName = (loggedInDentist != null && loggedInDentist.getName() != null && !loggedInDentist.getName().isBlank())
+            ? loggedInDentist.getName() : staffName;
+    String specialization = (loggedInDentist != null && loggedInDentist.getSpecialization() != null)
+            ? loggedInDentist.getSpecialization() : "Dental Specialist";
 
-    String dentistName = staffName;
-
-    if (loggedInDentist != null
-            && loggedInDentist.getName() != null
-            && !loggedInDentist.getName().isBlank()) {
-
-        dentistName =
-                loggedInDentist.getName();
-    }
-
-    List<Treatment> treatmentHistory =
-            (List<Treatment>) request.getAttribute(
-                    "treatmentHistory"
-            );
-
+    List<Treatment> treatmentHistory = (List<Treatment>) request.getAttribute("treatmentHistory");
     if (treatmentHistory == null) {
-        treatmentHistory =
-                java.util.Collections.emptyList();
+        treatmentHistory = java.util.Collections.emptyList();
     }
 
-    String errorMessage =
-            (String) request.getAttribute(
-                    "errorMessage"
-            );
+    String errorMessage = (String) request.getAttribute("errorMessage");
 
-    SimpleDateFormat dateFormat =
-            new SimpleDateFormat("dd MMM yyyy");
+    SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy");
+    SimpleDateFormat dateTimeFormat = new SimpleDateFormat("dd MMM yyyy, hh:mm a");
 
-    SimpleDateFormat dateTimeFormat =
-            new SimpleDateFormat("dd MMM yyyy, hh:mm a");
+    int totalTreatments = treatmentHistory.size();
+    long followUpCount = treatmentHistory.stream().filter(t -> t.getNextAppointmentDate() != null).count();
 %>
 
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Treatment History | Sunrise Dental Clinic</title>
 
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
-    <title>
-        Treatment History | Sunrise Dental Clinic
-    </title>
-
-    <link rel="preconnect"
-          href="https://fonts.googleapis.com">
-
-    <link rel="preconnect"
-          href="https://fonts.gstatic.com"
-          crossorigin>
-
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
-          rel="stylesheet">
-
-    <link rel="stylesheet"
-          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="<%= contextPath %>/css/reception.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
     <style>
-
-        * {
-            box-sizing: border-box;
-        }
-
-        body {
-            margin: 0;
-            font-family: "Poppins", sans-serif;
-            background: #f6fafc;
-            color: #455a64;
-        }
-
-        .page-container {
-            width: 100%;
-            min-height: 100vh;
-            padding: 35px;
-        }
-
-        .page-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 20px;
-            margin-bottom: 28px;
-        }
-
-        .page-title h1 {
-            margin: 0;
-            font-size: 28px;
-            color: #159bb1;
-            font-weight: 600;
-        }
-
-        .page-title p {
-            margin: 6px 0 0;
-            color: #78909c;
-            font-size: 14px;
-        }
-
-        .back-button {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 11px 18px;
-            border-radius: 10px;
-            background: #ffffff;
-            border: 1px solid #dcecef;
-            color: #159bb1;
-            text-decoration: none;
-            font-size: 13px;
-            font-weight: 500;
-            transition: 0.2s ease;
-        }
-
-        .back-button:hover {
-            background: #159bb1;
-            color: #ffffff;
-        }
-
-        .dentist-card {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            background: #ffffff;
-            border: 1px solid #e5f0f3;
-            border-radius: 16px;
-            padding: 18px 22px;
-            margin-bottom: 24px;
-        }
-
-        .dentist-avatar {
-            width: 48px;
-            height: 48px;
-            border-radius: 14px;
-            background: #eaf8fb;
-            color: #159bb1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-            font-weight: 600;
-        }
-
-        .dentist-info strong {
-            display: block;
-            color: #37474f;
-            font-size: 15px;
-        }
-
-        .dentist-info span {
-            display: block;
-            margin-top: 3px;
-            color: #90a4ae;
-            font-size: 12px;
-        }
-
-        .history-card {
-            background: #ffffff;
-            border: 1px solid #e5f0f3;
-            border-radius: 18px;
-            overflow: hidden;
-        }
-
-        .card-header {
-            padding: 23px 26px;
-            border-bottom: 1px solid #edf3f5;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .card-heading {
-            display: flex;
-            align-items: center;
-            gap: 13px;
-        }
-
-        .card-icon {
-            width: 42px;
-            height: 42px;
-            border-radius: 12px;
-            background: #eaf8fb;
-            color: #159bb1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 19px;
-        }
-
-        .card-heading h2 {
-            margin: 0;
-            font-size: 18px;
-            color: #37474f;
-            font-weight: 600;
-        }
-
-        .card-heading span {
-            display: block;
-            margin-top: 3px;
-            font-size: 12px;
-            color: #90a4ae;
-        }
-
-        .record-count {
-            font-size: 13px;
-            color: #78909c;
-        }
-
-        .table-wrapper {
-            width: 100%;
-            overflow-x: auto;
-        }
-
-        .history-table {
-            width: 100%;
-            border-collapse: collapse;
-            min-width: 850px;
-        }
-
-        .history-table th {
-            text-align: left;
-            padding: 15px 20px;
-            background: #f8fbfc;
-            color: #607d8b;
-            font-size: 12px;
-            font-weight: 600;
-            border-bottom: 1px solid #e8f0f2;
-            white-space: nowrap;
-        }
-
-        .history-table td {
-            padding: 17px 20px;
-            border-bottom: 1px solid #edf3f5;
-            vertical-align: top;
-            font-size: 13px;
-            color: #546e7a;
-        }
-
-        .history-table tbody tr:hover {
-            background: #fbfdfe;
-        }
-
-        .patient-name {
-            font-weight: 600;
-            color: #37474f;
-        }
-
-        .patient-number {
-            display: block;
-            margin-top: 3px;
-            font-size: 11px;
-            color: #90a4ae;
-        }
-
-        .appointment-number {
-            font-weight: 600;
-            color: #159bb1;
-        }
-
-        .date-value {
-            white-space: nowrap;
-            color: #546e7a;
-        }
-
-        .diagnosis-text {
-            color: #455a64;
-            font-weight: 500;
-        }
-
-        .treatment-text {
-            color: #546e7a;
-        }
-
-        .notes-text {
-            max-width: 260px;
-            line-height: 1.6;
-            color: #78909c;
-        }
-
-        .next-date {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 6px 9px;
-            border-radius: 8px;
-            background: #edfafd;
-            color: #159bb1;
-            font-size: 11px;
-            white-space: nowrap;
-        }
-
-        .empty-state {
-            padding: 70px 20px;
-            text-align: center;
-        }
-
-        .empty-icon {
-            width: 70px;
-            height: 70px;
-            margin: 0 auto 18px;
+        .treatment-header-card {
+            background: linear-gradient(135deg, rgba(14, 165, 180, 0.9), rgba(8, 127, 140, 0.95));
             border-radius: 20px;
-            background: #f0f8fa;
-            color: #8db6c0;
+            padding: 30px 35px;
+            color: #ffffff;
+            margin-bottom: 30px;
+            box-shadow: 0 15px 35px rgba(8, 127, 140, 0.25);
             display: flex;
             align-items: center;
-            justify-content: center;
-            font-size: 30px;
+            justify-content: space-between;
+            gap: 25px;
         }
 
-        .empty-state strong {
+        .treatment-header-text h2 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .treatment-header-text p {
+            font-size: 13.5px;
+            color: #d6f4f8;
+            margin: 0;
+        }
+
+        .history-main-card {
+            background: #ffffff;
+            border-radius: 18px;
+            padding: 28px 30px;
+            box-shadow: 0 10px 30px rgba(6, 38, 50, 0.08);
+            border: 1px solid #edf3f5;
+        }
+
+        .history-toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        .search-bar-wrap {
+            position: relative;
+            flex: 1;
+            min-width: 280px;
+        }
+
+        .search-bar-wrap i {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #8da4ae;
+            font-size: 16px;
+        }
+
+        .search-bar-wrap input {
+            width: 100%;
+            height: 46px;
+            border: 1.5px solid #dce8ec;
+            border-radius: 12px;
+            padding: 0 16px 0 44px;
+            font-size: 13px;
+            color: #123847;
+            background: #fbfdfe;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .search-bar-wrap input:focus {
+            border-color: #0ea5b4;
+            background: #ffffff;
+        }
+
+        .diagnosis-tag {
+            display: inline-block;
+            background: #e8f4fd;
+            color: #0b7ad1;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .procedure-text {
+            color: #294b5c;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .notes-box {
+            background: #f8fafb;
+            border: 1px solid #edf2f5;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            color: #557280;
+            margin-top: 4px;
+            max-width: 380px;
+        }
+
+        .followup-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: #fff8e6;
+            color: #b57a09;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11.5px;
+            font-weight: 600;
+        }
+
+        .empty-history-box {
+            text-align: center;
+            padding: 60px 20px;
+            color: #8da4ae;
+        }
+
+        .empty-history-box i {
+            font-size: 48px;
+            color: #b8d2dc;
+            margin-bottom: 12px;
             display: block;
-            color: #455a64;
-            font-size: 15px;
-            margin-bottom: 7px;
         }
-
-        .empty-state span {
-            color: #90a4ae;
-            font-size: 13px;
-        }
-
-        .error-message {
-            margin-bottom: 20px;
-            padding: 14px 17px;
-            border-radius: 10px;
-            background: #fff0f0;
-            border: 1px solid #ffd5d5;
-            color: #d33d3d;
-            font-size: 13px;
-        }
-
-        @media (max-width: 768px) {
-
-            .page-container {
-                padding: 20px;
-            }
-
-            .page-header {
-                align-items: flex-start;
-                flex-direction: column;
-            }
-
-            .page-title h1 {
-                font-size: 23px;
-            }
-
-            .card-header {
-                align-items: flex-start;
-                gap: 10px;
-                flex-direction: column;
-            }
-
-        }
-
     </style>
-
 </head>
-
 
 <body>
 
-<div class="page-container">
+<div class="dashboard-container">
 
+    <!-- =========================================================
+         SIDEBAR
+         ========================================================= -->
+    <aside class="sidebar" id="sidebar">
 
-    <!-- PAGE HEADER -->
-
-    <div class="page-header">
-
-        <div class="page-title">
-
-            <h1>
-                Treatment History
-            </h1>
-
-            <p>
-                Review treatment records for your patients.
-            </p>
-
+        <div class="sidebar-brand">
+            <img src="${pageContext.request.contextPath}/images/logo1.png" alt="Sunrise Dental Clinic Logo">
+            <div class="brand-text">
+                <h2>Sunrise</h2>
+                <span>Dental Clinic</span>
+            </div>
         </div>
 
+        <nav class="sidebar-navigation">
+            <p class="navigation-title">MAIN</p>
 
-        <a
-            href="${pageContext.request.contextPath}/dentist/dashboard"
-            class="back-button"
-        >
+            <a href="${pageContext.request.contextPath}/dentist/dashboard" class="nav-item">
+                <i class="bi bi-grid-1x2-fill"></i>
+                <span>Dashboard</span>
+            </a>
 
-            <i class="bi bi-arrow-left"></i>
+            <a href="${pageContext.request.contextPath}/dentist/appointments" class="nav-item">
+                <i class="bi bi-calendar-check"></i>
+                <span>My Appointments</span>
+            </a>
 
-            Back to Dashboard
-
-        </a>
-
-    </div>
-
-
-    <!-- DENTIST -->
-
-    <div class="dentist-card">
-
-        <div class="dentist-avatar">
-
-            <i class="bi bi-person-badge"></i>
-
-        </div>
-
-        <div class="dentist-info">
-
-            <strong>
-                Dr. <%= dentistName %>
-            </strong>
-
-            <span>
-                Dentist | Sunrise Dental Clinic
-            </span>
-
-        </div>
-
-    </div>
-
-
-    <!-- ERROR -->
-
-    <% if (errorMessage != null
-            && !errorMessage.isBlank()) { %>
-
-        <div class="error-message">
-
-            <i class="bi bi-exclamation-circle"></i>
-
-            <%= errorMessage %>
-
-        </div>
-
-    <% } %>
-
-
-    <!-- HISTORY CARD -->
-
-    <div class="history-card">
-
-
-        <div class="card-header">
-
-            <div class="card-heading">
-
-                <div class="card-icon">
-
-                    <i class="bi bi-clock-history"></i>
-
-                </div>
-
-                <div>
-
-                    <h2>
-                        Treatment Records
-                    </h2>
-
-                    <span>
-                        Previous clinical treatment information
+            <div class="nav-group open">
+                <button type="button" class="nav-item nav-parent" onclick="this.parentElement.classList.toggle('open')">
+                    <span class="nav-item-left">
+                        <i class="bi bi-people"></i>
+                        <span>My Patients</span>
                     </span>
-
+                    <i class="bi bi-chevron-down nav-chevron"></i>
+                </button>
+                <div class="nav-submenu open">
+                    <a href="${pageContext.request.contextPath}/dentist/patients" class="nav-subitem">
+                        <i class="bi bi-person-lines-fill"></i>
+                        <span>Patient Records</span>
+                    </a>
+                    <a href="${pageContext.request.contextPath}/dentist/treatment-history" class="nav-subitem active">
+                        <i class="bi bi-clock-history"></i>
+                        <span>Treatment History</span>
+                    </a>
                 </div>
-
             </div>
 
+            <a href="${pageContext.request.contextPath}/dentist/availability" class="nav-item">
+                <i class="bi bi-calendar2-week"></i>
+                <span>My Availability</span>
+            </a>
 
-            <div class="record-count">
+            <p class="navigation-title clinic-title">CLINIC</p>
 
-                <%= treatmentHistory.size() %>
-                record<%= treatmentHistory.size() == 1 ? "" : "s" %>
+            <a href="${pageContext.request.contextPath}/dentist/helpdesk.jsp" class="nav-item">
+                <i class="bi bi-question-circle"></i>
+                <span>Help Desk</span>
+            </a>
+        </nav>
 
-            </div>
-
+        <div class="sidebar-bottom">
+            <p class="navigation-title">ACCOUNT</p>
+            <a href="${pageContext.request.contextPath}/dentist/profile" class="nav-item">
+                <i class="bi bi-person-circle"></i>
+                <span>My Profile</span>
+            </a>
+            <a href="${pageContext.request.contextPath}/logout" class="nav-item logout-item">
+                <i class="bi bi-box-arrow-right"></i>
+                <span>Logout</span>
+            </a>
         </div>
+    </aside>
 
+    <!-- =========================================================
+         MAIN CONTENT
+         ========================================================= -->
+    <main class="main-content">
 
-        <% if (treatmentHistory.isEmpty()) { %>
+        <!-- TOPBAR -->
+        <header class="topbar">
+            <div class="topbar-left">
+                <h1>Treatment History</h1>
+                <p>Comprehensive record of dental diagnoses, procedures, and patient notes</p>
+            </div>
+            <div class="topbar-right">
+                <div class="user-profile">
+                    <div class="user-avatar">
+                        <i class="bi bi-person-fill"></i>
+                    </div>
+                    <div class="user-information">
+                        <strong>Dr. <%= dentistName %></strong>
+                        <span><%= specialization %></span>
+                    </div>
+                </div>
+            </div>
+        </header>
 
+        <!-- CONTENT -->
+        <section class="dashboard-content">
 
-            <!-- EMPTY -->
+            <!-- Hero Banner -->
+            <div class="treatment-header-card">
+                <div class="treatment-header-text">
+                    <h2>Clinical Treatment Archives</h2>
+                    <p>
+                        Review all documented dental treatments, medications prescribed, and scheduled patient follow-up sessions.
+                    </p>
+                </div>
+                <i class="bi bi-journal-medical" style="font-size: 55px; opacity: 0.85;"></i>
+            </div>
 
-            <div class="empty-state">
-
-                <div class="empty-icon">
-
-                    <i class="bi bi-journal-x"></i>
-
+            <!-- Stats Grid -->
+            <section class="statistics-grid">
+                <div class="stat-card">
+                    <div class="stat-icon appointment-icon">
+                        <i class="bi bi-file-earmark-medical"></i>
+                    </div>
+                    <div class="stat-information">
+                        <span>Total Treatments Logged</span>
+                        <strong><%= totalTreatments %></strong>
+                        <small>Clinical records</small>
+                    </div>
                 </div>
 
-                <strong>
-                    No Treatment Records Found
-                </strong>
+                <div class="stat-card">
+                    <div class="stat-icon confirmed-icon">
+                        <i class="bi bi-check-circle"></i>
+                    </div>
+                    <div class="stat-information">
+                        <span>Follow-Ups Scheduled</span>
+                        <strong><%= followUpCount %></strong>
+                        <small>Next visits noted</small>
+                    </div>
+                </div>
 
-                <span>
-                    Treatment records for your patients will appear here.
-                </span>
+                <div class="stat-card">
+                    <div class="stat-icon availability-icon">
+                        <i class="bi bi-shield-plus"></i>
+                    </div>
+                    <div class="stat-information">
+                        <span>Attending Surgeon</span>
+                        <strong>Dr. <%= dentistName %></strong>
+                        <small><%= specialization %></small>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Treatments Table Card -->
+            <div class="history-main-card">
+
+                <div class="history-toolbar">
+                    <div class="search-bar-wrap">
+                        <i class="bi bi-search"></i>
+                        <input type="text" id="treatmentSearch" placeholder="Search by patient name, diagnosis, or treatment notes..." onkeyup="filterTreatments()">
+                    </div>
+                </div>
+
+                <% if (treatmentHistory.isEmpty()) { %>
+                    <div class="empty-history-box">
+                        <i class="bi bi-folder-x"></i>
+                        <strong style="font-size: 16px; color: #355360; display: block; margin-bottom: 5px;">No Treatment Records Found</strong>
+                        <p style="font-size: 13px; margin: 0;">Completed patient consultations and logged medical records will be archived here.</p>
+                    </div>
+                <% } else { %>
+                    <div class="table-wrapper">
+                        <table id="treatmentsTable">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Patient</th>
+                                    <th>Diagnosis</th>
+                                    <th>Treatment & Notes</th>
+                                    <th>Next Follow-Up</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% for (Treatment t : treatmentHistory) { %>
+                                    <tr data-search="<%= (t.getPatientName() != null ? t.getPatientName() : "") + " " + (t.getDiagnosis() != null ? t.getDiagnosis() : "") + " " + (t.getTreatmentProvided() != null ? t.getTreatmentProvided() : "") + " " + (t.getTreatmentNotes() != null ? t.getTreatmentNotes() : "") %>">
+                                        <td>
+                                            <strong style="color: #0c3d4f; font-size: 13px;">
+                                                <%= t.getCreatedAt() != null ? dateFormat.format(t.getCreatedAt()) : "-" %>
+                                            </strong>
+                                            <% if (t.getAppointmentNumber() != null && !t.getAppointmentNumber().isBlank()) { %>
+                                                <small style="display: block; color: #8da4ae; font-size: 11px;"><%= t.getAppointmentNumber() %></small>
+                                            <% } %>
+                                        </td>
+                                        <td>
+                                            <div class="patient-cell">
+                                                <div class="patient-avatar">
+                                                    <%= t.getPatientName() != null && !t.getPatientName().isBlank() ? t.getPatientName().substring(0, 1).toUpperCase() : "P" %>
+                                                </div>
+                                                <div>
+                                                    <strong><%= t.getPatientName() != null ? t.getPatientName() : "Patient #" + t.getPatientId() %></strong>
+                                                    <span>ID: #<%= t.getPatientId() %></span>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <span class="diagnosis-tag">
+                                                <%= t.getDiagnosis() != null && !t.getDiagnosis().isBlank() ? t.getDiagnosis() : "General Consultation" %>
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <div class="procedure-text">
+                                                <%= t.getTreatmentProvided() != null && !t.getTreatmentProvided().isBlank() ? t.getTreatmentProvided() : "-" %>
+                                            </div>
+                                            <% if (t.getTreatmentNotes() != null && !t.getTreatmentNotes().isBlank()) { %>
+                                                <div class="notes-box">
+                                                    <i class="bi bi-chat-left-text" style="margin-right: 4px; color: #0ea5b4;"></i>
+                                                    <%= t.getTreatmentNotes() %>
+                                                </div>
+                                            <% } %>
+                                        </td>
+                                        <td>
+                                            <% if (t.getNextAppointmentDate() != null) { %>
+                                                <span class="followup-pill">
+                                                    <i class="bi bi-calendar-check"></i>
+                                                    <%= dateFormat.format(t.getNextAppointmentDate()) %>
+                                                </span>
+                                            <% } else { %>
+                                                <span style="color: #9cb0ba; font-size: 12px;">None Scheduled</span>
+                                            <% } %>
+                                        </td>
+                                    </tr>
+                                <% } %>
+                            </tbody>
+                        </table>
+                    </div>
+                <% } %>
 
             </div>
 
+        </section>
 
-        <% } else { %>
-
-
-            <!-- TABLE -->
-
-            <div class="table-wrapper">
-
-                <table class="history-table">
-
-                    <thead>
-
-                    <tr>
-
-                        <th>
-                            Patient
-                        </th>
-
-                        <th>
-                            Appointment
-                        </th>
-
-                        <th>
-                            Date
-                        </th>
-
-                        <th>
-                            Diagnosis
-                        </th>
-
-                        <th>
-                            Treatment
-                        </th>
-
-                        <th>
-                            Notes
-                        </th>
-
-                        <th>
-                            Next Appointment
-                        </th>
-
-                    </tr>
-
-                    </thead>
-
-
-                    <tbody>
-
-                    <%
-                        for (Treatment treatment :
-                                treatmentHistory) {
-
-                            String patientName =
-                                    treatment.getPatientName();
-
-                            if (patientName == null
-                                    || patientName.isBlank()) {
-
-                                patientName =
-                                        "Unknown Patient";
-                            }
-
-                            String patientNumber = "-";
-
-                            String appointmentNumber =
-                                    treatment.getAppointmentNumber();
-
-                            if (appointmentNumber == null
-                                    || appointmentNumber.isBlank()) {
-
-                                appointmentNumber = "-";
-                            }
-
-                            String diagnosis =
-                                    treatment.getDiagnosis();
-
-                            if (diagnosis == null
-                                    || diagnosis.isBlank()) {
-
-                                diagnosis = "-";
-                            }
-
-                            String treatmentProvided =
-                                    treatment.getTreatmentProvided();
-
-                            if (treatmentProvided == null
-                                    || treatmentProvided.isBlank()) {
-
-                                treatmentProvided = "-";
-                            }
-
-                            String notes =
-                                    treatment.getTreatmentNotes();
-
-                            if (notes == null
-                                    || notes.isBlank()) {
-
-                                notes = "-";
-                            }
-                    %>
-
-
-                        <tr>
-
-                            <!-- PATIENT -->
-
-                            <td>
-
-                                <div class="patient-name">
-                                    <%= patientName %>
-                                </div>
-
-                                <span class="patient-number">
-
-                                    Patient ID:
-                                    <%= treatment.getPatientId() %>
-
-                                </span>
-
-                            </td>
-
-
-                            <!-- APPOINTMENT -->
-
-                            <td>
-
-                                <span class="appointment-number">
-
-                                    <%= appointmentNumber %>
-
-                                </span>
-
-                            </td>
-
-
-                            <!-- DATE -->
-
-                            <td>
-
-                                <span class="date-value">
-
-                                    <%
-                                        if (treatment.getCreatedAt()
-                                                != null) {
-
-                                    %>
-
-                                        <%= dateTimeFormat.format(
-                                                treatment.getCreatedAt()
-                                        ) %>
-
-                                    <%
-                                        } else {
-                                    %>
-
-                                        -
-
-                                    <%
-                                        }
-                                    %>
-
-                                </span>
-
-                            </td>
-
-
-                            <!-- DIAGNOSIS -->
-
-                            <td>
-
-                                <span class="diagnosis-text">
-
-                                    <%= diagnosis %>
-
-                                </span>
-
-                            </td>
-
-
-                            <!-- TREATMENT -->
-
-                            <td>
-
-                                <span class="treatment-text">
-
-                                    <%= treatmentProvided %>
-
-                                </span>
-
-                            </td>
-
-
-                            <!-- NOTES -->
-
-                            <td>
-
-                                <div class="notes-text">
-
-                                    <%= notes %>
-
-                                </div>
-
-                            </td>
-
-
-                            <!-- NEXT APPOINTMENT -->
-
-                            <td>
-
-                                <%
-                                    if (treatment.getNextAppointmentDate()
-                                            != null) {
-                                %>
-
-                                    <span class="next-date">
-
-                                        <i class="bi bi-calendar-check"></i>
-
-                                        <%= dateFormat.format(
-                                                treatment.getNextAppointmentDate()
-                                        ) %>
-
-                                    </span>
-
-                                <%
-                                    } else {
-                                %>
-
-                                    -
-
-                                <%
-                                    }
-                                %>
-
-                            </td>
-
-                        </tr>
-
-
-                    <%
-                        }
-                    %>
-
-                    </tbody>
-
-                </table>
-
-            </div>
-
-
-        <% } %>
-
-
-    </div>
-
+    </main>
 
 </div>
 
-</body>
+<script>
+function filterTreatments() {
+    const input = document.getElementById("treatmentSearch").value.toLowerCase();
+    const rows = document.querySelectorAll("#treatmentsTable tbody tr");
 
+    rows.forEach(row => {
+        const text = row.getAttribute("data-search").toLowerCase();
+        if (text.includes(input)) {
+            row.style.display = "";
+        } else {
+            row.style.display = "none";
+        }
+    });
+}
+</script>
+
+</body>
 </html>

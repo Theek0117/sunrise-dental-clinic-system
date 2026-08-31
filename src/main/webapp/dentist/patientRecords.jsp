@@ -1,682 +1,395 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-
 <%@ page import="java.util.List" %>
 <%@ page import="java.util.Collections" %>
 <%@ page import="com.sunrise.dental.model.Patient" %>
+<%@ page import="com.sunrise.dental.model.Dentist" %>
 
 <%
-    String staffName =
-            (String) session.getAttribute("staffName");
-
+    String contextPath = request.getContextPath();
+    String staffName = (String) session.getAttribute("staffName");
     if (staffName == null || staffName.isBlank()) {
         staffName = "Dentist";
     }
 
-    List<Patient> patients =
-            (List<Patient>) request.getAttribute("patients");
+    Dentist loggedInDentist = (Dentist) request.getAttribute("loggedInDentist");
+    String dentistName = (loggedInDentist != null && loggedInDentist.getName() != null && !loggedInDentist.getName().isBlank())
+            ? loggedInDentist.getName() : staffName;
+    String specialization = (loggedInDentist != null && loggedInDentist.getSpecialization() != null)
+            ? loggedInDentist.getSpecialization() : "Dental Specialist";
 
+    List<Patient> patients = (List<Patient>) request.getAttribute("patients");
     if (patients == null) {
         patients = Collections.emptyList();
     }
 
-    String contextPath =
-            request.getContextPath();
+    int totalPatients = patients.size();
+    long activePatients = patients.stream().filter(p -> p.getStatus() == null || "ACTIVE".equalsIgnoreCase(p.getStatus())).count();
 %>
 
 <!DOCTYPE html>
-
 <html lang="en">
-
 <head>
-
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Records | Sunrise Dental Clinic</title>
 
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
-    <title>
-        Patient Records | Sunrise Dental Clinic
-    </title>
-
-    <link
-        rel="stylesheet"
-        href="<%= contextPath %>/css/reception.css"
-    >
-
-    <link
-        rel="stylesheet"
-        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
-    >
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="<%= contextPath %>/css/reception.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
     <style>
-
-        .patients-page {
-            padding: 30px;
-        }
-
-        .page-header {
+        .patients-header-card {
+            background: linear-gradient(135deg, rgba(14, 165, 180, 0.9), rgba(8, 127, 140, 0.95));
+            border-radius: 20px;
+            padding: 30px 35px;
+            color: #ffffff;
+            margin-bottom: 30px;
+            box-shadow: 0 15px 35px rgba(8, 127, 140, 0.25);
             display: flex;
+            align-items: center;
             justify-content: space-between;
-            align-items: center;
-            margin-bottom: 25px;
+            gap: 25px;
         }
 
-        .page-header h2 {
-            margin: 0;
-            color: #17324d;
-            font-size: 25px;
-        }
-
-        .page-header p {
-            margin: 7px 0 0;
-            color: #78909c;
-            font-size: 14px;
-        }
-
-        .record-count {
-            padding: 9px 16px;
-            border-radius: 20px;
-            background: #edfafd;
-            color: #079eb5;
-            font-size: 13px;
-            font-weight: 600;
-        }
-
-        .patients-card {
-            background: #ffffff;
-            border-radius: 16px;
-            box-shadow: 0 4px 18px rgba(30, 70, 90, 0.08);
-            overflow: hidden;
-        }
-
-        .table-wrapper {
-            overflow-x: auto;
-        }
-
-        .patients-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        .patients-table th {
-            padding: 15px 18px;
-            background: #f7fafb;
-            text-align: left;
-            color: #78909c;
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: .4px;
-            white-space: nowrap;
-        }
-
-        .patients-table td {
-            padding: 16px 18px;
-            border-bottom: 1px solid #edf2f4;
-            color: #45606e;
-            font-size: 13px;
-            vertical-align: middle;
-        }
-
-        .patients-table tr:last-child td {
-            border-bottom: none;
-        }
-
-        .patient-cell {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            min-width: 200px;
-        }
-
-        .patient-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: #edfafd;
-            color: #079eb5;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 13px;
+        .patients-header-text h2 {
+            font-size: 24px;
             font-weight: 700;
-            flex-shrink: 0;
+            margin-bottom: 6px;
         }
 
-        .patient-name {
-            color: #294b5c;
-            font-weight: 600;
+        .patients-header-text p {
+            font-size: 13.5px;
+            color: #d6f4f8;
+            margin: 0;
         }
 
-        .patient-number {
-            display: block;
-            margin-top: 3px;
-            color: #91a4ad;
-            font-size: 11px;
+        .patients-main-card {
+            background: #ffffff;
+            border-radius: 18px;
+            padding: 28px 30px;
+            box-shadow: 0 10px 30px rgba(6, 38, 50, 0.08);
+            border: 1px solid #edf3f5;
         }
 
-        .status {
+        .patients-toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        .search-bar-wrap {
+            position: relative;
+            flex: 1;
+            min-width: 280px;
+        }
+
+        .search-bar-wrap i {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #8da4ae;
+            font-size: 16px;
+        }
+
+        .search-bar-wrap input {
+            width: 100%;
+            height: 46px;
+            border: 1.5px solid #dce8ec;
+            border-radius: 12px;
+            padding: 0 16px 0 44px;
+            font-size: 13px;
+            color: #123847;
+            background: #fbfdfe;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .search-bar-wrap input:focus {
+            border-color: #0ea5b4;
+            background: #ffffff;
+        }
+
+        .contact-info-block {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            font-size: 12px;
+            color: #557280;
+        }
+
+        .contact-info-block span {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .contact-info-block i {
+            color: #0ea5b4;
+            font-size: 13px;
+        }
+
+        .action-pill-btn {
             display: inline-flex;
-            padding: 6px 11px;
-            border-radius: 20px;
-            font-size: 11px;
+            align-items: center;
+            gap: 6px;
+            padding: 7px 14px;
+            border-radius: 8px;
+            font-size: 12px;
             font-weight: 600;
+            text-decoration: none;
+            background: #edfafd;
+            color: #078c9b;
+            border: 1px solid rgba(7, 140, 155, 0.15);
+            transition: all 0.2s ease;
         }
 
-        .status-active {
-            background: #eaf8ef;
-            color: #16844a;
+        .action-pill-btn:hover {
+            background: #0ea5b4;
+            color: #ffffff;
+            transform: translateY(-1px);
         }
 
-        .status-inactive {
-            background: #fdecec;
-            color: #d53a3a;
-        }
-
-        .empty-state {
-            padding: 65px 20px;
+        .empty-patients-box {
             text-align: center;
-            color: #78909c;
+            padding: 60px 20px;
+            color: #8da4ae;
         }
 
-        .empty-state i {
+        .empty-patients-box i {
+            font-size: 48px;
+            color: #b8d2dc;
+            margin-bottom: 12px;
             display: block;
-            font-size: 42px;
-            margin-bottom: 15px;
-            color: #b5cbd4;
         }
-
-        .empty-state strong {
-            display: block;
-            margin-bottom: 5px;
-            color: #45606e;
-            font-size: 15px;
-        }
-
-        @media (max-width: 768px) {
-
-            .patients-page {
-                padding: 20px;
-            }
-
-            .page-header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 15px;
-            }
-
-        }
-
     </style>
-
 </head>
-
 
 <body>
 
 <div class="dashboard-container">
 
-    <!-- =====================================================
+    <!-- =========================================================
          SIDEBAR
-         ===================================================== -->
-
-    <aside
-        class="sidebar"
-        id="sidebar"
-    >
+         ========================================================= -->
+    <aside class="sidebar" id="sidebar">
 
         <div class="sidebar-brand">
-
-            <img
-                src="<%= contextPath %>/images/logo1.png"
-                alt="Sunrise Dental Clinic Logo"
-            >
-
+            <img src="<%= contextPath %>/images/logo1.png" alt="Sunrise Dental Clinic Logo">
             <div class="brand-text">
-
                 <h2>Sunrise</h2>
-
-                <span>
-                    Dental Clinic
-                </span>
-
+                <span>Dental Clinic</span>
             </div>
-
         </div>
 
-
         <nav class="sidebar-navigation">
+            <p class="navigation-title">MAIN</p>
 
-            <p class="navigation-title">
-                MAIN
-            </p>
-
-
-            <a
-                href="<%= contextPath %>/dentist/dashboard"
-                class="nav-item"
-            >
-
+            <a href="<%= contextPath %>/dentist/dashboard" class="nav-item">
                 <i class="bi bi-grid-1x2-fill"></i>
-
-                <span>
-                    Dashboard
-                </span>
-
+                <span>Dashboard</span>
             </a>
 
-
-            <a
-                href="<%= contextPath %>/dentist/appointments"
-                class="nav-item"
-            >
-
+            <a href="<%= contextPath %>/dentist/appointments" class="nav-item">
                 <i class="bi bi-calendar-check"></i>
-
-                <span>
-                    My Appointments
-                </span>
-
+                <span>My Appointments</span>
             </a>
-
 
             <div class="nav-group open">
-
-                <button
-                    type="button"
-                    class="nav-item nav-parent"
-                    onclick="this.parentElement.classList.toggle('open')"
-                >
-
+                <button type="button" class="nav-item nav-parent" onclick="this.parentElement.classList.toggle('open')">
                     <span class="nav-item-left">
-
                         <i class="bi bi-people"></i>
-
-                        <span>
-                            My Patients
-                        </span>
-
+                        <span>My Patients</span>
                     </span>
-
                     <i class="bi bi-chevron-down nav-chevron"></i>
-
                 </button>
-
-
-                <div class="nav-submenu">
-
-                    <a
-                        href="<%= contextPath %>/dentist/patients"
-                        class="nav-subitem active"
-                    >
-
+                <div class="nav-submenu open">
+                    <a href="<%= contextPath %>/dentist/patients" class="nav-subitem active">
                         <i class="bi bi-person-lines-fill"></i>
-
-                        <span>
-                            Patient Records
-                        </span>
-
+                        <span>Patient Records</span>
                     </a>
-
-
-                    <a
-                        href="<%= contextPath %>/dentist/treatment-history"
-                        class="nav-subitem"
-                    >
-
+                    <a href="<%= contextPath %>/dentist/treatment-history" class="nav-subitem">
                         <i class="bi bi-clock-history"></i>
-
-                        <span>
-                            Treatment History
-                        </span>
-
+                        <span>Treatment History</span>
                     </a>
-
                 </div>
-
             </div>
 
-
-            <a
-                href="<%= contextPath %>/dentist/availability"
-                class="nav-item"
-            >
-
+            <a href="<%= contextPath %>/dentist/availability" class="nav-item">
                 <i class="bi bi-calendar2-week"></i>
-
-                <span>
-                    My Availability
-                </span>
-
+                <span>My Availability</span>
             </a>
 
+            <p class="navigation-title clinic-title">CLINIC</p>
 
-            <p class="navigation-title clinic-title">
-                CLINIC
-            </p>
-
-
-            <a
-                href="#"
-                class="nav-item"
-            >
-
+            <a href="<%= contextPath %>/dentist/helpdesk.jsp" class="nav-item">
                 <i class="bi bi-question-circle"></i>
-
-                <span>
-                    Help Desk
-                </span>
-
+                <span>Help Desk</span>
             </a>
-
         </nav>
 
+        <div class="sidebar-bottom">
+            <p class="navigation-title">ACCOUNT</p>
+            <a href="<%= contextPath %>/dentist/profile" class="nav-item">
+                <i class="bi bi-person-circle"></i>
+                <span>My Profile</span>
+            </a>
+            <a href="<%= contextPath %>/logout" class="nav-item logout-item">
+                <i class="bi bi-box-arrow-right"></i>
+                <span>Logout</span>
+            </a>
+        </div>
     </aside>
 
-
-    <!-- =====================================================
+    <!-- =========================================================
          MAIN CONTENT
-         ===================================================== -->
-
+         ========================================================= -->
     <main class="main-content">
 
+        <!-- TOPBAR -->
         <header class="topbar">
-
             <div class="topbar-left">
-
-                <button
-                    type="button"
-                    class="menu-button"
-                    id="menuButton"
-                >
-
-                    <i class="bi bi-list"></i>
-
-                </button>
-
-
-                <div>
-
-                    <strong>
-                        Patient Records
-                    </strong>
-
-                    <span>
-                        Registered patients
-                    </span>
-
-                </div>
-
+                <h1>Patient Records</h1>
+                <p>Directory of registered clinic patients and medical profiles</p>
             </div>
-
-
             <div class="topbar-right">
-
-                <button
-                    type="button"
-                    class="icon-button"
-                    title="Notifications"
-                >
-
-                    <i class="bi bi-bell"></i>
-
-                </button>
-
-
                 <div class="user-profile">
-
                     <div class="user-avatar">
-
                         <i class="bi bi-person-fill"></i>
-
                     </div>
-
-
                     <div class="user-information">
-
-                        <strong>
-                            <%= staffName %>
-                        </strong>
-
-                        <span>
-                            Dentist
-                        </span>
-
+                        <strong>Dr. <%= dentistName %></strong>
+                        <span><%= specialization %></span>
                     </div>
-
-                    <i class="bi bi-chevron-down profile-arrow"></i>
-
                 </div>
-
             </div>
-
         </header>
 
+        <!-- CONTENT -->
+        <section class="dashboard-content">
 
-        <section class="patients-page">
-
-
-            <div class="page-header">
-
-                <div>
-
-                    <h2>
-                        Patient Records
-                    </h2>
-
+            <!-- Hero Banner -->
+            <div class="patients-header-card">
+                <div class="patients-header-text">
+                    <h2>Patient Clinical Directory</h2>
                     <p>
-                        View registered patient information.
+                        Search registered patients to review contact details, clinical history, diagnostic notes, and past appointments.
                     </p>
-
                 </div>
-
-
-                <div class="record-count">
-
-                    <i class="bi bi-people"></i>
-
-                    <%= patients.size() %>
-
-                    Patient<%= patients.size() == 1 ? "" : "s" %>
-
-                </div>
-
+                <i class="bi bi-people-fill" style="font-size: 55px; opacity: 0.85;"></i>
             </div>
 
+            <!-- Stats Grid -->
+            <section class="statistics-grid">
+                <div class="stat-card">
+                    <div class="stat-icon patient-icon">
+                        <i class="bi bi-person-badge"></i>
+                    </div>
+                    <div class="stat-information">
+                        <span>Total Registered Patients</span>
+                        <strong><%= totalPatients %></strong>
+                        <small>Active clinical roster</small>
+                    </div>
+                </div>
 
-            <div class="patients-card">
+                <div class="stat-card">
+                    <div class="stat-icon confirmed-icon">
+                        <i class="bi bi-person-check-fill"></i>
+                    </div>
+                    <div class="stat-information">
+                        <span>Active Patients</span>
+                        <strong><%= activePatients %></strong>
+                        <small>Eligible for consultations</small>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon availability-icon">
+                        <i class="bi bi-hospital"></i>
+                    </div>
+                    <div class="stat-information">
+                        <span>Dental Clinic</span>
+                        <strong>Sunrise Health</strong>
+                        <small>Patient Records Unit</small>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Patients Table Card -->
+            <div class="patients-main-card">
+
+                <div class="patients-toolbar">
+                    <div class="search-bar-wrap">
+                        <i class="bi bi-search"></i>
+                        <input type="text" id="patientSearch" placeholder="Search by patient name, patient #, phone number, or email..." onkeyup="filterPatients()">
+                    </div>
+                </div>
 
                 <% if (patients.isEmpty()) { %>
-
-                    <div class="empty-state">
-
-                        <i class="bi bi-person-x"></i>
-
-                        <strong>
-                            No patient records found
-                        </strong>
-
-                        <span>
-                            There are currently no patients registered.
-                        </span>
-
+                    <div class="empty-patients-box">
+                        <i class="bi bi-people"></i>
+                        <strong style="font-size: 16px; color: #355360; display: block; margin-bottom: 5px;">No Patient Records Found</strong>
+                        <p style="font-size: 13px; margin: 0;">Patients registered through reception will be listed in this clinical directory.</p>
                     </div>
-
                 <% } else { %>
-
-
                     <div class="table-wrapper">
-
-                        <table class="patients-table">
-
+                        <table id="patientsTable">
                             <thead>
-
-                            <tr>
-
-                                <th>
-                                    Patient
-                                </th>
-
-                                <th>
-                                    Contact Number
-                                </th>
-
-                                <th>
-                                    Email
-                                </th>
-
-                                <th>
-                                    Address
-                                </th>
-
-                                <th>
-                                    Status
-                                </th>
-
-                            </tr>
-
-                            </thead>
-
-
-                            <tbody>
-
-                            <% for (Patient patient : patients) { %>
-
-                                <%
-                                    String initials = "P";
-
-                                    if (patient.getName() != null
-                                            && !patient.getName().trim().isEmpty()) {
-
-                                        String[] parts =
-                                                patient.getName()
-                                                        .trim()
-                                                        .split("\\s+");
-
-                                        if (parts.length >= 2) {
-
-                                            initials =
-                                                    (
-                                                        parts[0].substring(0, 1)
-                                                        +
-                                                        parts[parts.length - 1]
-                                                                .substring(0, 1)
-                                                    ).toUpperCase();
-
-                                        } else {
-
-                                            initials =
-                                                    parts[0]
-                                                            .substring(
-                                                                    0,
-                                                                    Math.min(
-                                                                            2,
-                                                                            parts[0].length()
-                                                                    )
-                                                            )
-                                                            .toUpperCase();
-
-                                        }
-
-                                    }
-
-                                    String status =
-                                            patient.getStatus() != null
-                                                    ? patient.getStatus()
-                                                    : "UNKNOWN";
-
-                                    boolean active =
-                                            "ACTIVE".equalsIgnoreCase(status);
-                                %>
-
-
                                 <tr>
-
-                                    <td>
-
-                                        <div class="patient-cell">
-
-                                            <div class="patient-avatar">
-                                                <%= initials %>
-                                            </div>
-
-
-                                            <div>
-
-                                                <div class="patient-name">
-
-                                                    <%= patient.getName() != null
-                                                            ? patient.getName()
-                                                            : "-" %>
-
-                                                </div>
-
-
-                                                <span class="patient-number">
-
-                                                    <%= patient.getPatientNumber() != null
-                                                            ? patient.getPatientNumber()
-                                                            : "-" %>
-
-                                                </span>
-
-                                            </div>
-
-                                        </div>
-
-                                    </td>
-
-
-                                    <td>
-
-                                        <%= patient.getContactNumber() != null
-                                                ? patient.getContactNumber()
-                                                : "-" %>
-
-                                    </td>
-
-
-                                    <td>
-
-                                        <%= patient.getEmail() != null
-                                                ? patient.getEmail()
-                                                : "-" %>
-
-                                    </td>
-
-
-                                    <td>
-
-                                        <%= patient.getAddress() != null
-                                                ? patient.getAddress()
-                                                : "-" %>
-
-                                    </td>
-
-
-                                    <td>
-
-                                        <span class="status <%= active
-                                                ? "status-active"
-                                                : "status-inactive" %>">
-
-                                            <%= status %>
-
-                                        </span>
-
-                                    </td>
-
+                                    <th>Patient Details</th>
+                                    <th>Contact Information</th>
+                                    <th>Address</th>
+                                    <th>Status</th>
+                                    <th>Clinical History</th>
                                 </tr>
-
-
-                            <% } %>
-
+                            </thead>
+                            <tbody>
+                                <% for (Patient p : patients) { %>
+                                    <tr data-search="<%= (p.getName() != null ? p.getName() : "") + " " + (p.getPatientNumber() != null ? p.getPatientNumber() : "") + " " + (p.getContactNumber() != null ? p.getContactNumber() : "") + " " + (p.getEmail() != null ? p.getEmail() : "") + " " + (p.getAddress() != null ? p.getAddress() : "") %>">
+                                        <td>
+                                            <div class="patient-cell">
+                                                <div class="patient-avatar">
+                                                    <%= p.getName() != null && !p.getName().isBlank() ? p.getName().substring(0, 1).toUpperCase() : "P" %>
+                                                </div>
+                                                <div>
+                                                    <strong><%= p.getName() != null ? p.getName() : "Patient #" + p.getPatientId() %></strong>
+                                                    <span>#<%= p.getPatientNumber() != null ? p.getPatientNumber() : "PAT-" + p.getPatientId() %></span>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="contact-info-block">
+                                                <span><i class="bi bi-telephone-fill"></i> <%= p.getContactNumber() != null && !p.getContactNumber().isBlank() ? p.getContactNumber() : "N/A" %></span>
+                                                <span><i class="bi bi-envelope-fill"></i> <%= p.getEmail() != null && !p.getEmail().isBlank() ? p.getEmail() : "N/A" %></span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <span style="color: #455a64; font-size: 12.5px;">
+                                                <%= p.getAddress() != null && !p.getAddress().isBlank() ? p.getAddress() : "N/A" %>
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <span class="status <%= p.getStatus() == null || "ACTIVE".equalsIgnoreCase(p.getStatus()) ? "status-confirmed" : "status-cancelled" %>">
+                                                <%= p.getStatus() != null ? p.getStatus() : "ACTIVE" %>
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <a href="<%= contextPath %>/dentist/treatment-history" class="action-pill-btn">
+                                                <i class="bi bi-clock-history"></i> View Treatments
+                                            </a>
+                                        </td>
+                                    </tr>
+                                <% } %>
                             </tbody>
-
                         </table>
-
                     </div>
-
-
                 <% } %>
 
             </div>
@@ -687,32 +400,21 @@
 
 </div>
 
-
 <script>
+function filterPatients() {
+    const input = document.getElementById("patientSearch").value.toLowerCase();
+    const rows = document.querySelectorAll("#patientsTable tbody tr");
 
-    const menuButton =
-        document.getElementById("menuButton");
-
-    const sidebar =
-        document.getElementById("sidebar");
-
-    if (menuButton && sidebar) {
-
-        menuButton.addEventListener(
-            "click",
-            function () {
-
-                sidebar.classList.toggle(
-                    "sidebar-open"
-                );
-
-            }
-        );
-
-    }
-
+    rows.forEach(row => {
+        const text = row.getAttribute("data-search").toLowerCase();
+        if (text.includes(input)) {
+            row.style.display = "";
+        } else {
+            row.style.display = "none";
+        }
+    });
+}
 </script>
 
 </body>
-
 </html>

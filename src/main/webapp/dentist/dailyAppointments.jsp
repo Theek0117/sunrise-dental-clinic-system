@@ -293,23 +293,15 @@
 
 
         .appointments-title-area h2 {
-
             margin: 0;
-
-            color: #173b4d;
-
+            color: #ffffff;
             font-size: 24px;
-
             font-weight: 700;
         }
 
-
         .appointments-title-area p {
-
             margin: 5px 0 0;
-
-            color: #78909c;
-
+            color: #cdeaf0;
             font-size: 13px;
         }
 
@@ -1325,7 +1317,7 @@
                     </h1>
 
                     <p>
-                        Clinical Schedule
+                        View and manage your clinical schedule by date.
                     </p>
 
                 </div>
@@ -1362,7 +1354,7 @@
                     <div class="user-information">
 
                         <strong>
-                            Dr. <%= dentistName %>
+                            <%= dentistName %>
                         </strong>
 
                         <span>
@@ -1388,25 +1380,41 @@
         <section class="dashboard-content">
 
 
-            <!-- PAGE HEADER -->
-
-            <div class="appointments-page-header">
+            
 
 
-                <div class="appointments-title-area">
+            <!-- SELECTED DATE -->
 
-                    <h2>
-                        My Appointments
-                    </h2>
+            <div class="selected-date-banner">
 
-                    <p>
-                        View and manage your clinical schedule by date.
-                    </p>
+
+                <div class="selected-date-content">
+
+                    <div class="selected-date-icon">
+
+                        <i class="bi bi-calendar-check"></i>
+
+                    </div>
+
+
+                    <div>
+
+                        <h3>
+                            <%= displayDate %>
+                        </h3>
+
+                        <p>
+                            Your appointments for the selected date
+                        </p>
+
+                    </div>
 
                 </div>
 
 
-                <!-- DATE PICKER -->
+                <!-- TODAY BUTTON -->
+                
+                 <!-- DATE PICKER -->
 
                 <form
                     class="date-selector"
@@ -1445,51 +1453,7 @@
 
                 </form>
 
-            </div>
-
-
-            <!-- SELECTED DATE -->
-
-            <div class="selected-date-banner">
-
-
-                <div class="selected-date-content">
-
-                    <div class="selected-date-icon">
-
-                        <i class="bi bi-calendar-check"></i>
-
-                    </div>
-
-
-                    <div>
-
-                        <h3>
-                            <%= displayDate %>
-                        </h3>
-
-                        <p>
-                            Your appointments for the selected date
-                        </p>
-
-                    </div>
-
-                </div>
-
-
-                <!-- TODAY BUTTON -->
-
-                <a
-                    href="${pageContext.request.contextPath}/dentist/appointments"
-                    class="today-button"
-                >
-
-                    <i class="bi bi-calendar-day"></i>
-
-                    Today
-
-                </a>
-
+                
             </div>
 
 
@@ -1629,7 +1593,7 @@
             <section class="appointments-section">
 
 
-                <div class="section-heading">
+                <div class="section-heading" style="display: flex; justify-content: space-between; align-items: center; gap: 20px; flex-wrap: wrap;">
 
                     <div>
 
@@ -1641,6 +1605,19 @@
                             Only appointments assigned to you are displayed.
                         </p>
 
+                    </div>
+
+                    <div style="position: relative; min-width: 280px; flex: 0 1 340px;">
+                        <i class="bi bi-search" style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #8da4ae; font-size: 14px;"></i>
+                        <input
+                            type="text"
+                            id="appointmentSearch"
+                            placeholder="Search patient, #PAT, APT #..."
+                            onkeyup="filterAppointments()"
+                            style="width: 100%; height: 40px; border: 1.5px solid #dce8ec; border-radius: 10px; padding: 0 14px 0 38px; font-size: 13px; color: #123847; background: #fbfdfe; outline: none; box-sizing: border-box; transition: border-color 0.2s;"
+                            onfocus="this.style.borderColor='#0ea5b4'; this.style.background='#ffffff';"
+                            onblur="this.style.borderColor='#dce8ec'; this.style.background='#fbfdfe';"
+                        >
                     </div>
 
                 </div>
@@ -1818,7 +1795,7 @@
                             %>
 
 
-                            <tr>
+                            <tr data-search="<%= patientName + " " + patientNumber + " " + (appointment.getAppointmentNumber() != null ? appointment.getAppointmentNumber() : "") + " " + appointment.getAppointmentId() + " " + reason %>">
 
 
                                 <!-- TIME -->
@@ -2031,6 +2008,21 @@
 
             }
         );
+    }
+
+    function filterAppointments() {
+        const input = (document.getElementById("appointmentSearch").value || "").toLowerCase();
+        const rows = document.querySelectorAll(".appointments-table tbody tr");
+
+        rows.forEach(row => {
+            const searchData = (row.getAttribute("data-search") || "").toLowerCase();
+            if (!searchData) return;
+            if (searchData.includes(input)) {
+                row.style.display = "";
+            } else {
+                row.style.display = "none";
+            }
+        });
     }
 
 </script>

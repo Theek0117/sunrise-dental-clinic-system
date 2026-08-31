@@ -175,18 +175,17 @@ public class DentistDashboardServlet
             }
         }
 
-        /*
-         * Unique patients associated with this
-         * dentist across their appointments.
-         */
         long myPatientCount =
                 allDentistAppointments
                         .stream()
-                        .map(
-                            Appointment::getPatientId
-                        )
+                        .map(Appointment::getPatientId)
                         .distinct()
                         .count();
+
+        request.setAttribute(
+                "totalPatientCount",
+                (int) myPatientCount
+        );
 
         /*
          * Data for JSP.

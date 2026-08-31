@@ -1,6 +1,7 @@
 package com.sunrise.dental.dao;
 
 import java.sql.Date;
+import java.sql.Time;
 import java.util.List;
 
 import com.sunrise.dental.model.DentistAvailability;
@@ -14,5 +15,16 @@ public interface DentistAvailabilityDAO {
 
     DentistAvailability findById(
             int availabilityId
+    );
+
+    boolean save(
+            DentistAvailability availability
+    );
+
+    boolean hasOverlap(
+            int dentistId,
+            Date availableDate,
+            Time startTime,
+            Time endTime
     );
 }

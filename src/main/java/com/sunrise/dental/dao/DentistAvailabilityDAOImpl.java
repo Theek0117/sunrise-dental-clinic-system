@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,7 +52,6 @@ public class DentistAvailabilityDAOImpl
             ) {
 
                 if (resultSet.next()) {
-
                     return mapAvailability(
                             resultSet
                     );
@@ -64,6 +64,7 @@ public class DentistAvailabilityDAOImpl
 
         return null;
     }
+
 
     @Override
     public List<DentistAvailability>
@@ -131,6 +132,147 @@ public class DentistAvailabilityDAOImpl
 
         return availabilityList;
     }
+
+
+    // =========================================================
+    // SAVE AVAILABILITY
+    // =========================================================
+
+    @Override
+    public boolean save(
+            DentistAvailability availability) {
+
+        String sql = """
+                INSERT INTO dentist_availability
+                (
+                    dentist_id,
+                    available_date,
+                    start_time,
+                    end_time,
+                    slot_capacity,
+                    status
+                )
+                VALUES (?, ?, ?, ?, ?, ?)
+                """;
+
+        try (
+            Connection connection =
+                    DBConnection.getConnection();
+
+            PreparedStatement statement =
+                    connection.prepareStatement(sql)
+        ) {
+
+            statement.setInt(
+                    1,
+                    availability.getDentistId()
+            );
+
+            statement.setDate(
+                    2,
+                    availability.getAvailableDate()
+            );
+
+            statement.setTime(
+                    3,
+                    availability.getStartTime()
+            );
+
+            statement.setTime(
+                    4,
+                    availability.getEndTime()
+            );
+
+            statement.setInt(
+                    5,
+                    availability.getSlotCapacity()
+            );
+
+            statement.setString(
+                    6,
+                    availability.getStatus()
+            );
+
+            return statement.executeUpdate() > 0;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+
+    // =========================================================
+    // CHECK OVERLAPPING AVAILABILITY
+    // =========================================================
+
+    @Override
+    public boolean hasOverlap(
+            int dentistId,
+            Date availableDate,
+            Time startTime,
+            Time endTime) {
+
+        String sql = """
+                SELECT COUNT(*)
+                FROM dentist_availability
+                WHERE dentist_id = ?
+                  AND available_date = ?
+                  AND status = 'AVAILABLE'
+                  AND start_time < ?
+                  AND end_time > ?
+                """;
+
+        try (
+            Connection connection =
+                    DBConnection.getConnection();
+
+            PreparedStatement statement =
+                    connection.prepareStatement(sql)
+        ) {
+
+            statement.setInt(
+                    1,
+                    dentistId
+            );
+
+            statement.setDate(
+                    2,
+                    availableDate
+            );
+
+            statement.setTime(
+                    3,
+                    endTime
+            );
+
+            statement.setTime(
+                    4,
+                    startTime
+            );
+
+            try (
+                ResultSet resultSet =
+                        statement.executeQuery()
+            ) {
+
+                if (resultSet.next()) {
+
+                    return resultSet.getInt(1) > 0;
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
+
+    // =========================================================
+    // MAP DATABASE RECORD
+    // =========================================================
 
     private DentistAvailability mapAvailability(
             ResultSet resultSet)
