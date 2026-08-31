@@ -10,4 +10,5 @@ public interface DentistDAO {
 
     Dentist findById(int dentistId);
 
+    Dentist findByStaffId(int staffId);
 }

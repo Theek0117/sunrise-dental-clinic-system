@@ -515,4 +515,116 @@ public class AppointmentService {
                 || "CONFIRMED".equalsIgnoreCase(status)
                 || "RESCHEDULED".equalsIgnoreCase(status);
     }
+    
+    
+    public List<Appointment> getDentistAppointmentsForDate(
+            int dentistId,
+            Date date) {
+
+        if (dentistId <= 0 || date == null) {
+
+            return List.of();
+        }
+
+        return appointmentDAO.findByDentistAndDate(
+                dentistId,
+                date
+        );
+    }
+    
+    public List<Appointment> getDentistAppointments(
+            int dentistId) {
+
+        if (dentistId <= 0) {
+
+            return List.of();
+        }
+
+        return appointmentDAO.findByDentist(
+                dentistId
+        );
+    }
+    
+    public Appointment getDentistAppointment(
+            int appointmentId,
+            int dentistId) {
+
+        if (appointmentId <= 0
+                || dentistId <= 0) {
+
+            return null;
+        }
+
+        return appointmentDAO.findByIdAndDentist(
+                appointmentId,
+                dentistId
+        );
+    }
+    
+    public List<Appointment> getAppointmentsByDentistAndDate(
+            int dentistId,
+            Date appointmentDate) {
+
+        if (dentistId <= 0 || appointmentDate == null) {
+            return List.of();
+        }
+
+        return appointmentDAO.findByDentistAndDate(
+                dentistId,
+                appointmentDate
+        );
+    }
+    
+    public int countConfirmedAppointments(
+            List<Appointment> appointments) {
+
+        int count = 0;
+
+        for (Appointment appointment : appointments) {
+
+            if ("CONFIRMED".equalsIgnoreCase(
+                    appointment.getStatus())) {
+
+                count++;
+            }
+        }
+
+        return count;
+    }
+
+
+    public int countCompletedAppointments(
+            List<Appointment> appointments) {
+
+        int count = 0;
+
+        for (Appointment appointment : appointments) {
+
+            if ("COMPLETED".equalsIgnoreCase(
+                    appointment.getStatus())) {
+
+                count++;
+            }
+        }
+
+        return count;
+    }
+
+
+    public int countPendingAppointments(
+            List<Appointment> appointments) {
+
+        int count = 0;
+
+        for (Appointment appointment : appointments) {
+
+            if ("PENDING".equalsIgnoreCase(
+                    appointment.getStatus())) {
+
+                count++;
+            }
+        }
+
+        return count;
+    }
 }

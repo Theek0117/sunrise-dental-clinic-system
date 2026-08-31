@@ -27,4 +27,20 @@ public class DentistService {
 
         return dentistDAO.findById(dentistId);
     }
+    
+    public Dentist getDentistByStaffId(
+            int staffId) {
+
+        if (staffId <= 0) {
+
+            return null;
+        }
+
+        return dentistDAO.findByStaffId(
+                staffId
+        );
+    }
+    
+    
+    
 }

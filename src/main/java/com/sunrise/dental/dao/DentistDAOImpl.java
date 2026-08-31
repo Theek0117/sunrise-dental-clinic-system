@@ -149,4 +149,57 @@ public class DentistDAOImpl implements DentistDAO {
 
         return dentist;
     }
+    
+    @Override
+    public Dentist findByStaffId(int staffId) {
+
+        String sql = """
+                SELECT
+                    d.dentist_id,
+                    d.staff_id,
+                    d.dentist_number,
+                    d.name,
+                    d.room_number,
+                    d.nic,
+                    d.specialization,
+                    d.contact_number,
+                    d.email,
+                    d.status
+                FROM dentist d
+                INNER JOIN staff s
+                    ON d.staff_id = s.staff_id
+                WHERE d.staff_id = ?
+                  AND d.status = 'ACTIVE'
+                  AND s.role = 'DENTIST'
+                  AND s.status = 'ACTIVE'
+                """;
+
+        try (
+            Connection connection =
+                    DBConnection.getConnection();
+
+            PreparedStatement statement =
+                    connection.prepareStatement(sql)
+        ) {
+
+            statement.setInt(1, staffId);
+
+            try (ResultSet resultSet =
+                    statement.executeQuery()) {
+
+                if (resultSet.next()) {
+
+                    return mapDentist(resultSet);
+                }
+            }
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+    
+    
 }

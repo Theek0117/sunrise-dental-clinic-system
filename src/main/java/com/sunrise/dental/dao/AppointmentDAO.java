@@ -53,4 +53,18 @@ public interface AppointmentDAO {
             Time endTime,
             int appointmentId
     );
+    
+    List<Appointment> findByDentistAndDate(
+            int dentistId,
+            Date appointmentDate
+    );
+
+    List<Appointment> findByDentist(
+            int dentistId
+    );
+
+    Appointment findByIdAndDentist(
+            int appointmentId,
+            int dentistId
+    );
 }

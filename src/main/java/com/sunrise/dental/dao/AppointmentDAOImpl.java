@@ -719,4 +719,190 @@ public class AppointmentDAOImpl implements AppointmentDAO {
 
         return appointment;
     }
+    
+    @Override
+    public List<Appointment> findByDentistAndDate(
+            int dentistId,
+            Date appointmentDate) {
+
+        List<Appointment> appointments =
+                new ArrayList<>();
+
+        String sql = """
+                SELECT
+                    appointment_id,
+                    appointment_number,
+                    patient_id,
+                    dentist_id,
+                    availability_id,
+                    appointment_date,
+                    start_time,
+                    end_time,
+                    reason,
+                    status
+                FROM appointment
+                WHERE dentist_id = ?
+                  AND appointment_date = ?
+                ORDER BY start_time ASC
+                """;
+
+        try (
+            Connection connection =
+                    DBConnection.getConnection();
+
+            PreparedStatement statement =
+                    connection.prepareStatement(sql)
+        ) {
+
+            statement.setInt(
+                    1,
+                    dentistId
+            );
+
+            statement.setDate(
+                    2,
+                    appointmentDate
+            );
+
+            try (
+                ResultSet resultSet =
+                        statement.executeQuery()
+            ) {
+
+                while (resultSet.next()) {
+
+                    appointments.add(
+                            mapAppointment(resultSet)
+                    );
+                }
+            }
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+        }
+
+        return appointments;
+    }
+    
+    @Override
+    public List<Appointment> findByDentist(
+            int dentistId) {
+
+        List<Appointment> appointments =
+                new ArrayList<>();
+
+        String sql = """
+                SELECT
+                    appointment_id,
+                    appointment_number,
+                    patient_id,
+                    dentist_id,
+                    availability_id,
+                    appointment_date,
+                    start_time,
+                    end_time,
+                    reason,
+                    status
+                FROM appointment
+                WHERE dentist_id = ?
+                  AND status <> 'CANCELLED'
+                ORDER BY appointment_date DESC,
+                         start_time DESC
+                """;
+
+        try (
+            Connection connection =
+                    DBConnection.getConnection();
+
+            PreparedStatement statement =
+                    connection.prepareStatement(sql)
+        ) {
+
+            statement.setInt(
+                    1,
+                    dentistId
+            );
+
+            try (
+                ResultSet resultSet =
+                        statement.executeQuery()
+            ) {
+
+                while (resultSet.next()) {
+
+                    appointments.add(
+                            mapAppointment(resultSet)
+                    );
+                }
+            }
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+        }
+
+        return appointments;
+    }
+    
+    @Override
+    public Appointment findByIdAndDentist(
+            int appointmentId,
+            int dentistId) {
+
+        String sql = """
+                SELECT
+                    appointment_id,
+                    appointment_number,
+                    patient_id,
+                    dentist_id,
+                    availability_id,
+                    appointment_date,
+                    start_time,
+                    end_time,
+                    reason,
+                    status
+                FROM appointment
+                WHERE appointment_id = ?
+                  AND dentist_id = ?
+                """;
+
+        try (
+            Connection connection =
+                    DBConnection.getConnection();
+
+            PreparedStatement statement =
+                    connection.prepareStatement(sql)
+        ) {
+
+            statement.setInt(
+                    1,
+                    appointmentId
+            );
+
+            statement.setInt(
+                    2,
+                    dentistId
+            );
+
+            try (
+                ResultSet resultSet =
+                        statement.executeQuery()
+            ) {
+
+                if (resultSet.next()) {
+
+                    return mapAppointment(
+                            resultSet
+                    );
+                }
+            }
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+        }
+
+        return null;
+    }
 }

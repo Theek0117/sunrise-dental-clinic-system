@@ -102,9 +102,8 @@ public class LoginServlet extends HttpServlet {
 
                 response.sendRedirect(
                         request.getContextPath()
-                        + "/dentist/dentistDashboard.jsp"
+                        + "/dentist/dashboard"
                 );
-
             } else {
 
                 /*

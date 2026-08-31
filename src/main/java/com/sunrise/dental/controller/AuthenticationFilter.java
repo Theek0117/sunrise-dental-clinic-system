@@ -187,9 +187,9 @@ public class AuthenticationFilter implements Filter {
 
             response.sendRedirect(
                     contextPath
-                    + "/dentist/dentistDashboard.jsp"
+                    + "/dentist/dashboard"
             );
-
+            
         } else {
 
             response.sendRedirect(
