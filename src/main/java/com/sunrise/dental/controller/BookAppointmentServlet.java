@@ -14,15 +14,18 @@ import com.sunrise.dental.dao.DentistDAO;
 import com.sunrise.dental.dao.DentistDAOImpl;
 import com.sunrise.dental.dao.PatientDAO;
 import com.sunrise.dental.dao.PatientDAOImpl;
+import com.sunrise.dental.dao.TreatmentTypeDAO;
+import com.sunrise.dental.dao.TreatmentTypeDAOImpl;
+
 import com.sunrise.dental.model.Appointment;
 import com.sunrise.dental.model.Dentist;
 import com.sunrise.dental.model.Patient;
+
 import com.sunrise.dental.service.AppointmentService;
 import com.sunrise.dental.service.EmailService;
 
 @WebServlet("/reception/book-appointment")
-public class BookAppointmentServlet
-        extends HttpServlet {
+public class BookAppointmentServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
 
@@ -32,7 +35,16 @@ public class BookAppointmentServlet
 
     private DentistDAO dentistDAO;
 
+    private TreatmentTypeDAO treatmentTypeDAO;
+
     private EmailService emailService;
+
+
+    /*
+     * ==========================================
+     * INIT
+     * ==========================================
+     */
 
     @Override
     public void init() {
@@ -46,9 +58,27 @@ public class BookAppointmentServlet
         dentistDAO =
                 new DentistDAOImpl();
 
+        treatmentTypeDAO =
+                new TreatmentTypeDAOImpl();
+
         emailService =
                 new EmailService();
     }
+
+
+    /*
+     * ==========================================
+     * GET
+     * ==========================================
+     *
+     * Loads the appointment booking page.
+     *
+     * Data loaded:
+     * 1. Active patients
+     * 2. Active dentists
+     * 3. Active treatment types
+     *
+     */
 
     @Override
     protected void doGet(
@@ -66,15 +96,23 @@ public class BookAppointmentServlet
         );
     }
 
+
+    /*
+     * ==========================================
+     * POST
+     * ==========================================
+     *
+     * Handles appointment booking.
+     *
+     */
+
     @Override
     protected void doPost(
             HttpServletRequest request,
             HttpServletResponse response)
             throws ServletException, IOException {
 
-        request.setCharacterEncoding(
-                "UTF-8"
-        );
+        request.setCharacterEncoding("UTF-8");
 
         try {
 
@@ -119,6 +157,7 @@ public class BookAppointmentServlet
                             "reason"
                     );
 
+
             /*
              * ======================================
              * BASIC VALIDATION
@@ -156,6 +195,7 @@ public class BookAppointmentServlet
 
                 return;
             }
+
 
             /*
              * ======================================
@@ -196,44 +236,36 @@ public class BookAppointmentServlet
             reason =
                     reason.trim();
 
+
             /*
              * ======================================
-             * OTHER REASON
+             * VALIDATE TREATMENT TYPE
              * ======================================
+             *
+             * The selected appointment reason must
+             * exist as an ACTIVE treatment type.
+             *
              */
 
-            if ("Other".equalsIgnoreCase(
-                    reason
-            )) {
+            if (!isActiveTreatmentType(reason)) {
 
-                String otherReason =
-                        request.getParameter(
-                                "otherReason"
-                        );
+                request.setAttribute(
+                        "error",
+                        "Please select a valid treatment type."
+                );
 
-                if (otherReason == null
-                        || otherReason.isBlank()) {
+                loadBookingData(request);
 
-                    request.setAttribute(
-                            "error",
-                            "Please specify the reason for the appointment."
-                    );
+                request.getRequestDispatcher(
+                        "/reception/bookAppointment.jsp"
+                ).forward(
+                        request,
+                        response
+                );
 
-                    loadBookingData(request);
-
-                    request.getRequestDispatcher(
-                            "/reception/bookAppointment.jsp"
-                    ).forward(
-                            request,
-                            response
-                    );
-
-                    return;
-                }
-
-                reason =
-                        otherReason.trim();
+                return;
             }
+
 
             /*
              * ======================================
@@ -272,9 +304,10 @@ public class BookAppointmentServlet
                     reason
             );
 
+
             /*
              * ======================================
-             * BOOK
+             * BOOK APPOINTMENT
              * ======================================
              */
 
@@ -283,6 +316,7 @@ public class BookAppointmentServlet
                             .bookAppointment(
                                     appointment
                             );
+
 
             /*
              * ======================================
@@ -299,9 +333,9 @@ public class BookAppointmentServlet
 
                 request.setAttribute(
                         "appointmentNumber",
-                        appointment
-                                .getAppointmentNumber()
+                        appointment.getAppointmentNumber()
                 );
+
 
                 /*
                  * ==================================
@@ -314,6 +348,7 @@ public class BookAppointmentServlet
                                 appointment.getPatientId()
                         );
 
+
                 /*
                  * ==================================
                  * GET DENTIST
@@ -324,6 +359,7 @@ public class BookAppointmentServlet
                         appointmentService.getDentist(
                                 appointment.getDentistId()
                         );
+
 
                 /*
                  * ==================================
@@ -409,6 +445,7 @@ public class BookAppointmentServlet
             );
         }
 
+
         /*
          * ==========================================
          * RELOAD BOOKING DATA
@@ -425,17 +462,81 @@ public class BookAppointmentServlet
         );
     }
 
+
+    /*
+     * ==========================================
+     * LOAD BOOKING DATA
+     * ==========================================
+     *
+     * Loads all data required by the booking JSP.
+     *
+     */
+
     private void loadBookingData(
             HttpServletRequest request) {
+
+        /*
+         * Active patients
+         */
 
         request.setAttribute(
                 "patients",
                 patientDAO.findAllActive()
         );
 
+
+        /*
+         * Active dentists
+         */
+
         request.setAttribute(
                 "dentists",
                 dentistDAO.findAllActive()
+        );
+
+
+        /*
+         * Active treatment types
+         */
+
+        request.setAttribute(
+                "treatmentTypes",
+                treatmentTypeDAO.findAllActive()
+        );
+    }
+
+
+    /*
+     * ==========================================
+     * CHECK ACTIVE TREATMENT TYPE
+     * ==========================================
+     *
+     * Makes sure that the treatment selected
+     * from the appointment form still exists
+     * and is ACTIVE.
+     *
+     */
+
+    private boolean isActiveTreatmentType(
+            String treatmentName) {
+
+        if (treatmentName == null
+                || treatmentName.isBlank()) {
+
+            return false;
+        }
+
+        var treatmentType =
+                treatmentTypeDAO.findByName(
+                        treatmentName.trim()
+                );
+
+        if (treatmentType == null) {
+            return false;
+        }
+
+        return "ACTIVE".equalsIgnoreCase(
+                treatmentType.getStatus()
         );
     }
 }

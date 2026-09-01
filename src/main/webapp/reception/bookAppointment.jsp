@@ -3,6 +3,7 @@
 <%@ page import="java.util.Collections" %>
 <%@ page import="com.sunrise.dental.model.Patient" %>
 <%@ page import="com.sunrise.dental.model.Dentist" %>
+<%@ page import="com.sunrise.dental.model.TreatmentType" %>
 
 <%
     /*
@@ -23,12 +24,19 @@
     List<Dentist> dentists =
             (List<Dentist>) request.getAttribute("dentists");
 
+    List<TreatmentType> treatmentTypes =
+            (List<TreatmentType>) request.getAttribute("treatmentTypes");
+
     if (patients == null) {
         patients = Collections.emptyList();
     }
 
     if (dentists == null) {
         dentists = Collections.emptyList();
+    }
+
+    if (treatmentTypes == null) {
+        treatmentTypes = Collections.emptyList();
     }
 
     String contextPath = request.getContextPath();
@@ -987,48 +995,26 @@
 
 
                     <select
-                        id="reason"
-                        name="reason"
-                        required>
-
-                        <option value="">
-                            Select reason
-                        </option>
-
-                        <option value="Consultation">
-                            Consultation
-                        </option>
-
-                        <option value="Dental Cleaning">
-                            Dental Cleaning
-                        </option>
-
-                        <option value="Scaling">
-                            Scaling
-                        </option>
-
-                        <option value="Root Canal Treatment">
-                            Root Canal Treatment
-                        </option>
-
-                        <option value="Tooth Extraction">
-                            Tooth Extraction
-                        </option>
-
-                        <option value="Dental Filling">
-                            Dental Filling
-                        </option>
-
-                        <option value="Follow-up">
-                            Follow-up
-                        </option>
-
-                        <option value="Other">
-                            Other
-                        </option>
-
-                    </select>
-
+					    id="reason"
+					    name="reason"
+					    required>
+					
+					    <option value="">
+					        Select Appointment Reason
+					    </option>
+					
+					    <% for (TreatmentType treatmentType : treatmentTypes) { %>
+					
+					        <option
+					            value="<%= treatmentType.getTreatmentName() %>">
+					
+					            <%= treatmentType.getTreatmentName() %>
+					
+					        </option>
+					
+					    <% } %>
+					
+					</select>
                 </div>
 
 
