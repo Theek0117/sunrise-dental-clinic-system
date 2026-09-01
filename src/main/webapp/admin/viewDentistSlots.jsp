@@ -258,7 +258,7 @@
 
             <p class="navigation-title clinic-title">ANALYTICS</p>
 
-            <a href="<%= contextPath %>/admin/dashboard" class="nav-item">
+            <a href="<%= contextPath %>/admin/reports" class="nav-item">
                 <i class="bi bi-bar-chart-line-fill"></i>
                 <span>Reports</span>
             </a>
@@ -266,6 +266,10 @@
 
         <div class="sidebar-bottom">
             <p class="navigation-title">ACCOUNT</p>
+            <a href="<%= contextPath %>/admin/helpdesk" class="nav-item">
+                <i class="bi bi-question-circle"></i>
+                <span>Help Desk</span>
+            </a>
             <a href="<%= contextPath %>/logout" class="nav-item logout-item">
                 <i class="bi bi-box-arrow-right"></i>
                 <span>Logout</span>

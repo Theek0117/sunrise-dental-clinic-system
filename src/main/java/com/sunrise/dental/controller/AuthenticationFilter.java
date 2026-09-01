@@ -114,7 +114,7 @@ public class AuthenticationFilter implements Filter {
          * CASHIER AREA
          */
         if (requestedArea.startsWith("/cashier/")
-                && !"CASHIER".equalsIgnoreCase(role)) {
+                && !("CASHIER".equalsIgnoreCase(role) || "ADMIN".equalsIgnoreCase(role))) {
 
             redirectToOwnDashboard(
                     httpRequest,
