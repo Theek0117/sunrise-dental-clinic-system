@@ -17,6 +17,9 @@ import jakarta.mail.internet.MimeMessage;
 import com.sunrise.dental.model.Appointment;
 import com.sunrise.dental.model.Dentist;
 import com.sunrise.dental.model.Patient;
+import com.sunrise.dental.model.Payment;
+import com.sunrise.dental.model.PaymentAdditionalCharge;
+import java.util.List;
 
 public class EmailService {
 
@@ -343,6 +346,111 @@ public class EmailService {
 
             e.printStackTrace();
 
+            return false;
+        }
+    }
+
+
+    /*
+     * ==========================================
+     * SEND BILL / INVOICE EMAIL
+     * ==========================================
+     */
+
+    public boolean sendInvoiceEmail(
+            Patient patient,
+            Payment payment,
+            List<PaymentAdditionalCharge> additionalCharges,
+            String dentistName,
+            String treatmentName) {
+
+        try {
+            if (patient == null || payment == null) {
+                System.err.println("EmailService: Patient or Payment object is null.");
+                return false;
+            }
+
+            if (patient.getEmail() == null || patient.getEmail().isBlank()) {
+                System.err.println("EmailService: Patient email is empty.");
+                return false;
+            }
+
+            if (smtpUsername.isBlank() || smtpPassword.isBlank()) {
+                System.err.println("EmailService: SMTP not configured.");
+                return false;
+            }
+
+            MimeMessage message = createMessage(patient.getEmail());
+            message.setSubject("Payment Receipt & Invoice - " + safe(payment.getInvoiceNumber()), StandardCharsets.UTF_8.name());
+
+            StringBuilder itemsHtml = new StringBuilder();
+            itemsHtml.append("<tr><td style='padding:8px 0; color:#475569;'>").append(escapeHtml(treatmentName)).append(" (Basic Fee)</td><td style='padding:8px 0; text-align:right; font-weight:600; color:#0f172a;'>Rs. ").append(payment.getBasicAmount()).append("</td></tr>");
+
+            if (payment.getDoctorFee() != null && payment.getDoctorFee().compareTo(java.math.BigDecimal.ZERO) > 0) {
+                itemsHtml.append("<tr><td style='padding:8px 0; color:#475569;'>Doctor / Specialist Fee</td><td style='padding:8px 0; text-align:right; font-weight:600; color:#0f172a;'>Rs. ").append(payment.getDoctorFee()).append("</td></tr>");
+            }
+
+            if (additionalCharges != null) {
+                for (PaymentAdditionalCharge c : additionalCharges) {
+                    itemsHtml.append("<tr><td style='padding:8px 0; color:#475569;'>").append(escapeHtml(c.getChargeName())).append("</td><td style='padding:8px 0; text-align:right; font-weight:600; color:#0f172a;'>Rs. ").append(c.getAmount()).append("</td></tr>");
+                }
+            }
+
+            if (payment.getTaxAmount() != null && payment.getTaxAmount().compareTo(java.math.BigDecimal.ZERO) > 0) {
+                itemsHtml.append("<tr><td style='padding:8px 0; color:#64748b;'>Tax (5%)</td><td style='padding:8px 0; text-align:right; color:#64748b;'>Rs. ").append(payment.getTaxAmount()).append("</td></tr>");
+            }
+
+            String html = """
+                    <!DOCTYPE html>
+                    <html>
+                    <body style='margin:0; padding:0; background:#f4f7fb; font-family:Arial,sans-serif;'>
+                        <div style='max-width:620px; margin:30px auto; background:#ffffff; border-radius:16px; overflow:hidden; box-shadow:0 8px 30px rgba(0,0,0,0.08);'>
+                            <div style='background:linear-gradient(135deg, #0ea5b4, #087f8c); padding:28px; text-align:center; color:#ffffff;'>
+                                <h1 style='margin:0; font-size:26px;'>Sunrise Dental Clinic</h1>
+                                <p style='margin:6px 0 0; font-size:14px; opacity:0.9;'>Payment Receipt & Invoice</p>
+                            </div>
+                            <div style='padding:30px;'>
+                                <div style='display:flex; justify-content:space-between; margin-bottom:20px; border-bottom:1px solid #e2e8f0; padding-bottom:15px;'>
+                                    <div>
+                                        <p style='margin:0; color:#64748b; font-size:12px;'>INVOICE NUMBER</p>
+                                        <strong style='font-size:16px; color:#0f172a;'>%s</strong>
+                                    </div>
+                                    <div style='text-align:right;'>
+                                        <p style='margin:0; color:#64748b; font-size:12px;'>STATUS</p>
+                                        <strong style='color:#16a34a;'>PAID (%s)</strong>
+                                    </div>
+                                </div>
+                                <p style='color:#334155;'>Dear <strong>%s</strong>,</p>
+                                <p style='color:#475569; font-size:13.5px; line-height:1.6;'>Thank you for your visit to Sunrise Dental Clinic. Here is the receipt for your completed consultation and dental treatment with <strong>Dr. %s</strong>.</p>
+                                <table style='width:100%%; border-collapse:collapse; margin:20px 0; font-size:13.5px;'>
+                                    %s
+                                    <tr style='border-top:2px solid #cbd5e1;'>
+                                        <td style='padding:12px 0; font-weight:700; font-size:15px; color:#0f172a;'>Total Amount Paid</td>
+                                        <td style='padding:12px 0; text-align:right; font-weight:700; font-size:16px; color:#0ea5b4;'>Rs. %s</td>
+                                    </tr>
+                                </table>
+                                <p style='color:#475569; font-size:13px;'>If you have any questions regarding this invoice or require an insurance claim report, please contact our clinic front desk.</p>
+                                <p style='margin-top:25px; color:#0f172a; font-weight:600;'>Warm regards,<br>Sunrise Dental Clinic Billing Team</p>
+                            </div>
+                        </div>
+                    </body>
+                    </html>
+                    """.formatted(
+                            safe(payment.getInvoiceNumber()),
+                            safe(payment.getPaymentMethod()),
+                            safe(patient.getName()),
+                            safe(dentistName),
+                            itemsHtml.toString(),
+                            payment.getTotalAmount()
+                    );
+
+            message.setContent(html, "text/html; charset=UTF-8");
+            Transport.send(message);
+            System.out.println("Invoice email sent to: " + patient.getEmail());
+            return true;
+        } catch (Exception e) {
+            System.err.println("Failed to send invoice email: " + e.getMessage());
+            e.printStackTrace();
             return false;
         }
     }

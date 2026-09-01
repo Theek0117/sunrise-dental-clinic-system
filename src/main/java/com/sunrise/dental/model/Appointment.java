@@ -18,6 +18,8 @@ public class Appointment {
 
     private String reason;
     private String status;
+    
+    private int treatmentTypeId;
 
     public Appointment() {
     }
@@ -124,5 +126,17 @@ public class Appointment {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+    
+    public int getTreatmentTypeId() {
+
+        return treatmentTypeId;
+
+    }
+
+    public void setTreatmentTypeId(int treatmentTypeId) {
+
+        this.treatmentTypeId = treatmentTypeId;
+
     }
 }

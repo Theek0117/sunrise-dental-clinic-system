@@ -180,7 +180,7 @@ public class AuthenticationFilter implements Filter {
 
             response.sendRedirect(
                     contextPath
-                    + "/cashier/cashier"
+                    + "/cashier/dashboard"
             );
 
         } else if ("DENTIST".equalsIgnoreCase(role)) {

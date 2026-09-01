@@ -314,18 +314,19 @@ public class AppointmentDAOImpl implements AppointmentDAO {
                 new ArrayList<>();
 
         String sql = """
-                SELECT
-                    appointment_id,
-                    appointment_number,
-                    patient_id,
-                    dentist_id,
-                    availability_id,
-                    appointment_date,
-                    start_time,
-                    end_time,
-                    reason,
-                    status
-                FROM appointment
+               SELECT
+				    appointment_id,
+				    appointment_number,
+				    patient_id,
+				    dentist_id,
+				    availability_id,
+				    treatment_type_id,
+				    appointment_date,
+				    start_time,
+				    end_time,
+				    reason,
+				    status
+				FROM appointment
                 ORDER BY appointment_date DESC,
                          start_time DESC
                 """;
@@ -373,6 +374,7 @@ public class AppointmentDAOImpl implements AppointmentDAO {
                     start_time,
                     end_time,
                     reason,
+                    treatment_type_id,
                     status
                 FROM appointment
                 WHERE status IN (
@@ -425,6 +427,7 @@ public class AppointmentDAOImpl implements AppointmentDAO {
                     start_time,
                     end_time,
                     reason,
+                    treatment_type_id,
                     status
                 FROM appointment
                 WHERE appointment_id = ?
@@ -686,6 +689,12 @@ public class AppointmentDAOImpl implements AppointmentDAO {
                         "availability_id"
                 )
         );
+        
+        appointment.setTreatmentTypeId(
+                resultSet.getInt(
+                        "treatment_type_id"
+                )
+        );
 
         appointment.setAppointmentDate(
                 resultSet.getDate(
@@ -739,6 +748,7 @@ public class AppointmentDAOImpl implements AppointmentDAO {
                     start_time,
                     end_time,
                     reason,
+                    treatment_type_id,
                     status
                 FROM appointment
                 WHERE dentist_id = ?
@@ -803,6 +813,7 @@ public class AppointmentDAOImpl implements AppointmentDAO {
                     start_time,
                     end_time,
                     reason,
+                    treatment_type_id,
                     status
                 FROM appointment
                 WHERE dentist_id = ?
@@ -861,6 +872,7 @@ public class AppointmentDAOImpl implements AppointmentDAO {
                     start_time,
                     end_time,
                     reason,
+                    treatment_type_id,
                     status
                 FROM appointment
                 WHERE appointment_id = ?
@@ -950,5 +962,57 @@ public class AppointmentDAOImpl implements AppointmentDAO {
 
             return false;
         }
+    }
+    
+    
+    @Override
+    public List<Appointment> findCompletedAppointments() {
+
+        List<Appointment> appointments =
+                new ArrayList<>();
+
+        String sql = """
+                SELECT
+                    appointment_id,
+                    appointment_number,
+                    patient_id,
+                    dentist_id,
+                    availability_id,
+                    appointment_date,
+                    start_time,
+                    end_time,
+                    reason,
+                    treatment_type_id,
+                    status
+                FROM appointment
+                WHERE status = 'COMPLETED'
+                ORDER BY appointment_date DESC,
+                         start_time DESC
+                """;
+
+        try (
+                Connection connection =
+                        DBConnection.getConnection();
+
+                PreparedStatement statement =
+                        connection.prepareStatement(sql);
+
+                ResultSet resultSet =
+                        statement.executeQuery()
+        ) {
+
+            while (resultSet.next()) {
+
+                appointments.add(
+                        mapAppointment(resultSet)
+                );
+            }
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+        }
+
+        return appointments;
     }
 }

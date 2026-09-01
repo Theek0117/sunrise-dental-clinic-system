@@ -153,6 +153,11 @@ public class AppointmentService {
     public List<Appointment> getActiveAppointments() {
         return appointmentDAO.findActiveAppointments();
     }
+    
+    public List<Appointment> getCompletedAppointments() {
+
+        return appointmentDAO.findCompletedAppointments();
+    }
 
     public Appointment getAppointment(
             int appointmentId) {
@@ -410,6 +415,8 @@ public class AppointmentService {
                 dentistId
         );
     }
+    
+    
 
     private boolean isThirtyMinuteSlot(
             Appointment appointment) {

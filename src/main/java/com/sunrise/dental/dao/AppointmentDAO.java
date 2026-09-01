@@ -30,6 +30,8 @@ public interface AppointmentDAO {
 
     List<Appointment> findActiveAppointments();
 
+    List<Appointment> findCompletedAppointments();
+
     Appointment findById(int appointmentId);
 
     boolean cancelAppointment(
@@ -53,7 +55,7 @@ public interface AppointmentDAO {
             Time endTime,
             int appointmentId
     );
-    
+
     List<Appointment> findByDentistAndDate(
             int dentistId,
             Date appointmentDate
@@ -67,8 +69,7 @@ public interface AppointmentDAO {
             int appointmentId,
             int dentistId
     );
-    
-    
+
     boolean updateStatus(
             int appointmentId,
             int dentistId,

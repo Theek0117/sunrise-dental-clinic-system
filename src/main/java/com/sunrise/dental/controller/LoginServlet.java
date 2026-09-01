@@ -95,7 +95,7 @@ public class LoginServlet extends HttpServlet {
 
                 response.sendRedirect(
                         request.getContextPath()
-                        + "/cashier/cashier"
+                        + "/cashier/dashboard"
                 );
 
             } else if ("DENTIST".equalsIgnoreCase(role)) {
