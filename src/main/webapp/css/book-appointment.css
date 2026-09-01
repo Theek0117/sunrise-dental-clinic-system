@@ -716,6 +716,51 @@ img {
     pointer-events: auto;
     transform: translateY(0);
 }
+
+/* =========================================================
+   SEARCH INPUT WRAPPER
+   ========================================================= */
+
+.search-input-wrapper {
+    position: relative;
+    width: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.search-input-wrapper .search-icon {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--primary);
+    font-size: 15px;
+    pointer-events: none;
+    z-index: 2;
+}
+
+.search-input-wrapper input {
+    width: 100%;
+    height: 48px;
+    padding: 0 45px 0 43px;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    background: var(--white);
+    color: var(--text-dark);
+    font-size: 13.5px;
+    outline: none;
+    transition: border-color var(--transition), box-shadow var(--transition);
+}
+
+.search-input-wrapper input:hover {
+    border-color: #b8d2de;
+}
+
+.search-input-wrapper input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(22, 119, 168, 0.12);
+}
+
 /* =========================================================
    SEARCH TOGGLE
    ========================================================= */
@@ -1598,18 +1643,60 @@ img {
 
 .time-slot.selected {
     border-color: var(--primary);
-
     background: var(--primary-light);
-
-    box-shadow:
-        0 0 0 2px rgba(22, 119, 168, 0.10);
+    box-shadow: 0 0 0 2px rgba(22, 119, 168, 0.10);
 }
-
 
 .time-slot.selected > i {
     background: var(--primary);
-
     color: var(--white);
+}
+
+/* Booked & Disabled Time Slots */
+.time-slot.booked, .time-slot.full, .time-slot:disabled {
+    background: #fff1f2 !important;
+    border-color: #fca5a5 !important;
+    cursor: not-allowed !important;
+    opacity: 0.9;
+    box-shadow: none !important;
+    transform: none !important;
+}
+
+.time-slot.booked > i, .time-slot.full > i {
+    background: #ffe4e6 !important;
+    color: #e11d48 !important;
+}
+
+.time-slot.booked .time-slot-content strong, .time-slot.full .time-slot-content strong {
+    color: #9f1239 !important;
+    text-decoration: line-through;
+}
+
+.time-slot.booked .time-slot-content small, .time-slot.full .time-slot-content small {
+    color: #e11d48 !important;
+    font-weight: 700 !important;
+}
+
+.time-slot.past {
+    background: #f8fafc !important;
+    border-color: #e2e8f0 !important;
+    cursor: not-allowed !important;
+    opacity: 0.55;
+    box-shadow: none !important;
+    transform: none !important;
+}
+
+.time-slot.past > i {
+    background: #f1f5f9 !important;
+    color: #94a3b8 !important;
+}
+
+.time-slot.past .time-slot-content strong {
+    color: #64748b !important;
+}
+
+.time-slot.past .time-slot-content small {
+    color: #94a3b8 !important;
 }
 
 

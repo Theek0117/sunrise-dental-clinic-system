@@ -70,8 +70,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
           rel="stylesheet">
 
-    <link rel="stylesheet"
-          href="${pageContext.request.contextPath}/css/rescheduleAppointment.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/reception.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/rescheduleAppointment.css">
 
     <link rel="stylesheet"
           href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
@@ -80,59 +80,153 @@
 
 <body>
 
-<div class="reschedule-page">
+<div class="dashboard-container">
 
-    <header class="reschedule-header">
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
 
-        <div class="header-left">
+        <div class="sidebar-brand">
+            <img src="${pageContext.request.contextPath}/images/logo1.png" alt="Sunrise Dental Clinic Logo">
+            <div class="brand-text">
+                <h2>Sunrise</h2>
+                <span>Dental Clinic</span>
+            </div>
+        </div>
 
-            <a href="<%= request.getContextPath() %>/reception/view-appointments"
-               class="back-button"
-               title="Back to Appointments">
+        <nav class="sidebar-navigation">
+            <p class="navigation-title">MAIN</p>
 
-                <i class="bi bi-arrow-left"></i>
-
+            <a href="${pageContext.request.contextPath}/reception/dashboard" class="nav-item">
+                <i class="bi bi-grid-1x2-fill"></i>
+                <span>Dashboard</span>
             </a>
 
-            <div>
+            <a href="${pageContext.request.contextPath}/reception/schedule" class="nav-item">
+                <i class="bi bi-calendar3"></i>
+                <span>Today's Schedule</span>
+            </a>
 
-                <h1>
-                    Reschedule Appointment
-                </h1>
+            <div class="nav-dropdown open">
+                <button type="button" class="nav-item nav-dropdown-toggle" onclick="this.parentElement.classList.toggle('open')">
+                    <span class="nav-item-left">
+                        <i class="bi bi-calendar-check"></i>
+                        <span>Appointments</span>
+                    </span>
+                    <i class="bi bi-chevron-down dropdown-arrow"></i>
+                </button>
 
-                <p>
-                    Select a new dentist, date and available time slot.
-                </p>
-
+                <div class="nav-submenu">
+                    <a href="${pageContext.request.contextPath}/reception/book-appointment" class="nav-subitem">
+                        <i class="bi bi-calendar-plus"></i>
+                        <span>Book Appointment</span>
+                    </a>
+                    <a href="${pageContext.request.contextPath}/reception/view-appointments" class="nav-subitem active">
+                        <i class="bi bi-calendar3"></i>
+                        <span>View Appointments</span>
+                    </a>
+                </div>
             </div>
 
-        </div>
+            <div class="nav-group">
+                <button type="button" class="nav-item nav-parent" onclick="this.parentElement.classList.toggle('open')">
+                    <span class="nav-item-left">
+                        <i class="bi bi-people"></i>
+                        <span>Patients</span>
+                    </span>
+                    <i class="bi bi-chevron-down nav-chevron"></i>
+                </button>
 
-        <div class="header-user">
-
-            <div class="user-avatar">
-
-                <i class="bi bi-person-fill"></i>
-
+                <div class="nav-submenu">
+                    <a href="${pageContext.request.contextPath}/reception/register-patient" class="nav-subitem">
+                        <i class="bi bi-person-plus"></i>
+                        <span>Register New Patient</span>
+                    </a>
+                    <a href="${pageContext.request.contextPath}/reception/manage-patients" class="nav-subitem">
+                        <i class="bi bi-person-lines-fill"></i>
+                        <span>Manage Patients</span>
+                    </a>
+                </div>
             </div>
 
-            <div>
+            <p class="navigation-title clinic-title">CLINIC</p>
 
-                <strong>
-                    <%= staffName %>
-                </strong>
+            <div class="nav-group">
+                <button type="button" class="nav-item nav-toggle" onclick="this.parentElement.classList.toggle('open')">
+                    <span class="nav-item-left">
+                        <i class="bi bi-person-badge"></i>
+                        <span>Dentists</span>
+                    </span>
+                    <i class="bi bi-chevron-down nav-arrow"></i>
+                </button>
 
-                <span>
-                    Front Desk Reception
-                </span>
-
+                <div class="nav-submenu">
+                    <a href="${pageContext.request.contextPath}/reception/dentists" class="nav-subitem">
+                        <i class="bi bi-people"></i>
+                        <span>View Dentists</span>
+                    </a>
+                    <a href="${pageContext.request.contextPath}/reception/dentist-availability" class="nav-subitem">
+                        <i class="bi bi-calendar2-week"></i>
+                        <span>Check Availability</span>
+                    </a>
+                </div>
             </div>
 
-        </div>
+            <a href="${pageContext.request.contextPath}/reception/profile" class="nav-item">
+                <i class="bi bi-person-circle"></i>
+                <span>My Profile</span>
+            </a>
 
-    </header>
+            <a href="${pageContext.request.contextPath}/reception/helpdesk.jsp" class="nav-item">
+                <i class="bi bi-question-circle"></i>
+                <span>Help Desk</span>
+            </a>
 
-    <main class="reschedule-content">
+            <a href="${pageContext.request.contextPath}/logout" class="nav-item logout-item">
+                <i class="bi bi-box-arrow-right"></i>
+                <span>Logout</span>
+            </a>
+        </nav>
+
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+
+        <!-- TOPBAR -->
+        <header class="topbar">
+            <div class="topbar-left">
+                <a href="<%= request.getContextPath() %>/reception/view-appointments" class="menu-button">
+                    <i class="bi bi-arrow-left"></i>
+                </a>
+                <div>
+                    <h1>Reschedule Appointment</h1>
+                    <p>Modify appointment doctor, time slot, and patient booking details</p>
+                </div>
+            </div>
+
+            <div class="topbar-right">
+                <a href="${pageContext.request.contextPath}/reception/profile" class="user-profile">
+                    <div class="user-avatar">
+                        <i class="bi bi-person-fill"></i>
+                    </div>
+                    <div class="user-information">
+                        <strong><%= staffName %></strong>
+                        <span>Receptionist</span>
+                    </div>
+                </a>
+            </div>
+        </header>
+
+        <!-- DASHBOARD CONTENT -->
+        <section class="dashboard-content">
+
+            <!-- Hero Banner -->
+            <div class="welcome-section">
+                <div>
+                    <h2>Reschedule Booking</h2>
+                    <p>Select a new dentist, date and available time slot for the patient.</p>
+                </div>
+            </div>
 
         <div class="page-heading">
 
@@ -627,6 +721,8 @@
         </form>
 
         <% } %>
+
+        </section>
 
     </main>
 

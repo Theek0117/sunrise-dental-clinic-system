@@ -19,6 +19,7 @@ import com.sunrise.dental.model.Dentist;
 import com.sunrise.dental.model.DentistAvailability;
 import com.sunrise.dental.service.AppointmentService;
 import com.sunrise.dental.service.DentistAvailabilityService;
+import com.sunrise.dental.service.DentistService;
 
 @WebServlet("/reception/dentist-availability")
 public class DentistAvailabilityServlet extends HttpServlet {
@@ -28,6 +29,7 @@ public class DentistAvailabilityServlet extends HttpServlet {
     private DentistAvailabilityService availabilityService;
     private AppointmentDAO appointmentDAO;
     private AppointmentService appointmentService;
+    private DentistService dentistService;
 
     @Override
     public void init() {
@@ -40,6 +42,9 @@ public class DentistAvailabilityServlet extends HttpServlet {
 
         appointmentService =
                 new AppointmentService();
+
+        dentistService =
+                new DentistService();
     }
 
     @Override
@@ -459,6 +464,11 @@ public class DentistAvailabilityServlet extends HttpServlet {
         request.setAttribute(
                 "availabilityList",
                 availabilityList
+        );
+
+        request.setAttribute(
+                "dentists",
+                dentistService.getActiveDentists()
         );
 
         request.getRequestDispatcher(

@@ -1,330 +1,398 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
+<%
+    String staffName = (String) session.getAttribute("staffName");
+    if (staffName == null || staffName.isBlank()) {
+        staffName = "Receptionist";
+    }
+%>
+
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
     <meta charset="UTF-8">
-
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register Patient | Sunrise Dental Clinic</title>
 
-    <!-- Google Font -->
-    <link rel="preconnect"
-          href="https://fonts.googleapis.com">
+    <!-- Google Fonts Poppins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
-    <link rel="preconnect"
-          href="https://fonts.gstatic.com"
-          crossorigin>
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/reception.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
-          rel="stylesheet">
+    <style>
+        .form-card-container {
+            background: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 12px 35px rgba(6, 38, 50, 0.09);
+            padding: 34px 38px;
+            margin-bottom: 30px;
+            border: 1px solid #edf3f5;
+            max-width: 860px;
+        }
 
-    <!-- Bootstrap Icons -->
-    <link rel="stylesheet"
-          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 22px;
+        }
 
-    <!-- Page CSS -->
-    <link rel="stylesheet"
-          href="${pageContext.request.contextPath}/css/registerPatient.css">
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+        }
+        .form-group.full-width { grid-column: 1 / -1; }
 
+        .form-group label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #2c4a57;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .input-box-wrap {
+            position: relative;
+            display: flex;
+            align-items: center;
+            width: 100%;
+        }
+
+        .input-box-wrap i {
+            position: absolute;
+            left: 15px;
+            color: #8da4ae;
+            font-size: 16px;
+            pointer-events: none;
+            transition: color 0.2s;
+        }
+
+        .input-box-wrap input, .input-box-wrap textarea {
+            width: 100%;
+            border: 1.5px solid #d2e4ea;
+            border-radius: 11px;
+            padding: 12px 16px 12px 44px;
+            font-size: 13.5px;
+            color: #123847;
+            background: #ffffff;
+            outline: none;
+            box-sizing: border-box;
+            font-family: inherit;
+            transition: all 0.2s ease;
+        }
+
+        .input-box-wrap textarea {
+            padding-top: 13px;
+            min-height: 95px;
+        }
+
+        .input-box-wrap input:hover, .input-box-wrap textarea:hover {
+            border-color: #a4cddc;
+        }
+
+        .input-box-wrap input:focus, .input-box-wrap textarea:focus {
+            border-color: #0ea5b4 !important;
+            background: #ffffff !important;
+            box-shadow: 0 0 0 3.5px rgba(14, 165, 180, 0.14) !important;
+        }
+
+        .input-box-wrap input:focus + i, .input-box-wrap:focus-within i {
+            color: #0ea5b4;
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid #f0f4f6;
+        }
+
+        .cancel-btn {
+            padding: 11px 20px;
+            border-radius: 10px;
+            border: 1px solid #dce8ec;
+            background: #ffffff;
+            color: #557280;
+            font-size: 13px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .submit-btn {
+            padding: 11px 24px;
+            border-radius: 10px;
+            border: none;
+            background: linear-gradient(135deg, #0ea5b4, #087f8c);
+            color: #ffffff;
+            font-size: 13.5px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 14px rgba(8, 127, 140, 0.25);
+        }
+
+        .alert-box {
+            padding: 14px 20px;
+            border-radius: 12px;
+            font-size: 13.5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 22px;
+            max-width: 850px;
+        }
+        .alert-box.success { background: #e8f8f0; color: #0d8248; border: 1px solid #c2eed5; }
+        .alert-box.error { background: #feecee; color: #c92a2a; border: 1px solid #f9c6cb; }
+    </style>
 </head>
 
 <body>
 
-<div class="page-wrapper">
+<div class="dashboard-container">
 
     <!-- ========================================= -->
-    <!-- TOP HEADER -->
+    <!-- SIDEBAR -->
     <!-- ========================================= -->
+    <aside class="sidebar" id="sidebar">
 
-    <header class="page-header">
-
-        <div class="header-brand">
-
-            <img
-                src="${pageContext.request.contextPath}/images/logo1.png"
-                alt="Sunrise Dental Clinic Logo">
-
-            <div>
-
-                <h1>Sunrise Dental Clinic</h1>
-
-                <span>Clinic Management System</span>
-
+        <div class="sidebar-brand">
+            <img src="${pageContext.request.contextPath}/images/logo1.png" alt="Sunrise Dental Clinic Logo">
+            <div class="brand-text">
+                <h2>Sunrise</h2>
+                <span>Dental Clinic</span>
             </div>
-
         </div>
 
-        <a href="${pageContext.request.contextPath}/reception/dashboard"
-           class="back-link">
+        <nav class="sidebar-navigation">
+            <p class="navigation-title">MAIN</p>
 
-            <i class="bi bi-arrow-left"></i>
+            <a href="${pageContext.request.contextPath}/reception/dashboard" class="nav-item">
+                <i class="bi bi-grid-1x2-fill"></i>
+                <span>Dashboard</span>
+            </a>
 
-            Back to Dashboard
+            <a href="${pageContext.request.contextPath}/reception/schedule" class="nav-item">
+                <i class="bi bi-calendar3"></i>
+                <span>Today's Schedule</span>
+            </a>
 
-        </a>
+            <div class="nav-dropdown">
+                <button type="button" class="nav-item nav-dropdown-toggle" onclick="this.parentElement.classList.toggle('open')">
+                    <span class="nav-item-left">
+                        <i class="bi bi-calendar-check"></i>
+                        <span>Appointments</span>
+                    </span>
+                    <i class="bi bi-chevron-down dropdown-arrow"></i>
+                </button>
 
-    </header>
+                <div class="nav-submenu">
+                    <a href="${pageContext.request.contextPath}/reception/book-appointment" class="nav-subitem">
+                        <i class="bi bi-calendar-plus"></i>
+                        <span>Book Appointment</span>
+                    </a>
+                    <a href="${pageContext.request.contextPath}/reception/view-appointments" class="nav-subitem">
+                        <i class="bi bi-calendar3"></i>
+                        <span>View Appointments</span>
+                    </a>
+                </div>
+            </div>
 
+            <div class="nav-group open">
+                <button type="button" class="nav-item nav-parent" onclick="this.parentElement.classList.toggle('open')">
+                    <span class="nav-item-left">
+                        <i class="bi bi-people"></i>
+                        <span>Patients</span>
+                    </span>
+                    <i class="bi bi-chevron-down nav-chevron"></i>
+                </button>
+
+                <div class="nav-submenu">
+                    <a href="${pageContext.request.contextPath}/reception/register-patient" class="nav-subitem active">
+                        <i class="bi bi-person-plus"></i>
+                        <span>Register New Patient</span>
+                    </a>
+                    <a href="${pageContext.request.contextPath}/reception/manage-patients" class="nav-subitem">
+                        <i class="bi bi-person-lines-fill"></i>
+                        <span>Manage Patients</span>
+                    </a>
+                </div>
+            </div>
+
+            <p class="navigation-title clinic-title">CLINIC</p>
+
+            <div class="nav-group">
+                <button type="button" class="nav-item nav-toggle" onclick="this.parentElement.classList.toggle('open')">
+                    <span class="nav-item-left">
+                        <i class="bi bi-person-badge"></i>
+                        <span>Dentists</span>
+                    </span>
+                    <i class="bi bi-chevron-down nav-arrow"></i>
+                </button>
+
+                <div class="nav-submenu">
+                    <a href="${pageContext.request.contextPath}/reception/dentists" class="nav-subitem">
+                        <i class="bi bi-people"></i>
+                        <span>View Dentists</span>
+                    </a>
+                    <a href="${pageContext.request.contextPath}/reception/dentist-availability" class="nav-subitem">
+                        <i class="bi bi-calendar2-week"></i>
+                        <span>Check Availability</span>
+                    </a>
+                </div>
+            </div>
+
+            <a href="${pageContext.request.contextPath}/reception/profile" class="nav-item">
+                <i class="bi bi-person-circle"></i>
+                <span>My Profile</span>
+            </a>
+
+            <a href="${pageContext.request.contextPath}/reception/helpdesk.jsp" class="nav-item">
+                <i class="bi bi-question-circle"></i>
+                <span>Help Desk</span>
+            </a>
+
+            <a href="${pageContext.request.contextPath}/logout" class="nav-item logout-item">
+                <i class="bi bi-box-arrow-right"></i>
+                <span>Logout</span>
+            </a>
+        </nav>
+
+    </aside>
 
     <!-- ========================================= -->
     <!-- MAIN CONTENT -->
     <!-- ========================================= -->
+    <main class="main-content">
 
-    <main class="registration-container">
-
-        <div class="page-title">
-
-            <div class="title-icon">
-
-                <i class="bi bi-person-plus-fill"></i>
-
-            </div>
-
-            <div>
-
-                <h2>Register New Patient</h2>
-
-                <p>
-                    Create a patient record before booking an appointment.
-                </p>
-
-            </div>
-
-        </div>
-
-
-        <!-- ========================================= -->
-        <!-- SUCCESS MESSAGE -->
-        <!-- ========================================= -->
-
-        <% if (request.getAttribute("success") != null) { %>
-
-            <div class="alert alert-success">
-
-                <i class="bi bi-check-circle-fill"></i>
-
+        <!-- TOPBAR -->
+        <header class="topbar">
+            <div class="topbar-left">
+                <a href="${pageContext.request.contextPath}/reception/dashboard" class="menu-button">
+                    <i class="bi bi-arrow-left"></i>
+                </a>
                 <div>
-
-                    <strong>Patient registered successfully.</strong>
-
-                    <span>
-                        Patient Number:
-                        <%= request.getAttribute("patientNumber") %>
-                    </span>
-
+                    <h1>Patient Registration</h1>
+                    <p>Create a verified patient profile before scheduling clinical appointments</p>
                 </div>
-
             </div>
 
-        <% } %>
+            <div class="topbar-right">
+                <a href="${pageContext.request.contextPath}/reception/profile" class="user-profile">
+                    <div class="user-avatar">
+                        <i class="bi bi-person-fill"></i>
+                    </div>
+                    <div class="user-information">
+                        <strong><%= staffName %></strong>
+                        <span>Receptionist</span>
+                    </div>
+                </a>
+            </div>
+        </header>
 
+        <!-- DASHBOARD CONTENT -->
+        <section class="dashboard-content">
 
-        <!-- ========================================= -->
-        <!-- ERROR MESSAGE -->
-        <!-- ========================================= -->
-
-        <% if (request.getAttribute("error") != null) { %>
-
-            <div class="alert alert-error">
-
-                <i class="bi bi-exclamation-circle-fill"></i>
-
+            <!-- Hero Banner -->
+            <div class="welcome-section">
                 <div>
-
-                    <strong>Registration unsuccessful</strong>
-
-                    <span>
-                        <%= request.getAttribute("error") %>
-                    </span>
-
+                    <h2>New Patient Intake</h2>
+                    <p>Enter the patient's personal, contact, and residential information.</p>
                 </div>
-
-            </div>
-
-        <% } %>
-
-
-        <!-- ========================================= -->
-        <!-- REGISTRATION CARD -->
-        <!-- ========================================= -->
-
-        <section class="registration-card">
-
-            <div class="card-header">
-
                 <div>
-
-                    <h3>Patient Information</h3>
-
-                    <p>
-                        Enter the patient's personal and contact details.
-                    </p>
-
-                </div>
-
-                <span class="required-note">
-                    * Required fields
-                </span>
-
-            </div>
-
-
-            <form
-                action="${pageContext.request.contextPath}/reception/register-patient"
-                method="post"
-                class="patient-form">
-
-
-                <!-- ================================= -->
-                <!-- PATIENT NAME -->
-                <!-- ================================= -->
-
-                <div class="form-group">
-
-                    <label for="name">
-                        Patient Name
-                        <span>*</span>
-                    </label>
-
-                    <div class="input-wrapper">
-
-                        <i class="bi bi-person"></i>
-
-                        <input
-                            type="text"
-                            id="name"
-                            name="name"
-                            placeholder="Enter patient's full name"
-                            maxlength="100"
-                            autocomplete="name"
-                            required>
-
-                    </div>
-
-                </div>
-
-
-                <!-- ================================= -->
-                <!-- CONTACT NUMBER -->
-                <!-- ================================= -->
-
-                <div class="form-group">
-
-                    <label for="contactNumber">
-                        Contact Number
-                        <span>*</span>
-                    </label>
-
-                    <div class="input-wrapper">
-
-                        <i class="bi bi-telephone"></i>
-
-                        <input
-                            type="tel"
-                            id="contactNumber"
-                            name="contactNumber"
-                            placeholder="Enter contact number"
-                            maxlength="20"
-                            autocomplete="tel"
-                            required>
-
-                    </div>
-
-                </div>
-
-
-                <!-- ================================= -->
-                <!-- ADDRESS -->
-                <!-- ================================= -->
-
-                <div class="form-group full-width">
-
-                    <label for="address">
-                        Address
-                        <span>*</span>
-                    </label>
-
-                    <div class="textarea-wrapper">
-
-                        <i class="bi bi-geo-alt"></i>
-
-                        <textarea
-                            id="address"
-                            name="address"
-                            placeholder="Enter patient's address"
-                            maxlength="255"
-                            required></textarea>
-
-                    </div>
-
-                </div>
-
-
-                <!-- ================================= -->
-                <!-- EMAIL -->
-                <!-- ================================= -->
-
-                <div class="form-group full-width">
-
-                    <label for="email">
-                        Email Address
-                    </label>
-
-                    <div class="input-wrapper">
-
-                        <i class="bi bi-envelope"></i>
-
-                        <input
-                            type="email"
-                            id="email"
-                            name="email"
-                            placeholder="Enter email address"
-                            maxlength="100"
-                            autocomplete="email">
-
-                    </div>
-
-                    <small>
-                        If provided, this email must not already belong to another patient.
-                    </small>
-
-                </div>
-
-
-                <!-- ================================= -->
-                <!-- ACTIONS -->
-                <!-- ================================= -->
-
-                <div class="form-actions">
-
-                    <a
-                        href="${pageContext.request.contextPath}/reception/dashboard"
-                        class="cancel-button">
-
-                        <i class="bi bi-x-lg"></i>
-
-                        Cancel
-
+                    <a href="${pageContext.request.contextPath}/reception/manage-patients" class="view-all-link" style="background: rgba(255,255,255,0.2); padding: 8px 16px; border-radius: 10px; color: #ffffff;">
+                        <i class="bi bi-person-lines-fill"></i> View All Patients
                     </a>
+                </div>
+            </div>
 
-                    <button
-                        type="submit"
-                        class="register-button">
+            <!-- Notifications -->
+            <% if (request.getAttribute("success") != null) { %>
+                <div class="alert-box success">
+                    <i class="bi bi-check-circle-fill"></i>
+                    <div>
+                        <strong>Patient registered successfully!</strong>
+                        <span>Assigned Patient Number: <strong><%= request.getAttribute("patientNumber") %></strong></span>
+                    </div>
+                </div>
+            <% } %>
 
-                        <i class="bi bi-person-plus-fill"></i>
+            <% if (request.getAttribute("error") != null) { %>
+                <div class="alert-box error">
+                    <i class="bi bi-exclamation-circle-fill"></i>
+                    <div>
+                        <strong>Registration failed:</strong>
+                        <span><%= request.getAttribute("error") %></span>
+                    </div>
+                </div>
+            <% } %>
 
-                        Register Patient
-
-                    </button>
-
+            <!-- Form Card -->
+            <div class="form-card-container">
+                <div class="section-heading" style="margin-bottom: 25px; border-bottom: 1px solid #f0f4f6; padding-bottom: 15px;">
+                    <div>
+                        <h3>Patient Information Form</h3>
+                        <p>Fill in the required fields marked with <span style="color: #d9534f;">*</span></p>
+                    </div>
                 </div>
 
-            </form>
+                <form action="${pageContext.request.contextPath}/reception/register-patient" method="post">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="name">Full Name <span style="color: #d9534f;">*</span></label>
+                            <div class="input-box-wrap">
+                                <i class="bi bi-person"></i>
+                                <input type="text" id="name" name="name" placeholder="Enter patient's full name" maxlength="100" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="contactNumber">Contact Number <span style="color: #d9534f;">*</span></label>
+                            <div class="input-box-wrap">
+                                <i class="bi bi-telephone"></i>
+                                <input type="tel" id="contactNumber" name="contactNumber" placeholder="07XXXXXXXX" maxlength="20" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group full-width">
+                            <label for="address">Residential Address <span style="color: #d9534f;">*</span></label>
+                            <div class="input-box-wrap">
+                                <i class="bi bi-geo-alt" style="top: 14px;"></i>
+                                <textarea id="address" name="address" rows="3" placeholder="Enter patient's address" maxlength="255" required></textarea>
+                            </div>
+                        </div>
+
+                        <div class="form-group full-width">
+                            <label for="email">Email Address <span style="font-size: 11px; font-weight: normal; color: #8da4ae;">(Optional)</span></label>
+                            <div class="input-box-wrap">
+                                <i class="bi bi-envelope"></i>
+                                <input type="email" id="email" name="email" placeholder="patient@example.com" maxlength="100">
+                            </div>
+                            <small style="color: #8da4ae; font-size: 11.5px; margin-top: 4px;">Used for sending appointment booking confirmations and reminders.</small>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <a href="${pageContext.request.contextPath}/reception/dashboard" class="cancel-btn">
+                            <i class="bi bi-x-lg"></i> Cancel
+                        </a>
+                        <button type="submit" class="submit-btn">
+                            <i class="bi bi-person-plus-fill"></i> Complete Registration
+                        </button>
+                    </div>
+                </form>
+            </div>
 
         </section>
 
@@ -333,5 +401,4 @@
 </div>
 
 </body>
-
 </html>
