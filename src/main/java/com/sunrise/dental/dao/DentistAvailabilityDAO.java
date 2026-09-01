@@ -21,6 +21,8 @@ public interface DentistAvailabilityDAO {
             DentistAvailability availability
     );
 
+    List<DentistAvailability> findAll();
+
     boolean hasOverlap(
             int dentistId,
             Date availableDate,

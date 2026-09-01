@@ -108,4 +108,8 @@ public class DentistAvailabilityService {
                 availability
         );
     }
+
+    public List<DentistAvailability> getAllAvailability() {
+        return availabilityDAO.findAll();
+    }
 }

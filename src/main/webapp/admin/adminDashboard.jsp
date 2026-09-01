@@ -141,19 +141,13 @@
             </a>
 
             <a href="<%= contextPath %>/admin/staff" class="nav-item">
-			    <i class="bi bi-people-fill"></i>
-			    <span>Staff Management</span>
-			</a>
-
-
-            <a href="<%= contextPath %>/admin/dashboard" class="nav-item">
-                <i class="bi bi-person-lines-fill"></i>
-                <span>Patients</span>
+                <i class="bi bi-people-fill"></i>
+                <span>Staff Management</span>
             </a>
 
-            <a href="<%= contextPath %>/admin/dashboard" class="nav-item">
-                <i class="bi bi-calendar2-week"></i>
-                <span>Appointments</span>
+            <a href="<%= contextPath %>/admin/dentist-slots" class="nav-item">
+                <i class="bi bi-clock-history"></i>
+                <span>Dentist Time Slots</span>
             </a>
 
             <a href="<%= contextPath %>/admin/treatments" class="nav-item">
@@ -327,13 +321,13 @@
 						
 						</a>
 
-                    <a href="<%= contextPath %>/admin/dashboard" class="quick-action-card">
+                    <a href="<%= contextPath %>/admin/dentist-slots" class="quick-action-card">
                         <div class="quick-action-icon">
-                            <i class="bi bi-person-lines-fill"></i>
+                            <i class="bi bi-clock-history"></i>
                         </div>
                         <div>
-                            <strong>Manage Patients Records</strong>
-                            <span>Patient files and records</span>
+                            <strong>Dentist Time Slots</strong>
+                            <span>View doctor availability schedules</span>
                         </div>
                         <i class="bi bi-arrow-right"></i>
                     </a>

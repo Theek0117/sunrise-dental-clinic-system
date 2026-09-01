@@ -331,4 +331,36 @@ public class DentistAvailabilityDAOImpl
 
         return availability;
     }
+
+    @Override
+    public List<DentistAvailability> findAll() {
+        List<DentistAvailability> list = new ArrayList<>();
+        String sql = """
+                SELECT
+                    availability_id,
+                    dentist_id,
+                    available_date,
+                    start_time,
+                    end_time,
+                    slot_capacity,
+                    status,
+                    created_at
+                FROM dentist_availability
+                ORDER BY available_date DESC, start_time ASC
+                """;
+
+        try (
+            Connection connection = DBConnection.getConnection();
+            PreparedStatement statement = connection.prepareStatement(sql);
+            ResultSet resultSet = statement.executeQuery()
+        ) {
+            while (resultSet.next()) {
+                list.add(mapAvailability(resultSet));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return list;
+    }
 }
