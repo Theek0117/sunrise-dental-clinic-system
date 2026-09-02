@@ -22,8 +22,8 @@ body {
     color: #1a3b47;
     background:
         linear-gradient(
-            rgba(7, 43, 56, 0.85),
-            rgba(9, 64, 82, 0.82)
+            rgba(7, 43, 56, 0.48),
+            rgba(9, 64, 82, 0.52)
         ),
         url('../images/back.jpg');
     background-size: cover;

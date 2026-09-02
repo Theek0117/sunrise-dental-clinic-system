@@ -343,6 +343,35 @@ public class StaffDAOImpl implements StaffDAO {
         return false;
     }
 
+    @Override
+    public boolean updatePassword(
+            int staffId,
+            String newPassword) {
+
+        String sql = """
+                UPDATE staff
+                SET password = ?
+                WHERE staff_id = ?
+                """;
+
+        try (
+            Connection connection = DBConnection.getConnection();
+            PreparedStatement statement =
+                    connection.prepareStatement(sql)
+        ) {
+
+            statement.setString(1, newPassword);
+            statement.setInt(2, staffId);
+
+            return statement.executeUpdate() > 0;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
     private Staff mapStaff(ResultSet resultSet)
             throws Exception {
 

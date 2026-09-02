@@ -238,6 +238,58 @@
             color: #d48e0c;
         }
 
+        .action-btn-circle.password-reset-btn:hover {
+            background: #fefce8;
+            color: #ca8a04;
+            border-color: #eab308;
+        }
+
+        .password-input-wrap {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .password-input-wrap input {
+            width: 100%;
+            padding-right: 42px !important;
+        }
+
+        .toggle-password-icon {
+            position: absolute;
+            right: 14px;
+            cursor: pointer;
+            color: #8da4ae;
+            font-size: 15px;
+            transition: color 0.2s;
+        }
+
+        .toggle-password-icon:hover {
+            color: #0ea5b4;
+        }
+
+        .btn-generate-pwd {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #f0fdfa;
+            color: #0d9488;
+            border: 1px dashed #0d9488;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 6px;
+            width: fit-content;
+        }
+
+        .btn-generate-pwd:hover {
+            background: #0d9488;
+            color: #ffffff;
+        }
+
         /* Alerts */
         .alert {
             padding: 14px 20px;
@@ -687,6 +739,16 @@
                                             <i class="bi bi-pencil"></i>
                                         </button>
 
+                                        <button type="button" class="action-btn-circle password-reset-btn"
+                                                title="Reset Password"
+                                                data-staff-id="<%= staff.getStaffId() %>"
+                                                data-name="<%= staff.getName() == null ? "" : staff.getName().replace("&", "&amp;").replace("\"", "&quot;").replace("<", "&lt;").replace(">", "&gt;") %>"
+                                                data-username="<%= staff.getUsername() == null ? "" : staff.getUsername().replace("&", "&amp;").replace("\"", "&quot;").replace("<", "&lt;").replace(">", "&gt;") %>"
+                                                data-role="<%= staff.getRole() == null ? "" : staff.getRole() %>"
+                                                onclick="openResetPasswordModal(this)">
+                                            <i class="bi bi-key-fill"></i>
+                                        </button>
+
                                         <button type="button" class="action-btn-circle status-toggle"
                                                 title="<%= "ACTIVE".equalsIgnoreCase(status) ? "Deactivate Staff" : "Activate Staff" %>"
                                                 onclick="changeStatus(<%= staff.getStaffId() %>, '<%= status %>')">
@@ -863,6 +925,66 @@
     </div>
 </div>
 
+<!-- ========================================== -->
+<!-- RESET PASSWORD MODAL -->
+<!-- ========================================== -->
+<div class="modal-overlay" id="resetPasswordModal">
+    <div class="modal">
+        <div class="modal-header">
+            <div>
+                <h3 style="display: flex; align-items: center; gap: 8px;">
+                    <i class="bi bi-shield-lock-fill" style="color: #0ea5b4;"></i> Reset Staff Password
+                </h3>
+                <p>Set a new secure login password for this staff member</p>
+            </div>
+            <button type="button" class="close-modal" onclick="closeResetPasswordModal()">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
+
+        <form method="post" action="<%= contextPath %>/admin/staff" id="resetPasswordForm" onsubmit="return validatePasswordReset()">
+            <input type="hidden" name="action" value="resetPassword">
+            <input type="hidden" name="staffId" id="resetStaffId">
+
+            <div class="modal-body">
+                <div style="background: #f8fafc; border-left: 4px solid #0ea5b4; padding: 12px 16px; border-radius: 0 10px 10px 0; margin-bottom: 20px;">
+                    <span style="font-size: 11px; color: #64748b; text-transform: uppercase; font-weight: 700; display: block;">Target Staff Account</span>
+                    <strong id="resetTargetInfo" style="color: #0f172a; font-size: 13.5px; display: block; margin-top: 2px;"></strong>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 16px;">
+                    <label for="newPassword">New Password <span class="required">*</span></label>
+                    <div class="password-input-wrap">
+                        <input type="password" name="newPassword" id="newPassword" placeholder="Enter new password (min. 6 characters)" minlength="6" required>
+                        <i class="bi bi-eye toggle-password-icon" id="toggleNewPwd" onclick="togglePasswordVisibility('newPassword', 'toggleNewPwd')"></i>
+                    </div>
+                    <button type="button" class="btn-generate-pwd" onclick="generateRandomPassword()">
+                        <i class="bi bi-dice-5-fill"></i> Generate Strong Temporary Password
+                    </button>
+                </div>
+
+                <div class="form-group">
+                    <label for="confirmPassword">Confirm New Password <span class="required">*</span></label>
+                    <div class="password-input-wrap">
+                        <input type="password" name="confirmPassword" id="confirmPassword" placeholder="Re-enter new password" minlength="6" required>
+                        <i class="bi bi-eye toggle-password-icon" id="toggleConfirmPwd" onclick="togglePasswordVisibility('confirmPassword', 'toggleConfirmPwd')"></i>
+                    </div>
+                    <span class="form-help" id="passwordMatchMessage" style="color: #64748b; font-size: 11.5px; margin-top: 5px; display: block;">
+                        Minimum 6 characters. Must match the password above.
+                    </span>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="cancel-button" onclick="closeResetPasswordModal()">Cancel</button>
+                <button type="submit" class="save-button" style="background: linear-gradient(135deg, #0ea5b4, #087f8c);">
+                    <i class="bi bi-key-fill"></i> Reset Password
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <script>
 function openAddStaffModal() {
     document.getElementById("addStaffModal").classList.add("show");
@@ -929,6 +1051,89 @@ function closeEditStaffModal() {
     document.getElementById("editStaffModal").classList.remove("show");
 }
 
+function openResetPasswordModal(button) {
+    if (!button) return;
+    const staffId = button.dataset.staffId;
+    const name = button.dataset.name || "";
+    const username = button.dataset.username || "";
+    const role = button.dataset.role || "";
+
+    document.getElementById("resetStaffId").value = staffId;
+    document.getElementById("resetTargetInfo").textContent = name + " (@" + username + ") • " + formatRole(role);
+    document.getElementById("newPassword").value = "";
+    document.getElementById("confirmPassword").value = "";
+
+    const msg = document.getElementById("passwordMatchMessage");
+    if (msg) {
+        msg.textContent = "Minimum 6 characters. Must match the password above.";
+        msg.style.color = "#64748b";
+    }
+
+    document.getElementById("resetPasswordModal").classList.add("show");
+    document.getElementById("newPassword").focus();
+}
+
+function closeResetPasswordModal() {
+    document.getElementById("resetPasswordModal").classList.remove("show");
+}
+
+function togglePasswordVisibility(fieldId, iconId) {
+    const field = document.getElementById(fieldId);
+    const icon = document.getElementById(iconId);
+    if (!field || !icon) return;
+    if (field.type === "password") {
+        field.type = "text";
+        icon.classList.remove("bi-eye");
+        icon.classList.add("bi-eye-slash");
+    } else {
+        field.type = "password";
+        icon.classList.remove("bi-eye-slash");
+        icon.classList.add("bi-eye");
+    }
+}
+
+function generateRandomPassword() {
+    const chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#$";
+    let password = "Sun#";
+    for (let i = 0; i < 6; i++) {
+        password += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    password += "26";
+
+    const p1 = document.getElementById("newPassword");
+    const p2 = document.getElementById("confirmPassword");
+    p1.value = password;
+    p2.value = password;
+
+    p1.type = "text";
+    p2.type = "text";
+
+    const icon1 = document.getElementById("toggleNewPwd");
+    const icon2 = document.getElementById("toggleConfirmPwd");
+    if (icon1) icon1.className = "bi bi-eye-slash toggle-password-icon";
+    if (icon2) icon2.className = "bi bi-eye-slash toggle-password-icon";
+
+    const msg = document.getElementById("passwordMatchMessage");
+    if (msg) {
+        msg.textContent = "Generated: " + password + " (Remember to share with staff member)";
+        msg.style.color = "#0ea5b4";
+    }
+}
+
+function validatePasswordReset() {
+    const p1 = document.getElementById("newPassword").value;
+    const p2 = document.getElementById("confirmPassword").value;
+    if (p1.length < 6) {
+        alert("Password must be at least 6 characters long.");
+        return false;
+    }
+    if (p1 !== p2) {
+        alert("Passwords do not match. Please re-enter.");
+        return false;
+    }
+    return true;
+}
+
 function changeStatus(staffId, currentStatus) {
     if (!staffId) return;
     const isActive = String(currentStatus).toUpperCase() === "ACTIVE";
@@ -958,10 +1163,12 @@ function changeStatus(staffId, currentStatus) {
 // Modal Click Outside & ESC key
 document.getElementById("addStaffModal").addEventListener("click", function(e) { if (e.target === this) closeAddStaffModal(); });
 document.getElementById("editStaffModal").addEventListener("click", function(e) { if (e.target === this) closeEditStaffModal(); });
+document.getElementById("resetPasswordModal").addEventListener("click", function(e) { if (e.target === this) closeResetPasswordModal(); });
 document.addEventListener("keydown", function(e) {
     if (e.key === "Escape") {
         closeAddStaffModal();
         closeEditStaffModal();
+        closeResetPasswordModal();
     }
 });
 

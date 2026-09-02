@@ -622,6 +622,41 @@ public class StaffService {
 
     /*
      * ==========================================
+     * RESET PASSWORD
+     * ==========================================
+     */
+
+    public boolean resetPassword(
+            int staffId,
+            String newPassword) {
+
+        if (staffId <= 0
+                || isBlank(newPassword)) {
+
+            return false;
+        }
+
+        if (newPassword.trim().length() < 6) {
+
+            return false;
+        }
+
+        Staff staff =
+                staffDAO.findById(staffId);
+
+        if (staff == null) {
+
+            return false;
+        }
+
+        return staffDAO.updatePassword(
+                staffId,
+                newPassword.trim()
+        );
+    }
+
+    /*
+     * ==========================================
      * DEFAULT PASSWORD
      * ==========================================
      */

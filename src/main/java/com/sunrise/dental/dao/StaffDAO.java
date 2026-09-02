@@ -23,4 +23,6 @@ public interface StaffDAO {
     boolean update(Staff staff);
 
     boolean updateStatus(int staffId, String status);
+
+    boolean updatePassword(int staffId, String newPassword);
 }

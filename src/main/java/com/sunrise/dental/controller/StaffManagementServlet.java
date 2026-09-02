@@ -253,6 +253,22 @@ public class StaffManagementServlet extends HttpServlet {
 
         /*
          * ==========================================
+         * RESET PASSWORD
+         * ==========================================
+         */
+
+        if ("resetPassword".equalsIgnoreCase(action)) {
+
+            resetStaffPassword(
+                    request,
+                    response
+            );
+
+            return;
+        }
+
+        /*
+         * ==========================================
          * UNKNOWN ACTION
          * ==========================================
          */
@@ -667,6 +683,129 @@ public class StaffManagementServlet extends HttpServlet {
                     response,
                     "error",
                     "Unable to change staff status."
+            );
+        }
+    }
+
+    /*
+     * ==========================================
+     * RESET STAFF PASSWORD
+     * ==========================================
+     */
+
+    private void resetStaffPassword(
+            HttpServletRequest request,
+            HttpServletResponse response)
+            throws IOException {
+
+        String staffIdParam =
+                request.getParameter("staffId");
+
+        String newPassword =
+                request.getParameter("newPassword");
+
+        String confirmPassword =
+                request.getParameter("confirmPassword");
+
+        if (staffIdParam == null
+                || staffIdParam.isBlank()
+                || newPassword == null
+                || newPassword.isBlank()) {
+
+            redirectWithMessage(
+                    request,
+                    response,
+                    "error",
+                    "Please provide a new password."
+            );
+
+            return;
+        }
+
+        if (confirmPassword != null
+                && !newPassword.equals(confirmPassword)) {
+
+            redirectWithMessage(
+                    request,
+                    response,
+                    "error",
+                    "Passwords do not match."
+            );
+
+            return;
+        }
+
+        if (newPassword.trim().length() < 6) {
+
+            redirectWithMessage(
+                    request,
+                    response,
+                    "error",
+                    "Password must be at least 6 characters long."
+            );
+
+            return;
+        }
+
+        int staffId;
+
+        try {
+
+            staffId = Integer.parseInt(
+                    staffIdParam.trim()
+            );
+
+        } catch (NumberFormatException e) {
+
+            redirectWithMessage(
+                    request,
+                    response,
+                    "error",
+                    "Invalid staff member selected."
+            );
+
+            return;
+        }
+
+        Staff staff =
+                staffService.getStaffById(staffId);
+
+        if (staff == null) {
+
+            redirectWithMessage(
+                    request,
+                    response,
+                    "error",
+                    "Staff member not found."
+            );
+
+            return;
+        }
+
+        boolean success =
+                staffService.resetPassword(
+                        staffId,
+                        newPassword.trim()
+                );
+
+        if (success) {
+
+            redirectWithMessage(
+                    request,
+                    response,
+                    "success",
+                    "Password has been reset successfully for "
+                            + staff.getName()
+                            + " (@" + staff.getUsername() + ")."
+            );
+
+        } else {
+
+            redirectWithMessage(
+                    request,
+                    response,
+                    "error",
+                    "Failed to reset password. Please try again."
             );
         }
     }
