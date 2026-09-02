@@ -138,6 +138,17 @@
             border: 1px solid transparent;
         }
 
+        .action-link-btn.resend {
+            background: #e6f7f9;
+            color: #078c9b;
+            border-color: #b8e6ec;
+            cursor: pointer;
+        }
+        .action-link-btn.resend:hover {
+            background: #d0f1f5;
+            color: #056873;
+        }
+
         .action-link-btn.reschedule {
             background: #fff8e6;
             color: #d48e0c;
@@ -340,9 +351,24 @@
                     <i class="bi bi-check-circle-fill"></i>
                     <span>The appointment has been rescheduled successfully.</span>
                 </div>
+            <% } else if ("resent".equals(success)) { %>
+                <div class="alert-box success">
+                    <i class="bi bi-check-circle-fill"></i>
+                    <span>Appointment confirmation details have been resent successfully to <strong><%= email != null ? email : "the patient" %></strong>.</span>
+                </div>
             <% } %>
 
-            <% if (error != null) { %>
+            <% if ("noemail".equals(error)) { %>
+                <div class="alert-box error">
+                    <i class="bi bi-exclamation-circle-fill"></i>
+                    <span>Cannot resend details: The patient does not have an email address recorded. Please add an email via <strong>Manage Patients</strong> first.</span>
+                </div>
+            <% } else if ("email_failed".equals(error)) { %>
+                <div class="alert-box error">
+                    <i class="bi bi-exclamation-circle-fill"></i>
+                    <span>Failed to send the confirmation email. Please verify mail credentials or try again later.</span>
+                </div>
+            <% } else if (error != null) { %>
                 <div class="alert-box error">
                     <i class="bi bi-exclamation-circle-fill"></i>
                     <span>An error occurred while processing the request (<%= error %>).</span>
@@ -440,6 +466,15 @@
                                 <td>
                                     <div style="display: flex; gap: 8px; align-items: center;">
                                         <% if (!"CANCELLED".equalsIgnoreCase(status) && !"COMPLETED".equalsIgnoreCase(status)) { %>
+                                            <form method="post" action="${pageContext.request.contextPath}/reception/resend-appointment"
+                                                  onsubmit="return confirm('Resend appointment confirmation to <%= (patient != null && patient.getEmail() != null) ? patient.getEmail() : "patient" %>?');"
+                                                  style="display:inline; margin: 0;">
+                                                <input type="hidden" name="appointmentId" value="<%= appointment.getAppointmentId() %>">
+                                                <button type="submit" class="action-link-btn resend" title="Resend appointment details to patient's email">
+                                                    <i class="bi bi-send-check"></i> Resend Info
+                                                </button>
+                                            </form>
+
                                             <a class="action-link-btn reschedule"
                                                href="${pageContext.request.contextPath}/reception/reschedule-appointment?appointmentId=<%= appointment.getAppointmentId() %>">
                                                 <i class="bi bi-arrow-repeat"></i> Reschedule
@@ -456,6 +491,14 @@
                                         <% } else if ("CANCELLED".equalsIgnoreCase(status)) { %>
                                             <span style="font-size: 12px; color: #c92a2a; font-weight: 500;"><i class="bi bi-slash-circle"></i> Cancelled</span>
                                         <% } else { %>
+                                            <form method="post" action="${pageContext.request.contextPath}/reception/resend-appointment"
+                                                  onsubmit="return confirm('Resend appointment record to <%= (patient != null && patient.getEmail() != null) ? patient.getEmail() : "patient" %>?');"
+                                                  style="display:inline; margin: 0;">
+                                                <input type="hidden" name="appointmentId" value="<%= appointment.getAppointmentId() %>">
+                                                <button type="submit" class="action-link-btn resend" title="Resend appointment record to patient" style="padding: 4px 10px; font-size: 11.5px;">
+                                                    <i class="bi bi-send"></i> Resend
+                                                </button>
+                                            </form>
                                             <span style="font-size: 12px; color: #129c5b; font-weight: 500;"><i class="bi bi-check-circle"></i> Completed</span>
                                         <% } %>
                                     </div>

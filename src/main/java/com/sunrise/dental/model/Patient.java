@@ -1,10 +1,13 @@
 package com.sunrise.dental.model;
 
+import java.sql.Date;
+
 public class Patient {
 
     private int patientId;
     private String patientNumber;
     private String name;
+    private Date dateOfBirth;
     private String address;
     private String contactNumber;
     private String email;
@@ -25,6 +28,26 @@ public class Patient {
         this.patientId = patientId;
         this.patientNumber = patientNumber;
         this.name = name;
+        this.address = address;
+        this.contactNumber = contactNumber;
+        this.email = email;
+        this.status = status;
+    }
+
+    public Patient(
+            int patientId,
+            String patientNumber,
+            String name,
+            Date dateOfBirth,
+            String address,
+            String contactNumber,
+            String email,
+            String status) {
+
+        this.patientId = patientId;
+        this.patientNumber = patientNumber;
+        this.name = name;
+        this.dateOfBirth = dateOfBirth;
         this.address = address;
         this.contactNumber = contactNumber;
         this.email = email;
@@ -53,6 +76,30 @@ public class Patient {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Date getDateOfBirth() {
+        return dateOfBirth;
+    }
+
+    public void setDateOfBirth(Date dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
+    }
+
+    public void setDateOfBirth(String dobStr) {
+        if (dobStr != null && !dobStr.trim().isEmpty()) {
+            try {
+                this.dateOfBirth = Date.valueOf(dobStr.trim());
+            } catch (IllegalArgumentException e) {
+                this.dateOfBirth = null;
+            }
+        } else {
+            this.dateOfBirth = null;
+        }
+    }
+
+    public String getDateOfBirthString() {
+        return dateOfBirth != null ? dateOfBirth.toString() : "";
     }
 
     public String getAddress() {

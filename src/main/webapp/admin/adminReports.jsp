@@ -813,6 +813,7 @@
                             <th>Patient ID</th>
                             <th>Patient #</th>
                             <th>Full Name</th>
+                            <th>Date of Birth</th>
                             <th>Contact Phone</th>
                             <th>Email Address</th>
                             <th>Address</th>
@@ -828,6 +829,7 @@
                             <td>#<%= p.getPatientId() %></td>
                             <td><strong><%= p.getPatientNumber() != null ? p.getPatientNumber() : "-" %></strong></td>
                             <td><strong style="color:#0f172a;"><%= p.getName() %></strong></td>
+                            <td><%= p.getDateOfBirth() != null ? p.getDateOfBirth().toString() : "-" %></td>
                             <td><%= p.getContactNumber() != null ? p.getContactNumber() : "-" %></td>
                             <td><%= p.getEmail() != null ? p.getEmail() : "-" %></td>
                             <td><%= p.getAddress() != null ? p.getAddress() : "-" %></td>
@@ -842,7 +844,7 @@
                             } else {
                         %>
                         <tr>
-                            <td colspan="7" style="text-align:center; padding: 30px; color:#94a3b8;">No registered patients found.</td>
+                            <td colspan="8" style="text-align:center; padding: 30px; color:#94a3b8;">No registered patients found.</td>
                         </tr>
                         <% } %>
                     </tbody>

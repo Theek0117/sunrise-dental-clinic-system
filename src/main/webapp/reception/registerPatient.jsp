@@ -358,10 +358,26 @@
                         </div>
 
                         <div class="form-group">
+                            <label for="dateOfBirth">Date of Birth <span style="color: #d9534f;">*</span></label>
+                            <div class="input-box-wrap">
+                                <i class="bi bi-calendar2-date"></i>
+                                <input type="date" id="dateOfBirth" name="dateOfBirth" max="<%= java.time.LocalDate.now() %>" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
                             <label for="contactNumber">Contact Number <span style="color: #d9534f;">*</span></label>
                             <div class="input-box-wrap">
                                 <i class="bi bi-telephone"></i>
                                 <input type="tel" id="contactNumber" name="contactNumber" placeholder="07XXXXXXXX" maxlength="20" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email">Email Address <span style="font-size: 11px; font-weight: normal; color: #8da4ae;">(Optional)</span></label>
+                            <div class="input-box-wrap">
+                                <i class="bi bi-envelope"></i>
+                                <input type="email" id="email" name="email" placeholder="patient@example.com" maxlength="100">
                             </div>
                         </div>
 
@@ -371,15 +387,7 @@
                                 <i class="bi bi-geo-alt" style="top: 14px;"></i>
                                 <textarea id="address" name="address" rows="3" placeholder="Enter patient's address" maxlength="255" required></textarea>
                             </div>
-                        </div>
-
-                        <div class="form-group full-width">
-                            <label for="email">Email Address <span style="font-size: 11px; font-weight: normal; color: #8da4ae;">(Optional)</span></label>
-                            <div class="input-box-wrap">
-                                <i class="bi bi-envelope"></i>
-                                <input type="email" id="email" name="email" placeholder="patient@example.com" maxlength="100">
-                            </div>
-                            <small style="color: #8da4ae; font-size: 11.5px; margin-top: 4px;">Used for sending appointment booking confirmations and reminders.</small>
+                            <small style="color: #8da4ae; font-size: 11.5px; margin-top: 4px;">Email is used for sending appointment confirmations, invoices, and reminders.</small>
                         </div>
                     </div>
 

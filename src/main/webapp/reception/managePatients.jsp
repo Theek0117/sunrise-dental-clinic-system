@@ -461,9 +461,9 @@
                                 <input type="text" name="name" value="<%= editPatient.getName() %>" required>
                             </div>
 
-                            <div class="form-group full-width">
-                                <label>Address <span style="color: #d9534f;">*</span></label>
-                                <textarea name="address" rows="2" required><%= editPatient.getAddress() %></textarea>
+                            <div class="form-group">
+                                <label>Date of Birth</label>
+                                <input type="date" name="dateOfBirth" value="<%= editPatient.getDateOfBirthString() %>" max="<%= java.time.LocalDate.now() %>">
                             </div>
 
                             <div class="form-group">
@@ -482,6 +482,11 @@
                                     <option value="ACTIVE" <%= "ACTIVE".equalsIgnoreCase(editPatient.getStatus()) ? "selected" : "" %>>Active</option>
                                     <option value="INACTIVE" <%= "INACTIVE".equalsIgnoreCase(editPatient.getStatus()) ? "selected" : "" %>>Inactive</option>
                                 </select>
+                            </div>
+
+                            <div class="form-group full-width">
+                                <label>Address <span style="color: #d9534f;">*</span></label>
+                                <textarea name="address" rows="2" required><%= editPatient.getAddress() %></textarea>
                             </div>
                         </div>
 
@@ -519,6 +524,7 @@
                             <tr>
                                 <th>Patient Number</th>
                                 <th>Patient Name</th>
+                                <th>Date of Birth</th>
                                 <th>Contact Number</th>
                                 <th>Email</th>
                                 <th>Status</th>
@@ -546,6 +552,11 @@
                                             <span>ID: #<%= patient.getPatientId() %></span>
                                         </div>
                                     </div>
+                                </td>
+                                <td>
+                                    <span style="color: #1a3b47; font-size: 13px; font-weight: 500;">
+                                        <%= (patient.getDateOfBirth() != null) ? patient.getDateOfBirth().toString() : "<span style='color:#94a3b8;'>—</span>" %>
+                                    </span>
                                 </td>
                                 <td>
                                     <span style="color: #1a3b47; font-weight: 500;"><%= patient.getContactNumber() %></span>

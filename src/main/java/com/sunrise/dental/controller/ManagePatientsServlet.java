@@ -132,6 +132,9 @@ public class ManagePatientsServlet
             String address =
                     request.getParameter("address");
 
+            String dateOfBirth =
+                    request.getParameter("dateOfBirth");
+
             String contactNumber =
                     request.getParameter(
                             "contactNumber"
@@ -143,10 +146,8 @@ public class ManagePatientsServlet
             String status =
                     request.getParameter("status");
 
-
             Patient patient =
                     new Patient();
-
 
             patient.setPatientId(
                     patientId
@@ -155,6 +156,10 @@ public class ManagePatientsServlet
             patient.setName(
                     name
             );
+
+            if (dateOfBirth != null && !dateOfBirth.isBlank()) {
+                patient.setDateOfBirth(dateOfBirth.trim());
+            }
 
             patient.setAddress(
                     address

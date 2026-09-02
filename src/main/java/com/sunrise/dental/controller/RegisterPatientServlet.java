@@ -62,6 +62,8 @@ public class RegisterPatientServlet extends HttpServlet {
         String email =
                 request.getParameter("email");
 
+        String dateOfBirth =
+                request.getParameter("dateOfBirth");
 
         /*
          * Clean email.
@@ -76,7 +78,6 @@ public class RegisterPatientServlet extends HttpServlet {
             }
         }
 
-
         /*
          * Create Patient object.
          */
@@ -89,6 +90,10 @@ public class RegisterPatientServlet extends HttpServlet {
                         ? name.trim()
                         : ""
         );
+
+        if (dateOfBirth != null && !dateOfBirth.isBlank()) {
+            patient.setDateOfBirth(dateOfBirth.trim());
+        }
 
         patient.setAddress(
                 address != null

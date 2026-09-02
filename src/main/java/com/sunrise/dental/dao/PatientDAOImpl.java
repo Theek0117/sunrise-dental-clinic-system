@@ -20,12 +20,13 @@ public class PatientDAOImpl implements PatientDAO {
                 (
                     patient_number,
                     name,
+                    date_of_birth,
                     address,
                     contact_number,
                     email,
                     status
                 )
-                VALUES (?, ?, ?, ?, ?, ?)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
                 """;
 
         try (
@@ -44,13 +45,25 @@ public class PatientDAOImpl implements PatientDAO {
                     patient.getName()
             );
 
+            if (patient.getDateOfBirth() != null) {
+                statement.setDate(
+                        3,
+                        patient.getDateOfBirth()
+                );
+            } else {
+                statement.setNull(
+                        3,
+                        java.sql.Types.DATE
+                );
+            }
+
             statement.setString(
-                    3,
+                    4,
                     patient.getAddress()
             );
 
             statement.setString(
-                    4,
+                    5,
                     patient.getContactNumber()
             );
 
@@ -58,20 +71,20 @@ public class PatientDAOImpl implements PatientDAO {
                     || patient.getEmail().isBlank()) {
 
                 statement.setNull(
-                        5,
+                        6,
                         java.sql.Types.VARCHAR
                 );
 
             } else {
 
                 statement.setString(
-                        5,
+                        6,
                         patient.getEmail()
                 );
             }
 
             statement.setString(
-                    6,
+                    7,
                     patient.getStatus()
             );
 
@@ -185,6 +198,7 @@ public class PatientDAOImpl implements PatientDAO {
                     patient_id,
                     patient_number,
                     name,
+                    date_of_birth,
                     address,
                     contact_number,
                     email,
@@ -230,6 +244,7 @@ public class PatientDAOImpl implements PatientDAO {
                     patient_id,
                     patient_number,
                     name,
+                    date_of_birth,
                     address,
                     contact_number,
                     email,
@@ -275,6 +290,7 @@ public class PatientDAOImpl implements PatientDAO {
                     patient_id,
                     patient_number,
                     name,
+                    date_of_birth,
                     address,
                     contact_number,
                     email,
@@ -347,6 +363,7 @@ public class PatientDAOImpl implements PatientDAO {
                     patient_id,
                     patient_number,
                     name,
+                    date_of_birth,
                     address,
                     contact_number,
                     email,
@@ -396,6 +413,7 @@ public class PatientDAOImpl implements PatientDAO {
                 UPDATE patient
                 SET
                     name = ?,
+                    date_of_birth = ?,
                     address = ?,
                     contact_number = ?,
                     email = ?,
@@ -416,13 +434,25 @@ public class PatientDAOImpl implements PatientDAO {
                     patient.getName()
             );
 
+            if (patient.getDateOfBirth() != null) {
+                statement.setDate(
+                        2,
+                        patient.getDateOfBirth()
+                );
+            } else {
+                statement.setNull(
+                        2,
+                        java.sql.Types.DATE
+                );
+            }
+
             statement.setString(
-                    2,
+                    3,
                     patient.getAddress()
             );
 
             statement.setString(
-                    3,
+                    4,
                     patient.getContactNumber()
             );
 
@@ -430,25 +460,25 @@ public class PatientDAOImpl implements PatientDAO {
                     || patient.getEmail().isBlank()) {
 
                 statement.setNull(
-                        4,
+                        5,
                         java.sql.Types.VARCHAR
                 );
 
             } else {
 
                 statement.setString(
-                        4,
+                        5,
                         patient.getEmail()
                 );
             }
 
             statement.setString(
-                    5,
+                    6,
                     patient.getStatus()
             );
 
             statement.setInt(
-                    6,
+                    7,
                     patient.getPatientId()
             );
 
@@ -487,6 +517,16 @@ public class PatientDAOImpl implements PatientDAO {
                         "name"
                 )
         );
+
+        try {
+            patient.setDateOfBirth(
+                    resultSet.getDate(
+                            "date_of_birth"
+                    )
+            );
+        } catch (SQLException e) {
+            // Field might not exist yet in older schema
+        }
 
         patient.setAddress(
                 resultSet.getString(

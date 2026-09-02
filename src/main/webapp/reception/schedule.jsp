@@ -519,6 +519,27 @@
 
             </div>
 
+            <% 
+                String schedSuccess = request.getParameter("success");
+                String schedError = request.getParameter("error");
+                String schedEmail = request.getParameter("email");
+                if ("resent".equals(schedSuccess)) {
+            %>
+                <div style="background:#e8f8f0; color:#0d8248; border:1px solid #c2eed5; padding:14px 20px; border-radius:12px; margin-bottom:20px; display:flex; align-items:center; gap:10px; font-size:13.5px;">
+                    <i class="bi bi-check-circle-fill"></i>
+                    <span>Appointment details have been resent successfully to <strong><%= schedEmail != null ? schedEmail : "the patient" %></strong>.</span>
+                </div>
+            <% } else if ("noemail".equals(schedError)) { %>
+                <div style="background:#feecee; color:#c92a2a; border:1px solid #f9c6cb; padding:14px 20px; border-radius:12px; margin-bottom:20px; display:flex; align-items:center; gap:10px; font-size:13.5px;">
+                    <i class="bi bi-exclamation-circle-fill"></i>
+                    <span>Cannot resend details: The patient does not have an email address on file.</span>
+                </div>
+            <% } else if ("email_failed".equals(schedError)) { %>
+                <div style="background:#feecee; color:#c92a2a; border:1px solid #f9c6cb; padding:14px 20px; border-radius:12px; margin-bottom:20px; display:flex; align-items:center; gap:10px; font-size:13.5px;">
+                    <i class="bi bi-exclamation-circle-fill"></i>
+                    <span>Failed to send email. Please verify mail configuration or try again later.</span>
+                </div>
+            <% } %>
 
             <section class="appointments-section">
 
@@ -763,17 +784,27 @@
 
 
                                 <td>
+                                    <div style="display: flex; gap: 8px; align-items: center;">
+                                        <a
+                                            href="${pageContext.request.contextPath}/reception/view-appointment?appointmentId=<%= appointment.getAppointmentId() %>"
+                                            class="table-action"
+                                            title="View appointment"
+                                        >
+                                            <i class="bi bi-eye"></i>
+                                        </a>
 
-                                    <a
-                                        href="${pageContext.request.contextPath}/reception/view-appointment?appointmentId=<%= appointment.getAppointmentId() %>"
-                                        class="table-action"
-                                        title="View appointment"
-                                    >
-
-                                        <i class="bi bi-eye"></i>
-
-                                    </a>
-
+                                        <% if (!"CANCELLED".equalsIgnoreCase(status)) { %>
+                                            <form method="post" action="${pageContext.request.contextPath}/reception/resend-appointment"
+                                                  onsubmit="return confirm('Resend appointment details to <%= (patient != null && patient.getEmail() != null) ? patient.getEmail() : "patient" %>?');"
+                                                  style="display:inline; margin: 0;">
+                                                <input type="hidden" name="appointmentId" value="<%= appointment.getAppointmentId() %>">
+                                                <input type="hidden" name="returnTo" value="schedule">
+                                                <button type="submit" class="table-action" style="border:none; cursor:pointer; background:none; padding:0;" title="Resend confirmation email to patient">
+                                                    <i class="bi bi-send-check" style="color: #0ea5b4;"></i>
+                                                </button>
+                                            </form>
+                                        <% } %>
+                                    </div>
                                 </td>
 
                             </tr>
