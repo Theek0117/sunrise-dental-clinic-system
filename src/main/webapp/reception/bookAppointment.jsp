@@ -1286,5 +1286,7 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 </script>
 
+<script src="<%= contextPath %>/js/notifications.js"></script>
+
 </body>
 </html>

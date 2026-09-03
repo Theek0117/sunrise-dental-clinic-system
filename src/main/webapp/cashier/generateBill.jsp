@@ -455,7 +455,11 @@
                 </div>
             <% } %>
 
-            <form action="<%= contextPath %>/cashier/generate-bill" method="POST" id="billingForm">
+            <form action="<%= contextPath %>/cashier/generate-bill" method="POST" id="billingForm"
+                  data-confirm="Generate official invoice and record payment transaction for <%= patientName %>?"
+                  data-confirm-title="Confirm Billing & Invoice"
+                  data-confirm-type="primary"
+                  data-confirm-btn="Generate Bill">
                 <input type="hidden" name="appointmentId" value="<%= appointment.getAppointmentId() %>">
 
                 <div class="bill-workspace">
@@ -667,6 +671,8 @@
     // Initial calculation
     calculateTotals();
 </script>
+
+<script src="<%= contextPath %>/js/notifications.js"></script>
 
 </body>
 </html>

@@ -532,18 +532,20 @@
                                             <i class="bi bi-pencil"></i>
                                         </button>
 
-                                        <form method="post" action="<%= contextPath %>/admin/treatments" style="display:inline;">
+                                        <form method="post" action="<%= contextPath %>/admin/treatments" style="display:inline;"
+                                              data-confirm="Are you sure you want to <%= "ACTIVE".equalsIgnoreCase(status) ? "deactivate" : "activate" %> this treatment type?"
+                                              data-confirm-title="<%= "ACTIVE".equalsIgnoreCase(status) ? "Deactivate Treatment Type" : "Activate Treatment Type" %>"
+                                              data-confirm-type="<%= "ACTIVE".equalsIgnoreCase(status) ? "danger" : "primary" %>"
+                                              data-confirm-btn="<%= "ACTIVE".equalsIgnoreCase(status) ? "Yes, Deactivate" : "Yes, Activate" %>">
                                             <input type="hidden" name="action" value="changeStatus">
                                             <input type="hidden" name="treatmentTypeId" value="<%= treatmentType.getTreatmentTypeId() %>">
 
                                             <% if ("ACTIVE".equalsIgnoreCase(status)) { %>
-                                                <button type="submit" class="action-btn-circle status-toggle" title="Deactivate"
-                                                        onclick="return confirm('Are you sure you want to deactivate this treatment type?');">
+                                                <button type="submit" class="action-btn-circle status-toggle" title="Deactivate">
                                                     <i class="bi bi-pause-circle"></i>
                                                 </button>
                                             <% } else { %>
-                                                <button type="submit" class="action-btn-circle" title="Activate"
-                                                        onclick="return confirm('Are you sure you want to activate this treatment type?');">
+                                                <button type="submit" class="action-btn-circle" title="Activate">
                                                     <i class="bi bi-play-circle"></i>
                                                 </button>
                                             <% } %>
@@ -682,6 +684,8 @@ document.addEventListener("keydown", function(e) {
         return value.replace("\\", "\\\\").replace("'", "\\'").replace("\"", "\\\"").replace("\r", "\\r").replace("\n", "\\n");
     }
 %>
+
+<script src="<%= contextPath %>/js/notifications.js"></script>
 
 </body>
 </html>

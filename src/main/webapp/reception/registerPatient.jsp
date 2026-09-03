@@ -408,5 +408,7 @@
 
 </div>
 
+<script src="${pageContext.request.contextPath}/js/notifications.js"></script>
+
 </body>
 </html>

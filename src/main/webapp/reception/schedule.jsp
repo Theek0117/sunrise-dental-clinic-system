@@ -795,7 +795,10 @@
 
                                         <% if (!"CANCELLED".equalsIgnoreCase(status)) { %>
                                             <form method="post" action="${pageContext.request.contextPath}/reception/resend-appointment"
-                                                  onsubmit="return confirm('Resend appointment details to <%= (patient != null && patient.getEmail() != null) ? patient.getEmail() : "patient" %>?');"
+                                                  data-confirm="Resend appointment details to <%= (patient != null && patient.getEmail() != null) ? patient.getEmail() : "the patient" %>?"
+                                                  data-confirm-title="Resend Appointment Email"
+                                                  data-confirm-type="primary"
+                                                  data-confirm-btn="Yes, Send Email"
                                                   style="display:inline; margin: 0;">
                                                 <input type="hidden" name="appointmentId" value="<%= appointment.getAppointmentId() %>">
                                                 <input type="hidden" name="returnTo" value="schedule">
@@ -883,6 +886,8 @@
     }
 
 </script>
+
+<script src="${pageContext.request.contextPath}/js/notifications.js"></script>
 
 </body>
 

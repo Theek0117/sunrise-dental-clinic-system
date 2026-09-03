@@ -424,5 +424,7 @@
 
 </div>
 
+<script src="<%= contextPath %>/js/notifications.js"></script>
+
 </body>
 </html>

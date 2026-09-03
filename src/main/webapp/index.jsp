@@ -173,6 +173,19 @@
             font-size: 34px;
             color: var(--brand-teal);
             font-weight: 800;
+            overflow: hidden;
+        }
+
+        .doctor-avatar-wrap img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+            transition: transform 0.3s ease;
+        }
+
+        .doctor-card:hover .doctor-avatar-wrap img {
+            transform: scale(1.08);
         }
 
         .doctor-badge-status {
@@ -356,6 +369,14 @@
             font-size: 38px;
             font-weight: 800;
             flex-shrink: 0;
+            overflow: hidden;
+        }
+
+        .modal-avatar-lg img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
         }
 
         .modal-bio-para {
@@ -422,6 +443,189 @@
             box-shadow: 0 12px 28px rgba(14, 165, 180, 0.4);
         }
 
+        /* CALL-TO-BOOK BANNER & CONTACT HUB */
+        .call-to-book-banner {
+            background: linear-gradient(135deg, #062b38 0%, #0c4d61 100%);
+            border-radius: 24px;
+            padding: 38px 42px;
+            color: #ffffff;
+            margin-bottom: 35px;
+            box-shadow: 0 20px 45px rgba(6, 43, 56, 0.22);
+            border: 1.5px solid rgba(14, 165, 180, 0.35);
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .call-to-book-banner::after {
+            content: '';
+            position: absolute;
+            top: -60%;
+            right: -20%;
+            width: 380px;
+            height: 380px;
+            background: radial-gradient(circle, rgba(14, 165, 180, 0.25), transparent 70%);
+            pointer-events: none;
+        }
+
+        .booking-notice-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 22px;
+            background: linear-gradient(135deg, #0ea5b4, #087f8c);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 38px;
+            color: #ffffff;
+            flex-shrink: 0;
+            box-shadow: 0 10px 25px rgba(14, 165, 180, 0.35);
+        }
+
+        .booking-notice-content {
+            flex: 1;
+            position: relative;
+            z-index: 1;
+        }
+
+        .booking-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(254, 240, 138, 0.18);
+            border: 1px solid rgba(254, 240, 138, 0.4);
+            color: #fef08a;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 4px 14px;
+            border-radius: 20px;
+            margin-bottom: 12px;
+        }
+
+        .booking-notice-content h2 {
+            font-size: 26px;
+            font-weight: 800;
+            margin: 0 0 10px;
+            color: #ffffff;
+        }
+
+        .booking-notice-content p {
+            font-size: 14.5px;
+            color: #cde6ef;
+            line-height: 1.7;
+            margin: 0 0 22px;
+            max-width: 820px;
+        }
+
+        .quick-call-actions {
+            display: flex;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+
+        .call-action-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 13px 24px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .call-action-btn.primary {
+            background: #0ea5b4;
+            color: #ffffff;
+            box-shadow: 0 8px 20px rgba(14, 165, 180, 0.35);
+        }
+
+        .call-action-btn.primary:hover {
+            background: #11b8c9;
+            transform: translateY(-2px);
+            box-shadow: 0 12px 25px rgba(14, 165, 180, 0.45);
+        }
+
+        .call-action-btn.whatsapp {
+            background: #25d366;
+            color: #ffffff;
+            box-shadow: 0 8px 20px rgba(37, 211, 102, 0.3);
+        }
+
+        .call-action-btn.whatsapp:hover {
+            background: #22bf5b;
+            transform: translateY(-2px);
+        }
+
+        .call-action-btn.outline {
+            background: rgba(255, 255, 255, 0.12);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .call-action-btn.outline:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .booking-steps-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .booking-step-card {
+            background: #ffffff;
+            border-radius: 18px;
+            padding: 24px 22px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.04);
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            transition: all 0.25s ease;
+        }
+
+        .booking-step-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 28px rgba(14, 165, 180, 0.12);
+            border-color: #a4cddc;
+        }
+
+        .step-num {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: #e0f7fa;
+            color: var(--brand-teal);
+            font-size: 18px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .step-body h4 {
+            margin: 0 0 6px;
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--brand-navy);
+        }
+
+        .step-body p {
+            margin: 0;
+            font-size: 12.5px;
+            color: #64748b;
+            line-height: 1.6;
+        }
+
         /* ENHANCED PROCEDURES SECTION */
         .procedure-card-deluxe {
             background: #ffffff;
@@ -441,6 +645,9 @@
         @media (max-width: 900px) {
             .stats-ribbon { grid-template-columns: 1fr 1fr; margin-top: 20px; }
             .modal-info-grid { grid-template-columns: 1fr; }
+            .call-to-book-banner { flex-direction: column; text-align: center; padding: 30px 24px; }
+            .quick-call-actions { justify-content: center; }
+            .booking-steps-grid { grid-template-columns: 1fr; }
         }
 
         @media (max-width: 600px) {
@@ -480,7 +687,7 @@
 
                 <div class="nav-actions">
                     <a class="login-btn" href="<%= contextPath %>/login.jsp"><i class="bi bi-person-lock"></i> Staff Portal</a>
-                    <a class="nav-btn" href="#contact"><i class="bi bi-calendar-check"></i> Book Visit</a>
+                    <a class="nav-btn" href="#contact"><i class="bi bi-telephone-fill"></i> Contact Us</a>
                     <button class="menu-toggle" id="menuToggle" aria-label="Open navigation menu" aria-expanded="false">
                         <span></span>
                     </button>
@@ -498,7 +705,7 @@
                     Experience world-class dental procedures, pain-free treatments, and award-winning specialist care in a luxurious and calming atmosphere.
                 </p>
                 <div style="display:flex; gap:14px; flex-wrap:wrap; margin-top:24px;">
-                    <a class="primary-btn" href="#contact"><i class="bi bi-calendar-plus"></i> Book Consultation</a>
+                    <a class="primary-btn" href="#contact"><i class="bi bi-telephone-fill"></i> Contact & Appointments</a>
                     <a class="primary-btn" href="#doctors" style="background:rgba(255,255,255,0.15); border:1.5px solid rgba(255,255,255,0.4); backdrop-filter:blur(8px);"><i class="bi bi-people"></i> Meet Our Doctors</a>
                 </div>
 
@@ -570,6 +777,16 @@
             <!-- DOCTORS GRID -->
             <div class="doctors-grid" id="doctorsContainer">
                 <%
+                    String[] doctorPhotos = {
+                        "https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=400&auto=format&fit=crop&q=80",
+                        "https://images.unsplash.com/photo-1594824813590-389602e1c981?w=400&auto=format&fit=crop&q=80",
+                        "https://images.unsplash.com/photo-1537368910025-700350fe46c7?w=400&auto=format&fit=crop&q=80",
+                        "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=400&auto=format&fit=crop&q=80",
+                        "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=400&auto=format&fit=crop&q=80",
+                        "https://images.unsplash.com/photo-1622902046580-2b47f47f5471?w=400&auto=format&fit=crop&q=80"
+                    };
+                    int docIdx = 0;
+
                     if (activeDentists != null && !activeDentists.isEmpty()) {
                         for (Dentist d : activeDentists) {
                             String docName = d.getName() != null ? d.getName() : "Specialist";
@@ -578,6 +795,8 @@
                             String initial = docName.startsWith("Dr.") ? docName.substring(3).trim().substring(0,1).toUpperCase() : docName.substring(0,1).toUpperCase();
                             String docPhone = d.getContactNumber() != null ? d.getContactNumber() : "+1 (800) 555-0199";
                             String docEmail = d.getEmail() != null ? d.getEmail() : "doctor@sunrisedental.com";
+                            String photoUrl = doctorPhotos[docIdx % doctorPhotos.length];
+                            docIdx++;
 
                             // Categorize for filtering
                             String cat = "general";
@@ -591,13 +810,14 @@
                             }
 
                             // Generate rich biography paragraph
-                            String bioParagraph = "Dr. " + docName + " is a distinguished " + spec + " at Sunrise Dental Clinic with over a decade of clinical practice. Renowned for a gentle and patient-centered philosophy, Dr. " + docName + " specializes in advanced dental restorations, precision diagnostics, and painless procedures. Patients appreciate their meticulous attention to detail, calming chairside manner, and dedication to crafting natural, healthy smiles that boost confidence.";
+                            String bioParagraph = "Dr. " + docName + " is a distinguished " + spec + " at Sunrise Dental Clinic with extensive clinical experience. Renowned for a gentle and patient-centered approach, Dr. " + docName + " specializes in modern dental restorations, precision diagnostics, and painless treatments. Patients appreciate their meticulous attention to detail, calming chairside manner, and dedication to crafting natural, healthy smiles that boost confidence.";
                 %>
-                <div class="doctor-card" data-category="<%= cat %>" onclick="openDoctorModal('<%= docName.replace("'", "\\'") %>', '<%= spec.replace("'", "\\'") %>', '<%= room.replace("'", "\\'") %>', '<%= docPhone.replace("'", "\\'") %>', '<%= docEmail.replace("'", "\\'") %>', '<%= bioParagraph.replace("'", "\\'") %>', '<%= initial %>')">
+                <div class="doctor-card" data-category="<%= cat %>" onclick="openDoctorModal('<%= docName.replace("'", "\\'") %>', '<%= spec.replace("'", "\\'") %>', '<%= room.replace("'", "\\'") %>', '<%= docPhone.replace("'", "\\'") %>', '<%= docEmail.replace("'", "\\'") %>', '<%= bioParagraph.replace("'", "\\'") %>', '<%= initial %>', '<%= photoUrl %>')">
                     <div class="doctor-card-banner">
                         <span class="doctor-badge-status"><i class="bi bi-circle-fill" style="color:#4ade80; font-size:8px;"></i> Available</span>
                         <div class="doctor-avatar-wrap">
-                            <%= initial %>
+                            <img src="<%= photoUrl %>" alt="Dr. <%= docName %>" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            <span style="display:none; width:100%; height:100%; align-items:center; justify-content:center;"><%= initial %></span>
                         </div>
                     </div>
 
@@ -624,10 +844,13 @@
                     } else {
                 %>
                 <!-- FALLBACK SPECIALISTS WHEN DB HAS INITIAL DATA -->
-                <div class="doctor-card" data-category="orthodontics" onclick="openDoctorModal('Amila Perera', 'Consultant Orthodontist & Smile Architect', 'Room 102', '+1 (800) 555-0199', 'amila@sunrisedental.com', 'Dr. Amila Perera is a premier Consultant Orthodontist with over 12 years of specialized experience in clear aligners, Invisalign, and complex bite corrections. Known for crafting harmonious smile aesthetics, Dr. Perera combines 3D digital smile simulation with compassionate patient guidance.', 'A')">
+                <div class="doctor-card" data-category="orthodontics" onclick="openDoctorModal('Amila Perera', 'Consultant Orthodontist & Smile Architect', 'Room 102', '+1 (800) 555-0199', 'amila@sunrisedental.com', 'Dr. Amila Perera is a premier Consultant Orthodontist with over 12 years of specialized experience in clear aligners, Invisalign, and complex bite corrections. Known for crafting harmonious smile aesthetics, Dr. Perera combines 3D digital smile simulation with compassionate patient guidance.', 'A', 'https://images.unsplash.com/photo-1537368910025-700350fe46c7?w=400&auto=format&fit=crop&q=80')">
                     <div class="doctor-card-banner">
                         <span class="doctor-badge-status"><i class="bi bi-circle-fill" style="color:#4ade80; font-size:8px;"></i> Available</span>
-                        <div class="doctor-avatar-wrap">A</div>
+                        <div class="doctor-avatar-wrap">
+                            <img src="https://images.unsplash.com/photo-1537368910025-700350fe46c7?w=400&auto=format&fit=crop&q=80" alt="Dr. Amila Perera" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            <span style="display:none; width:100%; height:100%; align-items:center; justify-content:center;">A</span>
+                        </div>
                     </div>
                     <div class="doctor-card-body">
                         <h3>Dr. Amila Perera</h3>
@@ -641,10 +864,13 @@
                     </div>
                 </div>
 
-                <div class="doctor-card" data-category="surgery" onclick="openDoctorModal('Kasun Silva', 'Senior Oral & Maxillofacial Surgeon', 'Room 105', '+1 (800) 555-0199', 'kasun@sunrisedental.com', 'Dr. Kasun Silva is an esteemed Oral & Maxillofacial Surgeon specialized in dental implants, bone grafting, and gentle surgical extractions. He emphasizes zero-anxiety procedures utilizing cutting-edge computer-guided implantology.', 'K')">
+                <div class="doctor-card" data-category="surgery" onclick="openDoctorModal('Kasun Silva', 'Senior Oral & Maxillofacial Surgeon', 'Room 105', '+1 (800) 555-0199', 'kasun@sunrisedental.com', 'Dr. Kasun Silva is an esteemed Oral & Maxillofacial Surgeon specialized in dental implants, bone grafting, and gentle surgical extractions. He emphasizes zero-anxiety procedures utilizing cutting-edge computer-guided implantology.', 'K', 'https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=400&auto=format&fit=crop&q=80')">
                     <div class="doctor-card-banner">
                         <span class="doctor-badge-status"><i class="bi bi-circle-fill" style="color:#4ade80; font-size:8px;"></i> Available</span>
-                        <div class="doctor-avatar-wrap">K</div>
+                        <div class="doctor-avatar-wrap">
+                            <img src="https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=400&auto=format&fit=crop&q=80" alt="Dr. Kasun Silva" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            <span style="display:none; width:100%; height:100%; align-items:center; justify-content:center;">K</span>
+                        </div>
                     </div>
                     <div class="doctor-card-body">
                         <h3>Dr. Kasun Silva</h3>
@@ -658,10 +884,13 @@
                     </div>
                 </div>
 
-                <div class="doctor-card" data-category="cosmetic" onclick="openDoctorModal('Sanduni Fernando', 'Cosmetic & Aesthetic Dental Specialist', 'Room 108', '+1 (800) 555-0199', 'sanduni@sunrisedental.com', 'Dr. Sanduni Fernando brings an artistic passion to cosmetic dentistry, specializing in porcelain veneers, laser teeth whitening, and composite bonding. Her personalized smile makeovers are celebrated for their natural brilliance.', 'S')">
+                <div class="doctor-card" data-category="cosmetic" onclick="openDoctorModal('Sanduni Fernando', 'Cosmetic & Aesthetic Dental Specialist', 'Room 108', '+1 (800) 555-0199', 'sanduni@sunrisedental.com', 'Dr. Sanduni Fernando brings an artistic passion to cosmetic dentistry, specializing in porcelain veneers, laser teeth whitening, and composite bonding. Her personalized smile makeovers are celebrated for their natural brilliance.', 'S', 'https://images.unsplash.com/photo-1594824813590-389602e1c981?w=400&auto=format&fit=crop&q=80')">
                     <div class="doctor-card-banner">
                         <span class="doctor-badge-status"><i class="bi bi-circle-fill" style="color:#4ade80; font-size:8px;"></i> Available</span>
-                        <div class="doctor-avatar-wrap">S</div>
+                        <div class="doctor-avatar-wrap">
+                            <img src="https://images.unsplash.com/photo-1594824813590-389602e1c981?w=400&auto=format&fit=crop&q=80" alt="Dr. Sanduni Fernando" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            <span style="display:none; width:100%; height:100%; align-items:center; justify-content:center;">S</span>
+                        </div>
                     </div>
                     <div class="doctor-card-body">
                         <h3>Dr. Sanduni Fernando</h3>
@@ -690,7 +919,10 @@
 
                 <div class="modal-body-scroll">
                     <div class="modal-profile-header">
-                        <div class="modal-avatar-lg" id="modalDocInitial">D</div>
+                        <div class="modal-avatar-lg">
+                            <img id="modalDocPhoto" src="" alt="Doctor Photo" onerror="this.style.display='none'; document.getElementById('modalDocInitial').style.display='flex';">
+                            <span id="modalDocInitial" style="display:none; width:100%; height:100%; align-items:center; justify-content:center; font-size:36px; font-weight:800; color:var(--brand-teal);">D</span>
+                        </div>
                         <div>
                             <h2 style="margin:0; font-size:22px; font-weight:700; color:var(--brand-navy);" id="modalDocName">Dr. Specialist</h2>
                             <span style="color:var(--brand-teal); font-size:13.5px; font-weight:600;" id="modalDocSpec">Specialist</span>
@@ -721,8 +953,8 @@
                         </div>
                     </div>
 
-                    <a href="#contact" class="btn-modal-book-cta" onclick="selectDoctorForBooking()">
-                        <i class="bi bi-calendar2-check"></i> Book Consultation with This Specialist
+                    <a href="tel:+18005550199" class="btn-modal-book-cta">
+                        <i class="bi bi-telephone-fill"></i> Call Reception to Book (+1 800 555-0199)
                     </a>
                 </div>
             </div>
@@ -819,7 +1051,7 @@
                     <p>
                         Schedule a gentle consultation with our specialists today and take the first step towards your dream smile.
                     </p>
-                    <a href="#contact" class="callout-badge" style="text-decoration:none;">Book Your Visit Now →</a>
+                    <a href="#contact" class="callout-badge" style="text-decoration:none;">Contact Our Clinic →</a>
                 </div>
 
                 <div class="callout-visual" aria-label="Dental care banner" data-aos="fade-left" data-aos-duration="1000"></div>
@@ -827,83 +1059,90 @@
         </section>
 
         <!-- ========================================================= -->
-        <!-- CONTACT & BOOKING INQUIRY -->
+        <!-- CONTACT & APPOINTMENT BOOKING HUB -->
         <!-- ========================================================= -->
         <section id="contact" class="contact-section" data-aos="fade-up" data-aos-duration="800">
             <div class="gallery-grid" style="padding-bottom: 40px;">
-                <div class="section-kicker">Get in Touch</div>
-                <h2 class="section-title">Schedule Your Consultation</h2>
-                
+                <div class="section-kicker">Book Your Visit</div>
+                <h2 class="section-title">Contact Us for Appointments</h2>
+
+                <!-- CALL-TO-BOOK HERO BANNER -->
+                <div class="call-to-book-banner" data-aos="zoom-in" data-aos-duration="800">
+                    <div class="booking-notice-icon">
+                        <i class="bi bi-telephone-inbound-fill"></i>
+                    </div>
+                    <div class="booking-notice-content">
+                        <span class="booking-badge"><i class="bi bi-info-circle-fill"></i> PHONE & DIRECT APPOINTMENT BOOKINGS ONLY</span>
+                        <h2>Please Call Our Reception to Book Your Appointment</h2>
+                        <p>
+                            To ensure optimal doctor availability, personalized consultation time, and immediate slot confirmation, <strong>all patient appointments are arranged directly with our friendly reception desk coordinators</strong>. We will check real-time doctor schedules and book your preferred date & time immediately.
+                        </p>
+                        <div class="quick-call-actions">
+                            <a href="tel:+18005550199" class="call-action-btn primary"><i class="bi bi-telephone-fill"></i> Call Reception: +1 (800) 555-0199</a>
+                            <a href="https://wa.me/18005550199" target="_blank" class="call-action-btn whatsapp"><i class="bi bi-whatsapp"></i> WhatsApp Booking</a>
+                            <a href="mailto:appointments@sunrisedental.com" class="call-action-btn outline"><i class="bi bi-envelope-fill"></i> Email Inquiry</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4 CONTACT INFORMATION CARDS -->
                 <div class="services-grid">
                     <article class="service-card" data-aos="zoom-in" data-aos-delay="50">
                         <div class="service-icon">☎</div>
-                        <h3>Call Direct</h3>
-                        <p>+1 (800) 555-0199</p>
-                        <p class="contact-detail">Mon - Sat: 9 AM - 7 PM</p>
+                        <h3>Phone Hotlines</h3>
+                        <p><strong>+1 (800) 555-0199</strong></p>
+                        <p class="contact-detail" style="margin-top:6px; color:#0ea5b4; font-weight:600;">Main Reception Desk</p>
+                        <p class="contact-detail">24/7 Dental Emergency: +1 (800) 555-0911</p>
                     </article>
-                    
+
                     <article class="service-card" data-aos="zoom-in" data-aos-delay="100">
                         <div class="service-icon">✉</div>
-                        <h3>Email Inquiries</h3>
-                        <p>hello@sunrisedental.com</p>
-                        <p class="contact-detail">Fast reply within 24 hours</p>
+                        <h3>Email Helpdesk</h3>
+                        <p><strong>appointments@sunrisedental.com</strong></p>
+                        <p class="contact-detail" style="margin-top:6px; color:#0ea5b4; font-weight:600;">Booking Inquiries</p>
+                        <p class="contact-detail">General: hello@sunrisedental.com</p>
                     </article>
-                    
+
                     <article class="service-card" data-aos="zoom-in" data-aos-delay="150">
                         <div class="service-icon">📍</div>
-                        <h3>Our Location</h3>
-                        <p>24 Harbor Avenue, Dental Suite 4</p>
-                        <p class="contact-detail">Ample Free Parking</p>
+                        <h3>Clinic Location</h3>
+                        <p><strong>24 Harbor Avenue, Suite 4</strong></p>
+                        <p class="contact-detail" style="margin-top:6px; color:#0ea5b4; font-weight:600;">Colombo 03, Dental Pavilion</p>
+                        <p class="contact-detail">Reserved Free Patient Parking & Wheelchair Access</p>
                     </article>
-                    
+
                     <article class="service-card" data-aos="zoom-in" data-aos-delay="200">
                         <div class="service-icon">⏰</div>
-                        <h3>Working Hours</h3>
-                        <p>Mon - Sat: 9:00 AM - 7:00 PM</p>
-                        <p class="contact-detail">24/7 Emergency Service</p>
+                        <h3>Reception Hours</h3>
+                        <p><strong>Mon - Sat: 9:00 AM - 7:00 PM</strong></p>
+                        <p class="contact-detail" style="margin-top:6px; color:#0ea5b4; font-weight:600;">Sunday: 10:00 AM - 4:00 PM</p>
+                        <p class="contact-detail">24/7 On-Call Emergency Toothache Care</p>
                     </article>
                 </div>
 
-                <div class="contact-form-wrapper" data-aos="fade-up" data-aos-delay="100">
-                    <h3>Request an Appointment Window</h3>
-                    <p>Fill in your preferences and our reception coordinator will confirm your time slot promptly.</p>
-                    <form class="contact-form" onsubmit="event.preventDefault(); alert('Thank you! Your appointment inquiry has been received. Our reception team will contact you shortly.');">
-                        <div class="form-group">
-                            <input type="text" placeholder="Your Full Name" required>
+                <!-- 3 SIMPLE STEPS TO BOOK -->
+                <div class="booking-steps-grid" data-aos="fade-up" data-aos-delay="100">
+                    <div class="booking-step-card">
+                        <div class="step-num">1</div>
+                        <div class="step-body">
+                            <h4>Call Our Reception</h4>
+                            <p>Dial our primary booking hotline at <strong>+1 (800) 555-0199</strong> or message us via WhatsApp.</p>
                         </div>
-                        <div class="form-group">
-                            <input type="email" placeholder="Your Email Address" required>
+                    </div>
+                    <div class="booking-step-card">
+                        <div class="step-num">2</div>
+                        <div class="step-body">
+                            <h4>Select Doctor & Slot</h4>
+                            <p>Our receptionist will check real-time availability and reserve the ideal specialist for your treatment.</p>
                         </div>
-                        <div class="form-group">
-                            <input type="tel" placeholder="Your Contact Phone" required>
+                    </div>
+                    <div class="booking-step-card">
+                        <div class="step-num">3</div>
+                        <div class="step-body">
+                            <h4>Instant Confirmation</h4>
+                            <p>Receive immediate SMS and email confirmation with visit reminders and clinic directions.</p>
                         </div>
-                        <div class="form-group">
-                            <select id="bookingDoctorSelect" required>
-                                <option value="">Select Preferred Specialist</option>
-                                <%
-                                    if (activeDentists != null) {
-                                        for (Dentist d : activeDentists) {
-                                %>
-                                    <option value="Dr. <%= d.getName() %>">Dr. <%= d.getName() %> (<%= d.getSpecialization() %>)</option>
-                                <%
-                                        }
-                                    }
-                                %>
-                                <option value="First Available Doctor">First Available Specialist</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <select required>
-                                <option value="">Select Dental Procedure</option>
-                                <option value="general">Routine Cleaning & Exam</option>
-                                <option value="implants">Dental Implants</option>
-                                <option value="cosmetic">Cosmetic Teeth Whitening</option>
-                                <option value="ortho">Orthodontics & Invisalign</option>
-                                <option value="rootcanal">Root Canal Therapy</option>
-                            </select>
-                        </div>
-                        <button type="submit" class="form-submit"><i class="bi bi-calendar-check"></i> Submit Appointment Request</button>
-                    </form>
+                    </div>
                 </div>
             </div>
         </section>
@@ -1001,7 +1240,7 @@
         // DOCTOR MODAL LOGIC
         let currentSelectedDoctorName = "";
 
-        function openDoctorModal(name, spec, room, phone, email, bio, initial) {
+        function openDoctorModal(name, spec, room, phone, email, bio, initial, photoUrl) {
             currentSelectedDoctorName = name;
             document.getElementById('modalDocName').textContent = "Dr. " + name;
             document.getElementById('modalDocSpec').textContent = spec;
@@ -1009,7 +1248,20 @@
             document.getElementById('modalDocPhone').textContent = phone;
             document.getElementById('modalDocEmail').textContent = email;
             document.getElementById('modalDocBio').textContent = bio;
-            document.getElementById('modalDocInitial').textContent = initial || "D";
+
+            const photoImg = document.getElementById('modalDocPhoto');
+            const initSpan = document.getElementById('modalDocInitial');
+            if (photoUrl && photoImg) {
+                photoImg.src = photoUrl;
+                photoImg.style.display = 'block';
+                if (initSpan) initSpan.style.display = 'none';
+            } else {
+                if (photoImg) photoImg.style.display = 'none';
+                if (initSpan) {
+                    initSpan.textContent = initial || "D";
+                    initSpan.style.display = 'flex';
+                }
+            }
 
             const modal = document.getElementById('doctorModal');
             modal.classList.add('show');
@@ -1025,19 +1277,6 @@
         function closeDoctorModalOnOverlay(event) {
             if (event.target === document.getElementById('doctorModal')) {
                 closeDoctorModal();
-            }
-        }
-
-        function selectDoctorForBooking() {
-            closeDoctorModal();
-            const select = document.getElementById('bookingDoctorSelect');
-            if (select && currentSelectedDoctorName) {
-                for (let i = 0; i < select.options.length; i++) {
-                    if (select.options[i].text.toLowerCase().includes(currentSelectedDoctorName.toLowerCase())) {
-                        select.selectedIndex = i;
-                        break;
-                    }
-                }
             }
         }
 

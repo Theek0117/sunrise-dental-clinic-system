@@ -1833,6 +1833,12 @@
                                                 <%= patientNumber %>
                                             </span>
 
+                                            <% if (patient != null && patient.getDateOfBirth() != null) { %>
+                                                <small style="color: #64748b; font-size: 11px; display: block; margin-top: 2px;">
+                                                    <i class="bi bi-calendar2-date" style="color: #0ea5b4;"></i> DOB: <%= patient.getDateOfBirth() %>
+                                                </small>
+                                            <% } %>
+
                                         </div>
 
                                     </div>
@@ -2027,6 +2033,7 @@
 
 </script>
 
+<script src="${pageContext.request.contextPath}/js/notifications.js"></script>
 
 </body>
 

@@ -447,6 +447,11 @@
                                         <div>
                                             <strong><%= pName %></strong>
                                             <span><%= pPhone %></span>
+                                            <% if (patient != null && patient.getDateOfBirth() != null) { %>
+                                                <small style="color: #64748b; font-size: 11px; display: block; margin-top: 1px;">
+                                                    <i class="bi bi-calendar2-date" style="color: #0ea5b4;"></i> <%= patient.getDateOfBirth() %>
+                                                </small>
+                                            <% } %>
                                         </div>
                                     </div>
                                 </td>
@@ -467,7 +472,10 @@
                                     <div style="display: flex; gap: 8px; align-items: center;">
                                         <% if (!"CANCELLED".equalsIgnoreCase(status) && !"COMPLETED".equalsIgnoreCase(status)) { %>
                                             <form method="post" action="${pageContext.request.contextPath}/reception/resend-appointment"
-                                                  onsubmit="return confirm('Resend appointment confirmation to <%= (patient != null && patient.getEmail() != null) ? patient.getEmail() : "patient" %>?');"
+                                                  data-confirm="Resend appointment confirmation to <%= (patient != null && patient.getEmail() != null) ? patient.getEmail() : "the patient" %>?"
+                                                  data-confirm-title="Resend Confirmation Email"
+                                                  data-confirm-type="primary"
+                                                  data-confirm-btn="Yes, Send Email"
                                                   style="display:inline; margin: 0;">
                                                 <input type="hidden" name="appointmentId" value="<%= appointment.getAppointmentId() %>">
                                                 <button type="submit" class="action-link-btn resend" title="Resend appointment details to patient's email">
@@ -481,7 +489,10 @@
                                             </a>
 
                                             <form method="post" action="${pageContext.request.contextPath}/reception/cancel-appointment"
-                                                  onsubmit="return confirm('Are you sure you want to cancel appointment <%= appointment.getAppointmentNumber() %>?');"
+                                                  data-confirm="Are you sure you want to cancel appointment <%= appointment.getAppointmentNumber() %>? This slot will be released for other patients."
+                                                  data-confirm-title="Cancel Appointment"
+                                                  data-confirm-type="danger"
+                                                  data-confirm-btn="Yes, Cancel Slot"
                                                   style="display:inline; margin: 0;">
                                                 <input type="hidden" name="appointmentId" value="<%= appointment.getAppointmentId() %>">
                                                 <button type="submit" class="action-link-btn cancel">
@@ -492,7 +503,10 @@
                                             <span style="font-size: 12px; color: #c92a2a; font-weight: 500;"><i class="bi bi-slash-circle"></i> Cancelled</span>
                                         <% } else { %>
                                             <form method="post" action="${pageContext.request.contextPath}/reception/resend-appointment"
-                                                  onsubmit="return confirm('Resend appointment record to <%= (patient != null && patient.getEmail() != null) ? patient.getEmail() : "patient" %>?');"
+                                                  data-confirm="Resend appointment record to <%= (patient != null && patient.getEmail() != null) ? patient.getEmail() : "the patient" %>?"
+                                                  data-confirm-title="Resend Appointment Record"
+                                                  data-confirm-type="primary"
+                                                  data-confirm-btn="Yes, Send Email"
                                                   style="display:inline; margin: 0;">
                                                 <input type="hidden" name="appointmentId" value="<%= appointment.getAppointmentId() %>">
                                                 <button type="submit" class="action-link-btn resend" title="Resend appointment record to patient" style="padding: 4px 10px; font-size: 11.5px;">
@@ -548,6 +562,8 @@ if (searchInput) searchInput.addEventListener("input", filterAppointments);
 if (statusFilter) statusFilter.addEventListener("change", filterAppointments);
 if (dateFilter) dateFilter.addEventListener("change", filterAppointments);
 </script>
+
+<script src="${pageContext.request.contextPath}/js/notifications.js"></script>
 
 </body>
 </html>

@@ -1138,26 +1138,55 @@ function changeStatus(staffId, currentStatus) {
     if (!staffId) return;
     const isActive = String(currentStatus).toUpperCase() === "ACTIVE";
     const actionText = isActive ? "deactivate" : "activate";
-    if (!confirm("Are you sure you want to " + actionText + " this staff member?")) return;
 
-    const form = document.createElement("form");
-    form.method = "POST";
-    form.action = "<%= contextPath %>/admin/staff";
+    if (window.showConfirmDialog) {
+        window.showConfirmDialog({
+            title: (isActive ? "Deactivate" : "Activate") + " Staff Member?",
+            message: "Are you sure you want to " + actionText + " this staff member's login access?",
+            confirmText: isActive ? "Yes, Deactivate" : "Yes, Activate",
+            type: isActive ? "danger" : "primary",
+            onConfirm: () => {
+                const form = document.createElement("form");
+                form.method = "POST";
+                form.action = "<%= contextPath %>/admin/staff";
 
-    const actionInput = document.createElement("input");
-    actionInput.type = "hidden";
-    actionInput.name = "action";
-    actionInput.value = "changeStatus";
+                const actionInput = document.createElement("input");
+                actionInput.type = "hidden";
+                actionInput.name = "action";
+                actionInput.value = "changeStatus";
 
-    const staffIdInput = document.createElement("input");
-    staffIdInput.type = "hidden";
-    staffIdInput.name = "staffId";
-    staffIdInput.value = staffId;
+                const staffIdInput = document.createElement("input");
+                staffIdInput.type = "hidden";
+                staffIdInput.name = "staffId";
+                staffIdInput.value = staffId;
 
-    form.appendChild(actionInput);
-    form.appendChild(staffIdInput);
-    document.body.appendChild(form);
-    form.submit();
+                form.appendChild(actionInput);
+                form.appendChild(staffIdInput);
+                document.body.appendChild(form);
+                form.submit();
+            }
+        });
+    } else {
+        if (!confirm("Are you sure you want to " + actionText + " this staff member?")) return;
+        const form = document.createElement("form");
+        form.method = "POST";
+        form.action = "<%= contextPath %>/admin/staff";
+
+        const actionInput = document.createElement("input");
+        actionInput.type = "hidden";
+        actionInput.name = "action";
+        actionInput.value = "changeStatus";
+
+        const staffIdInput = document.createElement("input");
+        staffIdInput.type = "hidden";
+        staffIdInput.name = "staffId";
+        staffIdInput.value = staffId;
+
+        form.appendChild(actionInput);
+        form.appendChild(staffIdInput);
+        document.body.appendChild(form);
+        form.submit();
+    }
 }
 
 // Modal Click Outside & ESC key
@@ -1181,6 +1210,8 @@ setTimeout(function() {
     });
 }, 5000);
 </script>
+
+<script src="<%= contextPath %>/js/notifications.js"></script>
 
 </body>
 </html>

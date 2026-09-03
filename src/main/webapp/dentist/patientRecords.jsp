@@ -361,6 +361,11 @@
                                                 <div>
                                                     <strong><%= p.getName() != null ? p.getName() : "Patient #" + p.getPatientId() %></strong>
                                                     <span>#<%= p.getPatientNumber() != null ? p.getPatientNumber() : "PAT-" + p.getPatientId() %></span>
+                                                    <% if (p.getDateOfBirth() != null) { %>
+                                                        <small style="color: #64748b; font-size: 11px; display: block; margin-top: 2px;">
+                                                            <i class="bi bi-calendar2-date" style="color: #0ea5b4;"></i> DOB: <%= p.getDateOfBirth() %>
+                                                        </small>
+                                                    <% } %>
                                                 </div>
                                             </div>
                                         </td>

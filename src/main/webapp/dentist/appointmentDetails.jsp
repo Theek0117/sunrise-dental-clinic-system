@@ -1686,6 +1686,21 @@
                         <div class="info-item">
 
                             <label>
+                                Date of Birth
+                            </label>
+
+                            <strong>
+                                <i class="bi bi-calendar2-date" style="color: #0ea5b4; margin-right: 4px;"></i>
+                                <%= (patient.getDateOfBirth() != null)
+                                        ? patient.getDateOfBirth().toString()
+                                        : "<span style='color:#94a3b8; font-weight:normal;'>Not provided</span>" %>
+                            </strong>
+
+                        </div>
+
+                        <div class="info-item">
+
+                            <label>
                                 Contact Number
                             </label>
 
@@ -2675,6 +2690,8 @@
         );
     }
 </script>
+
+<script src="${pageContext.request.contextPath}/js/notifications.js"></script>
 
 </body>
 
