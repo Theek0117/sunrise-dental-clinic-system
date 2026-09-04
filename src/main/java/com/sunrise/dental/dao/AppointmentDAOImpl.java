@@ -125,19 +125,16 @@ public class AppointmentDAOImpl implements AppointmentDAO {
                         );
 
                 if (lastNumber != null
-                        && lastNumber.length() > 1) {
+                        && !lastNumber.isBlank()) {
 
-                    int number =
-                            Integer.parseInt(
-                                    lastNumber.substring(1)
-                            );
-
-                    number++;
-
-                    return String.format(
-                            "A%06d",
-                            number
-                    );
+                    String digits = lastNumber.replaceAll("\\D+", "");
+                    if (!digits.isEmpty()) {
+                        int number = Integer.parseInt(digits);
+                        return String.format(
+                                "A%06d",
+                                number + 1
+                        );
+                    }
                 }
             }
 

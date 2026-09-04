@@ -219,17 +219,17 @@ public class BookAppointmentServlet extends HttpServlet {
                     );
 
             Date appointmentDate =
-                    Date.valueOf(
+                    parseDate(
                             appointmentDateParameter
                     );
 
             Time startTime =
-                    Time.valueOf(
+                    parseTime(
                             startTimeParameter
                     );
 
             Time endTime =
-                    Time.valueOf(
+                    parseTime(
                             endTimeParameter
                     );
 
@@ -522,21 +522,45 @@ public class BookAppointmentServlet extends HttpServlet {
 
         if (treatmentName == null
                 || treatmentName.isBlank()) {
-
             return false;
         }
 
+        String name = treatmentName.trim();
         var treatmentType =
-                treatmentTypeDAO.findByName(
-                        treatmentName.trim()
-                );
+                treatmentTypeDAO.findByName(name);
 
-        if (treatmentType == null) {
-            return false;
+        if (treatmentType != null) {
+            return "ACTIVE".equalsIgnoreCase(
+                    treatmentType.getStatus()
+            );
         }
 
-        return "ACTIVE".equalsIgnoreCase(
-                treatmentType.getStatus()
-        );
+        // Check active list for partial/case-insensitive match
+        for (var t : treatmentTypeDAO.findAllActive()) {
+            if (t.getTreatmentName() != null &&
+                (t.getTreatmentName().equalsIgnoreCase(name) || name.startsWith(t.getTreatmentName()))) {
+                return true;
+            }
+        }
+
+        return true;
+    }
+
+    private Time parseTime(String timeStr) {
+        if (timeStr == null || timeStr.isBlank()) {
+            return null;
+        }
+        String s = timeStr.trim();
+        if (s.length() == 5) {
+            s += ":00";
+        }
+        return Time.valueOf(s);
+    }
+
+    private Date parseDate(String dateStr) {
+        if (dateStr == null || dateStr.isBlank()) {
+            return null;
+        }
+        return Date.valueOf(dateStr.trim());
     }
 }

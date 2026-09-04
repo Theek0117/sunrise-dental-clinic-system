@@ -1291,10 +1291,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (!isBookingConfirmed) {
             e.preventDefault();
-            const pName = summaryPatientName && summaryPatientName.textContent.trim() !== "-" ? summaryPatientName.textContent.trim() : "Patient";
-            const dName = summaryDentistName && summaryDentistName.textContent.trim() !== "-" ? summaryDentistName.textContent.trim() : "Dentist";
-            const aDate = summaryDate && summaryDate.textContent.trim() !== "-" ? summaryDate.textContent.trim() : appointmentDate.value;
-            const aTime = summaryTime && summaryTime.textContent.trim() !== "-" ? summaryTime.textContent.trim() : "Selected Slot";
+            const pName = (selectedPatientName && selectedPatientName.textContent.trim()) ? selectedPatientName.textContent.trim() : (summaryPatient ? summaryPatient.textContent.trim() : "Patient");
+            const dName = (selectedDentistName && selectedDentistName.textContent.trim()) ? selectedDentistName.textContent.trim() : (summaryDentist ? summaryDentist.textContent.trim() : "Dentist");
+            const aDate = (summaryDate && summaryDate.textContent.trim() !== "Not selected") ? summaryDate.textContent.trim() : appointmentDate.value;
+            const aTime = (summaryTime && summaryTime.textContent.trim() !== "Not selected") ? summaryTime.textContent.trim() : "Selected Slot";
 
             if (typeof window.showConfirmDialog === "function") {
                 window.showConfirmDialog({

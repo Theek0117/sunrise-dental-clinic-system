@@ -2,7 +2,9 @@ package com.sunrise.dental.service;
 
 import java.sql.Date;
 import java.sql.Time;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 import com.sunrise.dental.dao.AppointmentDAO;
@@ -421,11 +423,17 @@ public class AppointmentService {
     private boolean isThirtyMinuteSlot(
             Appointment appointment) {
 
-        long duration =
-                appointment.getEndTime().getTime()
-                - appointment.getStartTime().getTime();
+        if (appointment == null
+                || appointment.getStartTime() == null
+                || appointment.getEndTime() == null) {
+            return false;
+        }
 
-        return duration / (60 * 1000) == 30;
+        LocalTime start = appointment.getStartTime().toLocalTime();
+        LocalTime end = appointment.getEndTime().toLocalTime();
+        long minutes = java.time.Duration.between(start, end).toMinutes();
+
+        return minutes == 30;
     }
 
     private boolean validAvailability(
@@ -452,86 +460,65 @@ public class AppointmentService {
             Time end,
             DentistAvailability availability) {
 
-        if (availability == null) {
+        if (availability == null || date == null || start == null || end == null) {
             return false;
         }
 
         /*
          * Dentist must match availability
          */
-
-        if (availability.getDentistId()
-                != dentistId) {
-
+        if (availability.getDentistId() != dentistId) {
             return false;
         }
 
         /*
          * Date must match availability
          */
+        if (availability.getAvailableDate() == null) {
+            return false;
+        }
 
-        if (availability.getAvailableDate() == null
-                || !availability.getAvailableDate()
-                        .equals(date)) {
-
+        LocalDate availDate = availability.getAvailableDate().toLocalDate();
+        LocalDate targetDate = date.toLocalDate();
+        if (!availDate.equals(targetDate)) {
             return false;
         }
 
         /*
          * Slot must be inside availability
          */
+        LocalTime slotStart = start.toLocalTime();
+        LocalTime slotEnd = end.toLocalTime();
+        LocalTime availStart = availability.getStartTime().toLocalTime();
+        LocalTime availEnd = availability.getEndTime().toLocalTime();
 
-        if (start.before(
-                availability.getStartTime())) {
-
-            return false;
-        }
-
-        if (end.after(
-                availability.getEndTime())) {
-
+        if (slotStart.isBefore(availStart) || slotEnd.isAfter(availEnd)) {
             return false;
         }
 
         /*
          * Slot must start on a 30-minute boundary
-         * relative to the availability start.
          */
+        int startMinutes = slotStart.getHour() * 60 + slotStart.getMinute();
+        int availabilityStartMinutes = availStart.getHour() * 60 + availStart.getMinute();
 
-        int startMinutes =
-                start.toLocalTime().getHour() * 60
-                + start.toLocalTime().getMinute();
-
-        int availabilityStartMinutes =
-                availability.getStartTime()
-                        .toLocalTime()
-                        .getHour() * 60
-                + availability.getStartTime()
-                        .toLocalTime()
-                        .getMinute();
-
-        int relative =
-                startMinutes
-                - availabilityStartMinutes;
-
-        return relative >= 0
-                && relative % 30 == 0;
+        int relative = startMinutes - availabilityStartMinutes;
+        return relative >= 0 && relative % 30 == 0;
     }
 
     private boolean isFutureSlot(
             Date date,
             Time startTime) {
 
-        LocalDateTime now =
-                LocalDateTime.now();
+        if (date == null || startTime == null) {
+            return false;
+        }
 
-        LocalDateTime slot =
-                LocalDateTime.of(
-                        date.toLocalDate(),
-                        startTime.toLocalTime()
-                );
+        LocalDate today = LocalDate.now();
+        LocalDate appDate = date.toLocalDate();
 
-        return slot.isAfter(now);
+        // Allow today and any future dates
+        return !appDate.isBefore(today);
     }
 
     private boolean isActiveStatus(
