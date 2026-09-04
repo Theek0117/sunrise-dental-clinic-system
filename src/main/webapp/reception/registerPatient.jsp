@@ -28,10 +28,11 @@
             background: #ffffff;
             border-radius: 20px;
             box-shadow: 0 12px 35px rgba(6, 38, 50, 0.09);
-            padding: 34px 38px;
+            padding: 38px 44px;
             margin-bottom: 30px;
             border: 1px solid #edf3f5;
-            max-width: 860px;
+            width: 100%;
+            box-sizing: border-box;
         }
 
         .form-grid {
@@ -108,39 +109,52 @@
         .form-actions {
             display: flex;
             justify-content: flex-end;
-            gap: 12px;
-            margin-top: 25px;
-            padding-top: 20px;
+            align-items: center;
+            gap: 14px;
+            margin-top: 30px;
+            padding-top: 22px;
             border-top: 1px solid #f0f4f6;
         }
 
         .cancel-btn {
-            padding: 11px 20px;
-            border-radius: 10px;
-            border: 1px solid #dce8ec;
             background: #ffffff;
-            color: #557280;
-            font-size: 13px;
-            font-weight: 600;
+            color: #527382;
+            border: 1px solid #d2e4ea;
+            padding: 12px 22px;
+            border-radius: 10px;
+            font-weight: 500;
+            font-size: 13.5px;
             text-decoration: none;
             display: inline-flex;
             align-items: center;
-            gap: 6px;
+            gap: 7px;
+            transition: all 0.2s;
+        }
+
+        .cancel-btn:hover {
+            background: #f4f8fa;
+            color: #2c4a57;
         }
 
         .submit-btn {
-            padding: 11px 24px;
-            border-radius: 10px;
-            border: none;
-            background: linear-gradient(135deg, #0ea5b4, #087f8c);
+            background: #0ea5b4;
             color: #ffffff;
-            font-size: 13.5px;
+            border: none;
+            padding: 12px 26px;
+            border-radius: 10px;
             font-weight: 600;
-            cursor: pointer;
+            font-size: 13.5px;
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            box-shadow: 0 4px 14px rgba(8, 127, 140, 0.25);
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 14px rgba(14, 165, 180, 0.3);
+        }
+
+        .submit-btn:hover {
+            background: #0c8c99;
+            transform: translateY(-1px);
         }
 
         .alert-box {
@@ -155,6 +169,15 @@
         }
         .alert-box.success { background: #e8f8f0; color: #0d8248; border: 1px solid #c2eed5; }
         .alert-box.error { background: #feecee; color: #c92a2a; border: 1px solid #f9c6cb; }
+
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            .form-card-container {
+                padding: 24px 20px;
+            }
+        }
     </style>
 </head>
 
@@ -283,12 +306,16 @@
                     <i class="bi bi-arrow-left"></i>
                 </a>
                 <div>
-                    <h1>Patient Registration</h1>
-                    <p>Create a verified patient profile before scheduling clinical appointments</p>
+                    <h1>New Patient Intake</h1>
+                    <p>Enter the patient's personal, contact, and residential information.</p>
                 </div>
             </div>
 
-            <div class="topbar-right">
+            <div class="topbar-right" style="display: flex; align-items: center; gap: 14px;">
+                <a href="${pageContext.request.contextPath}/reception/manage-patients" class="view-all-link" style="background: rgba(14, 165, 180, 0.22); border: 1px solid rgba(14, 165, 180, 0.45); padding: 8px 16px; border-radius: 10px; color: #ffffff; font-size: 13px; font-weight: 500; display: inline-flex; align-items: center; gap: 7px; text-decoration: none;">
+                    <i class="bi bi-person-lines-fill"></i> View All Patients
+                </a>
+
                 <a href="${pageContext.request.contextPath}/reception/profile" class="user-profile">
                     <div class="user-avatar">
                         <i class="bi bi-person-fill"></i>
@@ -303,19 +330,6 @@
 
         <!-- DASHBOARD CONTENT -->
         <section class="dashboard-content">
-
-            <!-- Hero Banner -->
-            <div class="welcome-section">
-                <div>
-                    <h2>New Patient Intake</h2>
-                    <p>Enter the patient's personal, contact, and residential information.</p>
-                </div>
-                <div>
-                    <a href="${pageContext.request.contextPath}/reception/manage-patients" class="view-all-link" style="background: rgba(255,255,255,0.2); padding: 8px 16px; border-radius: 10px; color: #ffffff;">
-                        <i class="bi bi-person-lines-fill"></i> View All Patients
-                    </a>
-                </div>
-            </div>
 
             <!-- Notifications -->
             <% if (request.getAttribute("success") != null) { %>
@@ -342,8 +356,8 @@
             <div class="form-card-container">
                 <div class="section-heading" style="margin-bottom: 25px; border-bottom: 1px solid #f0f4f6; padding-bottom: 15px;">
                     <div>
-                        <h3>Patient Information Form</h3>
-                        <p>Fill in the required fields marked with <span style="color: #d9534f;">*</span></p>
+                        <h3 style="font-size: 18px; font-weight: 700; color: #0c3d4f; margin: 0 0 4px;">Patient Registration Form</h3>
+                        <p style="font-size: 13px; color: #64748b; margin: 0;">Fill in all required fields marked with <span style="color: #d9534f; font-weight: bold;">*</span></p>
                     </div>
                 </div>
 
@@ -353,7 +367,7 @@
                             <label for="name">Full Name <span style="color: #d9534f;">*</span></label>
                             <div class="input-box-wrap">
                                 <i class="bi bi-person"></i>
-                                <input type="text" id="name" name="name" placeholder="Enter patient's full name" maxlength="100" required>
+                                <input type="text" id="name" name="name" placeholder="Enter patient's full name" maxlength="100" pattern="^[A-Za-z\s\.\'-]{2,100}$" title="Enter a valid name (letters and spaces only, min 2 characters)" required>
                             </div>
                         </div>
 
@@ -361,7 +375,7 @@
                             <label for="dateOfBirth">Date of Birth <span style="color: #d9534f;">*</span></label>
                             <div class="input-box-wrap">
                                 <i class="bi bi-calendar2-date"></i>
-                                <input type="date" id="dateOfBirth" name="dateOfBirth" max="<%= java.time.LocalDate.now() %>" required>
+                                <input type="date" id="dateOfBirth" name="dateOfBirth" min="1900-01-01" max="<%= java.time.LocalDate.now() %>" required>
                             </div>
                         </div>
 
@@ -369,15 +383,15 @@
                             <label for="contactNumber">Contact Number <span style="color: #d9534f;">*</span></label>
                             <div class="input-box-wrap">
                                 <i class="bi bi-telephone"></i>
-                                <input type="tel" id="contactNumber" name="contactNumber" placeholder="07XXXXXXXX" maxlength="20" required>
+                                <input type="tel" id="contactNumber" name="contactNumber" placeholder="07XXXXXXXX" maxlength="15" pattern="^(?:0|94|\+94)?[0-9]{9,10}$" title="Enter a valid phone number (e.g. 0712345678 or +94712345678)" required>
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label for="email">Email Address <span style="font-size: 11px; font-weight: normal; color: #8da4ae;">(Optional)</span></label>
+                            <label for="email">Email Address <span style="color: #d9534f;">*</span></label>
                             <div class="input-box-wrap">
                                 <i class="bi bi-envelope"></i>
-                                <input type="email" id="email" name="email" placeholder="patient@example.com" maxlength="100">
+                                <input type="email" id="email" name="email" placeholder="patient@example.com" maxlength="100" pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$" title="Enter a valid email address" required>
                             </div>
                         </div>
 
@@ -387,7 +401,7 @@
                                 <i class="bi bi-geo-alt" style="top: 14px;"></i>
                                 <textarea id="address" name="address" rows="3" placeholder="Enter patient's address" maxlength="255" required></textarea>
                             </div>
-                            <small style="color: #8da4ae; font-size: 11.5px; margin-top: 4px;">Email is used for sending appointment confirmations, invoices, and reminders.</small>
+                            <small style="color: #8da4ae; font-size: 11.5px; margin-top: 4px;">Email is required for sending automated appointment confirmations, bill invoices, and reminders.</small>
                         </div>
                     </div>
 

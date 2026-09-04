@@ -307,8 +307,8 @@
                     <i class="bi bi-arrow-left"></i>
                 </a>
                 <div>
-                    <h1>Appointments Directory</h1>
-                    <p>View, search, reschedule, and manage patient clinic bookings</p>
+                    <h1>Patient Appointments</h1>
+                    <p>Complete record of all upcoming, confirmed, and past clinic bookings.</p>
                 </div>
             </div>
 
@@ -327,18 +327,6 @@
 
         <!-- DASHBOARD CONTENT -->
         <section class="dashboard-content">
-
-            <!-- Welcome / Hero Banner -->
-            <div class="welcome-section">
-                <div>
-                    <h2>Patient Appointments</h2>
-                    <p>Complete record of all upcoming, confirmed, and past clinic bookings.</p>
-                </div>
-                <div class="current-date">
-                    <i class="bi bi-calendar3"></i>
-                    <span id="liveDateDisplay">All Records</span>
-                </div>
-            </div>
 
             <!-- Notifications -->
             <% if ("cancelled".equals(success)) { %>
@@ -428,7 +416,8 @@
                                     Dentist dentist = (dentists != null) ? dentists.get(appointment.getDentistId()) : null;
                                     String pName = (patient != null && patient.getName() != null) ? patient.getName() : "Patient #" + appointment.getPatientId();
                                     String pPhone = (patient != null && patient.getContactNumber() != null) ? patient.getContactNumber() : "-";
-                                    String dName = (dentist != null && dentist.getName() != null) ? dentist.getName() : "Dentist #" + appointment.getDentistId();
+                                    String rawDName = (dentist != null && dentist.getName() != null) ? dentist.getName().trim() : ("Dentist #" + appointment.getDentistId());
+                                    String dName = rawDName.replaceAll("^(?i)dr\\.?\\s*", "").trim();
                                     String dSpec = (dentist != null && dentist.getSpecialization() != null) ? dentist.getSpecialization() : "Surgeon";
                                     String status = appointment.getStatus() != null ? appointment.getStatus() : "PENDING";
                                     String statusClass = status.trim().toLowerCase().replace(" ", "-");

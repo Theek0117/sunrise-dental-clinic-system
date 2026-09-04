@@ -100,11 +100,13 @@
             background: #ffffff;
             border-radius: 20px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
-            overflow: hidden;
+            overflow-x: auto;
+            border: 1px solid #e2e8f0;
         }
 
         .table-custom {
             width: 100%;
+            min-width: 1050px;
             border-collapse: collapse;
         }
 
@@ -118,14 +120,16 @@
             letter-spacing: 0.5px;
             background: #f8fafc;
             border-bottom: 1px solid #e2e8f0;
+            white-space: nowrap;
         }
 
         .table-custom td {
-            padding: 16px 20px;
+            padding: 18px 20px;
             font-size: 13.5px;
             color: #334155;
             border-bottom: 1px solid #f1f5f9;
             vertical-align: middle;
+            white-space: nowrap;
         }
 
         .table-custom tr:hover td {
@@ -265,7 +269,6 @@
                             <th>Treatment</th>
                             <th>Base Cost</th>
                             <th>Date</th>
-                            <th>Time</th>
                             <th>Status</th>
                             <th>Action</th>
                         </tr>
@@ -281,7 +284,8 @@
                                     String pName = (p != null && p.getName() != null) ? p.getName() : "Patient #" + app.getPatientId();
 
                                     Dentist d = (dentists != null) ? dentists.get(app.getDentistId()) : null;
-                                    String dName = (d != null && d.getName() != null) ? d.getName() : "Dentist #" + app.getDentistId();
+                                    String rawDName = (d != null && d.getName() != null) ? d.getName().trim() : ("#" + app.getDentistId());
+                                    String dentistLabel = "Dr. " + rawDName.replaceAll("^(?i)dr\\.?\\s*", "").trim();
 
                                     TreatmentType tt = (treatmentTypes != null) ? treatmentTypes.get(app.getAppointmentId()) : null;
                                     String treatName = (tt != null && tt.getTreatmentName() != null) ? tt.getTreatmentName() : "General Treatment";
@@ -301,12 +305,11 @@
                                 </div>
                             </td>
                             <td>
-                                <span style="color:#0ea5b4; font-weight:600;">Dr. <%= dName %></span>
+                                <span style="color:#0ea5b4; font-weight:600;"><%= dentistLabel %></span>
                             </td>
                             <td><%= treatName %></td>
                             <td><strong>Rs. <%= String.format("%.2f", cost) %></strong></td>
                             <td><%= app.getAppointmentDate() %></td>
-                            <td><%= app.getStartTime() %> - <%= app.getEndTime() %></td>
                             <td>
                                 <span style="background:#dcfce7; color:#15803d; padding:4px 10px; border-radius:20px; font-size:11.5px; font-weight:600;">
                                     <i class="bi bi-circle-fill" style="font-size:8px;"></i> Completed
@@ -323,7 +326,7 @@
                             } else {
                         %>
                         <tr>
-                            <td colspan="9" style="text-align:center; padding: 50px 20px; color:#94a3b8;">
+                            <td colspan="8" style="text-align:center; padding: 50px 20px; color:#94a3b8;">
                                 <i class="bi bi-inbox" style="font-size:38px; display:block; margin-bottom:10px;"></i>
                                 <strong style="display:block; font-size:15px; color:#475569;">No completed appointments found</strong>
                                 <span>All completed appointments have either been billed or no records match your search.</span>
@@ -339,5 +342,6 @@
 
 </div>
 
+<script src="<%= contextPath %>/js/notifications.js"></script>
 </body>
 </html>

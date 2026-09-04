@@ -5,6 +5,7 @@
     if (staffName == null || staffName.isBlank()) {
         staffName = "Dentist";
     }
+    String docStaffLabel = "Dr. " + staffName.replaceAll("^(?i)dr\\.?\\s*", "").trim();
 %>
 
 <!DOCTYPE html>
@@ -339,7 +340,7 @@
                         <i class="bi bi-person-fill"></i>
                     </div>
                     <div class="user-information">
-                        <strong>Dr. <%= staffName %></strong>
+                        <strong><%= docStaffLabel %></strong>
                         <span>Dental Specialist</span>
                     </div>
                 </div>
@@ -529,5 +530,6 @@
 
 </div>
 
+<script src="${pageContext.request.contextPath}/js/notifications.js"></script>
 </body>
 </html>

@@ -104,7 +104,8 @@
     String patientName = (patient != null && patient.getName() != null) ? patient.getName() : "Patient #" + appointment.getPatientId();
     String patientEmail = (patient != null && patient.getEmail() != null) ? patient.getEmail() : "N/A";
     String patientContact = (patient != null && patient.getContactNumber() != null) ? patient.getContactNumber() : "N/A";
-    String doctorName = (dentist != null && dentist.getName() != null) ? dentist.getName() : "Dentist #" + appointment.getDentistId();
+    String rawDocName = (dentist != null && dentist.getName() != null) ? dentist.getName().trim() : ("Dentist #" + appointment.getDentistId());
+    String doctorLabel = "Dr. " + rawDocName.replaceAll("^(?i)dr\\.?\\s*", "").trim();
     String doctorSpecialization = (dentist != null && dentist.getSpecialization() != null) ? dentist.getSpecialization() : "Dental Surgeon";
     String treatmentTitle = (treatmentType != null && treatmentType.getTreatmentName() != null) ? treatmentType.getTreatmentName() : "General Dental Treatment";
 %>
@@ -485,7 +486,7 @@
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px;">
                             <div style="background:#f8fafc; padding:14px 16px; border-radius:12px; border:1px solid #e2e8f0;">
                                 <span style="display:block; font-size:11.5px; color:#64748b; font-weight:600; text-transform:uppercase;">Attending Doctor</span>
-                                <strong style="color:#0f172a; font-size:14px;">Dr. <%= doctorName %></strong>
+                                <strong style="color:#0f172a; font-size:14px;"><%= doctorLabel %></strong>
                                 <span style="display:block; color:#0ea5b4; font-size:12px; font-weight:500;"><%= doctorSpecialization %></span>
                             </div>
                             <div style="background:#f8fafc; padding:14px 16px; border-radius:12px; border:1px solid #e2e8f0;">
@@ -512,8 +513,10 @@
                         <div class="field-group">
                             <label class="field-label" for="doctorFee">Doctor's Clinical Fee (Rs.)</label>
                             <input type="number" step="0.01" min="0" name="doctorFee" id="doctorFee" value="0.00"
+                                   onkeydown="return ['e','E','+','-'].includes(event.key) ? false : true"
+                                   oninput="if(this.value < 0) this.value = 0;"
                                    placeholder="0.00" class="form-control" style="font-weight:600;">
-                            <span style="font-size:11.5px; color:#64748b; margin-top:4px; display:block;">Enter any doctor consultation or specialist procedure charge.</span>
+                            <span style="font-size:11.5px; color:#64748b; margin-top:4px; display:block;">Enter any doctor consultation or specialist procedure charge (Numbers only, min 0.00).</span>
                         </div>
 
                         <!-- 3. ADDITIONAL CHARGES / MEDICATIONS / SERVICES -->
@@ -639,7 +642,10 @@
         row.className = 'charge-row';
         row.innerHTML = `
             <input type="text" name="chargeName" value="\${name}" placeholder="e.g. X-Ray, Antibiotics, Dressing" class="form-control" required>
-            <input type="number" step="0.01" min="0" name="chargeAmount" value="\${amount}" placeholder="Amount (Rs.)" class="form-control charge-amt-input" required>
+            <input type="number" step="0.01" min="0" name="chargeAmount" value="\${amount}" 
+                   onkeydown="return ['e','E','+','-'].includes(event.key) ? false : true"
+                   oninput="if(this.value < 0) this.value = 0;"
+                   placeholder="Amount (Rs.)" class="form-control charge-amt-input" required>
             <button type="button" class="btn-del-row" title="Remove"><i class="bi bi-trash3"></i></button>
         `;
 

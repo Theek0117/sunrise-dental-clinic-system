@@ -66,78 +66,54 @@ public class RegisterPatientServlet extends HttpServlet {
                 request.getParameter("dateOfBirth");
 
         /*
-         * Clean email.
+         * Validate inputs.
          */
+        if (name == null || name.trim().length() < 2) {
+            request.setAttribute("error", "Patient name must be at least 2 characters long.");
+            request.getRequestDispatcher("/reception/registerPatient.jsp").forward(request, response);
+            return;
+        }
 
-        if (email != null) {
+        if (contactNumber == null || !contactNumber.trim().matches("^(?:0|94|\\+94)?[0-9]{9,10}$")) {
+            request.setAttribute("error", "Please provide a valid 10-digit contact number (e.g. 07XXXXXXXX).");
+            request.getRequestDispatcher("/reception/registerPatient.jsp").forward(request, response);
+            return;
+        }
 
-            email = email.trim();
+        if (email == null || !email.trim().matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$")) {
+            request.setAttribute("error", "Please provide a valid email address (e.g. patient@example.com).");
+            request.getRequestDispatcher("/reception/registerPatient.jsp").forward(request, response);
+            return;
+        }
 
-            if (email.isEmpty()) {
-                email = null;
-            }
+        if (address == null || address.trim().isBlank()) {
+            request.setAttribute("error", "Residential address cannot be empty.");
+            request.getRequestDispatcher("/reception/registerPatient.jsp").forward(request, response);
+            return;
         }
 
         /*
          * Create Patient object.
          */
-
-        Patient patient =
-                new Patient();
-
-        patient.setName(
-                name != null
-                        ? name.trim()
-                        : ""
-        );
-
+        Patient patient = new Patient();
+        patient.setName(name.trim());
         if (dateOfBirth != null && !dateOfBirth.isBlank()) {
             patient.setDateOfBirth(dateOfBirth.trim());
         }
-
-        patient.setAddress(
-                address != null
-                        ? address.trim()
-                        : ""
-        );
-
-        patient.setContactNumber(
-                contactNumber != null
-                        ? contactNumber.trim()
-                        : ""
-        );
-
-        patient.setEmail(email);
-
+        patient.setAddress(address.trim());
+        patient.setContactNumber(contactNumber.trim());
+        patient.setEmail(email.trim());
 
         /*
          * Register patient.
          */
-
-        boolean registered =
-                patientService.registerPatient(
-                        patient
-                );
-
+        boolean registered = patientService.registerPatient(patient);
 
         if (registered) {
-
-            request.setAttribute(
-                    "success",
-                    "Patient registered successfully."
-            );
-
-            request.setAttribute(
-                    "patientNumber",
-                    patient.getPatientNumber()
-            );
-
+            request.setAttribute("success", "Patient registered successfully.");
+            request.setAttribute("patientNumber", patient.getPatientNumber());
         } else {
-
-            request.setAttribute(
-                    "error",
-                    "Unable to register patient. The information may already exist or may be invalid."
-            );
+            request.setAttribute("error", "Unable to register patient. The contact number or email may already be registered.");
         }
 
 

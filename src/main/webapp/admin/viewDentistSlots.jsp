@@ -65,29 +65,26 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
     <style>
-        .slots-header-card {
-            background: linear-gradient(135deg, rgba(14, 165, 180, 0.9), rgba(8, 127, 140, 0.95));
-            border-radius: 20px;
-            padding: 30px 35px;
-            color: #ffffff;
-            margin-bottom: 30px;
-            box-shadow: 0 15px 35px rgba(8, 127, 140, 0.25);
+        .topbar-left {
             display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 25px;
+            flex-direction: column;
+            align-items: flex-start;
+            justify-content: center;
+            gap: 2px;
         }
 
-        .slots-header-text h2 {
-            font-size: 24px;
-            font-weight: 700;
-            margin-bottom: 6px;
+        .statistics-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 22px;
+            margin-bottom: 25px;
+            width: 100%;
         }
 
-        .slots-header-text p {
-            font-size: 13.5px;
-            color: #d6f4f8;
-            margin: 0;
+        @media (max-width: 900px) {
+            .statistics-grid {
+                grid-template-columns: 1fr;
+            }
         }
 
         .filter-container-card {
@@ -286,8 +283,10 @@
         <!-- TOPBAR -->
         <header class="topbar">
             <div class="topbar-left">
-                <h1>Dentist Available Time Slots</h1>
-                <p>Overview of doctor consultation hours and available clinical schedules</p>
+                <div>
+                    <h1>Dentist Available Time Slots</h1>
+                    <p>Overview of doctor consultation hours, capacity limits, and clinical schedules</p>
+                </div>
             </div>
 
             <div class="topbar-right">
@@ -310,17 +309,6 @@
 
         <!-- CONTENT -->
         <section class="dashboard-content">
-
-            <!-- Hero Banner -->
-            <div class="slots-header-card">
-                <div class="slots-header-text">
-                    <h2>Doctor Time Slot Directory</h2>
-                    <p>
-                        Review configured consultation windows, capacity limits, and doctor availability across all clinical dates.
-                    </p>
-                </div>
-                <i class="bi bi-calendar2-range" style="font-size: 55px; opacity: 0.85;"></i>
-            </div>
 
             <!-- Stats Grid -->
             <section class="statistics-grid">
@@ -368,9 +356,11 @@
                             <span class="filter-label">Dentist:</span>
                             <select name="dentistId" class="filter-select" onchange="this.form.submit()">
                                 <option value="">-- All Dentists --</option>
-                                <% for (Dentist d : dentists) { %>
+                                <% for (Dentist d : dentists) { 
+                                    String dClean = d.getName() != null ? d.getName().replaceAll("^(?i)dr\\.?\\s*", "").trim() : "";
+                                %>
                                     <option value="<%= d.getDentistId() %>" <%= selectedDentistId != null && selectedDentistId == d.getDentistId() ? "selected" : "" %>>
-                                        Dr. <%= d.getName() %> (<%= d.getSpecialization() %>)
+                                        Dr. <%= dClean %> (<%= d.getSpecialization() %>)
                                     </option>
                                 <% } %>
                             </select>
@@ -424,7 +414,8 @@
                             if (!availabilityList.isEmpty()) {
                                 for (DentistAvailability slot : availabilityList) {
                                     Dentist d = dentistMap.get(slot.getDentistId());
-                                    String dName = (d != null && d.getName() != null) ? d.getName() : "Dentist #" + slot.getDentistId();
+                                    String rawDName = (d != null && d.getName() != null) ? d.getName().trim() : ("Dentist #" + slot.getDentistId());
+                                    String dName = rawDName.replaceAll("^(?i)dr\\.?\\s*", "").trim();
                                     String dSpec = (d != null && d.getSpecialization() != null) ? d.getSpecialization() : "Dental Surgeon";
                                     String dayName = slot.getAvailableDate() != null ? dayDateFormat.format(slot.getAvailableDate()) : "-";
                                     String timeRange = (slot.getStartTime() != null ? timeFormat.format(slot.getStartTime()) : "-")
@@ -512,6 +503,7 @@ function filterSlots() {
     });
 }
 </script>
+<script src="<%= contextPath %>/js/notifications.js"></script>
 
 </body>
 </html>

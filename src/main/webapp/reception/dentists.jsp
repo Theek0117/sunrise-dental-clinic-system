@@ -30,9 +30,9 @@
     <style>
         .dentist-cards-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
             gap: 22px;
-            margin-top: 25px;
+            margin-top: 15px;
         }
 
         .doctor-card {
@@ -41,84 +41,200 @@
             box-shadow: 0 10px 30px rgba(6, 38, 50, 0.08);
             padding: 24px;
             border: 1px solid #edf3f5;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            transition: all 0.25s ease;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
+            position: relative;
+            overflow: hidden;
         }
 
         .doctor-card:hover {
             transform: translateY(-4px);
-            box-shadow: 0 16px 36px rgba(6, 38, 50, 0.13);
+            box-shadow: 0 18px 40px rgba(6, 38, 50, 0.14);
             border-color: #0ea5b4;
         }
 
         .doctor-card-top {
             display: flex;
             align-items: center;
-            gap: 16px;
+            justify-content: space-between;
             margin-bottom: 16px;
         }
 
-        .doctor-avatar-box {
-            width: 54px;
-            height: 54px;
-            border-radius: 14px;
-            background: #e6f7f9;
-            color: #078c9b;
-            font-size: 22px;
-            font-weight: 700;
+        .avatar-info-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .doctor-avatar-wrapper {
+            position: relative;
+            width: 60px !important;
+            height: 60px !important;
+            min-width: 60px !important;
+            min-height: 60px !important;
+            max-width: 60px !important;
+            max-height: 60px !important;
+            border-radius: 16px;
+            overflow: hidden !important;
+            background: linear-gradient(135deg, #e0f2fe, #bae6fd);
+            flex-shrink: 0;
+            box-shadow: 0 4px 12px rgba(14, 165, 180, 0.15);
             display: flex;
             align-items: center;
             justify-content: center;
-            flex-shrink: 0;
         }
 
-        .doctor-name-title h3 {
-            font-size: 16px;
+        .doctor-avatar-wrapper img {
+            width: 60px !important;
+            height: 60px !important;
+            min-width: 60px !important;
+            min-height: 60px !important;
+            max-width: 60px !important;
+            max-height: 60px !important;
+            object-fit: cover !important;
+            display: block !important;
+            border-radius: 16px;
+        }
+
+        .doctor-avatar-fallback {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
             font-weight: 700;
-            color: #0c3d4f;
-            margin: 0;
+            color: #0e7490;
+            background: linear-gradient(135deg, #e0f2fe, #cffafe);
         }
 
-        .doctor-name-title span {
-            font-size: 11.5px;
-            color: #0ea5b4;
-            font-weight: 600;
-            text-transform: uppercase;
+        .active-status-dot {
+            position: absolute;
+            bottom: -1px;
+            right: -1px;
+            width: 14px;
+            height: 14px;
+            background: #22c55e;
+            border: 2.5px solid #ffffff;
+            border-radius: 50%;
+        }
+
+        .doc-header-badges {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 6px;
+        }
+
+        .badge-doc-id {
+            background: #f1f5f9;
+            color: #475569;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 6px;
             letter-spacing: 0.5px;
         }
 
-        .doctor-details-list {
-            list-style: none;
-            padding: 0;
-            margin: 0 0 18px 0;
-            border-top: 1px solid #f0f4f6;
-            padding-top: 14px;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            font-size: 12.5px;
-            color: #557280;
+        .badge-available {
+            background: #ecfdf5;
+            color: #16a34a;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 3px 9px;
+            border-radius: 12px;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
         }
 
-        .doctor-details-list li {
+        .badge-available::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #22c55e;
+        }
+
+        .doctor-name-title {
+            margin-bottom: 12px;
+        }
+
+        .doctor-name-title h3 {
+            font-size: 16.5px;
+            font-weight: 700;
+            color: #0f2e3d;
+            margin: 0 0 5px 0;
+            line-height: 1.3;
+        }
+
+        .doc-spec-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: #f0fdfa;
+            color: #0d9488;
+            border: 1px solid #ccfbf1;
+            font-size: 11.5px;
+            font-weight: 600;
+            padding: 3px 9px;
+            border-radius: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+        }
+
+        .doctor-info-list {
+            list-style: none;
+            padding: 12px 0 0 0;
+            margin: 0 0 16px 0;
+            border-top: 1px dashed #e2e8f0;
+            display: flex;
+            flex-direction: column;
+            gap: 9px;
+        }
+
+        .doctor-info-item {
             display: flex;
             align-items: center;
             gap: 10px;
+            font-size: 12.5px;
+            color: #475569;
         }
 
-        .doctor-details-list li i {
-            color: #8da4ae;
+        .doctor-info-item i {
+            color: #0ea5b4;
             font-size: 14px;
             width: 16px;
+            flex-shrink: 0;
         }
 
-        .doctor-action-btn {
-            background: linear-gradient(135deg, #0ea5b4, #087f8c);
+        .doctor-info-item a {
+            color: #475569;
+            text-decoration: none;
+            transition: color 0.2s;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .doctor-info-item a:hover {
+            color: #0ea5b4;
+            text-decoration: underline;
+        }
+
+        .card-actions-row {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 8px;
+        }
+
+        .btn-view-slots {
+            background: #0ea5b4;
             color: #ffffff;
             border: none;
-            padding: 10px 16px;
+            padding: 10px 14px;
             border-radius: 10px;
             font-size: 12.5px;
             font-weight: 600;
@@ -126,49 +242,60 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            gap: 7px;
             width: 100%;
             box-sizing: border-box;
-            box-shadow: 0 4px 12px rgba(8, 127, 140, 0.25);
-            transition: opacity 0.2s;
+            box-shadow: 0 3px 10px rgba(14, 165, 180, 0.25);
+            transition: all 0.2s ease;
         }
 
-        .doctor-action-btn:hover {
-            opacity: 0.95;
+        .btn-view-slots:hover {
+            background: #0c8c99;
             color: #ffffff;
+            transform: translateY(-1px);
         }
 
         .search-input-wrap {
             position: relative;
             flex: 1;
-            max-width: 450px;
+            min-width: 320px;
+            max-width: 480px;
         }
 
         .search-input-wrap i {
             position: absolute;
-            left: 14px;
+            left: 15px;
             top: 50%;
             transform: translateY(-50%);
             color: #8da4ae;
-            font-size: 14px;
+            font-size: 15px;
         }
 
         .search-input-wrap input {
             width: 100%;
-            height: 42px;
-            border: 1.5px solid #dce8ec;
-            border-radius: 10px;
-            padding: 0 14px 0 38px;
+            height: 44px;
+            border: 1.5px solid rgba(255, 255, 255, 0.35);
+            border-radius: 12px;
+            padding: 0 16px 0 42px;
             font-size: 13px;
-            color: #123847;
-            background: #fbfdfe;
+            color: #0f2e3d;
+            background: rgba(255, 255, 255, 0.95);
             outline: none;
             box-sizing: border-box;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+            transition: all 0.2s;
         }
 
         .search-input-wrap input:focus {
             border-color: #0ea5b4;
             background: #ffffff;
+            box-shadow: 0 0 0 3px rgba(14, 165, 180, 0.2);
+        }
+
+        @media (max-width: 768px) {
+            .dentist-cards-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
@@ -299,7 +426,7 @@
                 </a>
                 <div>
                     <h1>Dentist Specialists</h1>
-                    <p>Clinical practitioners roster and assigned rooms</p>
+                    <p>View clinic dentist profiles, specializations, and schedule availability.</p>
                 </div>
             </div>
 
@@ -319,76 +446,108 @@
         <!-- DASHBOARD CONTENT -->
         <section class="dashboard-content">
 
-            <!-- Hero Banner -->
-            <div class="welcome-section">
-                <div>
-                    <h2>Doctor Directory</h2>
-                    <p>View clinic dentist profiles, specializations, and schedule availability.</p>
-                </div>
-                <div>
-                    <a href="${pageContext.request.contextPath}/reception/dentist-availability" class="view-all-link" style="background: rgba(255,255,255,0.2); padding: 8px 16px; border-radius: 10px; color: #ffffff;">
+            <!-- Toolbar Section -->
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 22px; flex-wrap: wrap;">
+                <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap; flex: 1;">
+                    <div class="search-input-wrap">
+                        <i class="bi bi-search"></i>
+                        <input type="text" id="dentistSearch" placeholder="Search doctor name or specialization...">
+                    </div>
+                    <a href="${pageContext.request.contextPath}/reception/dentist-availability" class="view-all-link" style="background: rgba(14, 165, 180, 0.22); border: 1px solid rgba(14, 165, 180, 0.45); padding: 11px 18px; border-radius: 12px; color: #ffffff; font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; gap: 8px; text-decoration: none;">
                         <i class="bi bi-calendar2-week"></i> Check Availability
                     </a>
                 </div>
-            </div>
 
-            <!-- Toolbar Section -->
-            <div style="display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 22px; flex-wrap: wrap;">
-                <div class="search-input-wrap">
-                    <i class="bi bi-search"></i>
-                    <input type="text" id="dentistSearch" placeholder="Search doctor name or specialization...">
-                </div>
-
-                <span style="font-size: 13px; color: #d6f4f8; font-weight: 500;">
-                    <%= dentists != null ? dentists.size() : 0 %> active dentist(s) on roster
+                <span style="font-size: 12.5px; color: #ffffff; background: rgba(14, 165, 180, 0.3); border: 1px solid rgba(14, 165, 180, 0.45); padding: 6px 14px; border-radius: 20px; font-weight: 600;">
+                    <i class="bi bi-person-check-fill" style="color:#67e8f9;"></i> <%= dentists != null ? dentists.size() : 0 %> Active Dentists
                 </span>
             </div>
 
             <!-- Dentist Grid -->
             <div class="dentist-cards-grid" id="dentistGrid">
-                <% if (dentists != null && !dentists.isEmpty()) {
+                <% 
+                String[] docPhotos = {
+                    "https://images.unsplash.com/photo-1537368910025-700350fe46c7?w=400&auto=format&fit=crop&q=80",
+                    "https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=400&auto=format&fit=crop&q=80",
+                    "https://images.unsplash.com/photo-1594824813590-389602e1c981?w=400&auto=format&fit=crop&q=80",
+                    "https://images.unsplash.com/photo-1622902046580-2b47f47f5471?w=400&auto=format&fit=crop&q=80"
+                };
+                int photoIdx = 0;
+
+                if (dentists != null && !dentists.isEmpty()) {
                     for (Dentist dentist : dentists) {
+                        String rawName = dentist.getName() != null ? dentist.getName().trim() : "Specialist";
+                        String cleanName = rawName.replaceAll("^(?i)dr\\.?\\s*", "").trim();
+                        String displayName = "Dr. " + cleanName;
+
                         String initials = "DR";
-                        if (dentist.getName() != null && !dentist.getName().isBlank()) {
-                            String[] parts = dentist.getName().trim().split("\\s+");
-                            if (parts.length >= 2) {
-                                initials = (parts[0].substring(0, 1) + parts[parts.length - 1].substring(0, 1)).toUpperCase();
-                            } else {
-                                initials = dentist.getName().substring(0, Math.min(2, dentist.getName().length())).toUpperCase();
-                            }
+                        String[] parts = cleanName.split("\\s+");
+                        if (parts.length >= 2) {
+                            initials = (parts[0].substring(0, 1) + parts[parts.length - 1].substring(0, 1)).toUpperCase();
+                        } else if (!cleanName.isEmpty()) {
+                            initials = cleanName.substring(0, Math.min(2, cleanName.length())).toUpperCase();
                         }
+
+                        String photoUrl = docPhotos[photoIdx % docPhotos.length];
+                        photoIdx++;
+
+                        String spec = dentist.getSpecialization() != null && !dentist.getSpecialization().isBlank() 
+                                ? dentist.getSpecialization() : "General Dentistry";
+                        String room = dentist.getRoomNumber() != null && !dentist.getRoomNumber().isBlank()
+                                ? dentist.getRoomNumber() : "Room 101";
                 %>
-                    <article class="doctor-card" data-name="<%= dentist.getName().toLowerCase() %>" data-specialization="<%= (dentist.getSpecialization() != null ? dentist.getSpecialization() : "").toLowerCase() %>">
+                    <article class="doctor-card" data-name="<%= cleanName.toLowerCase() %>" data-specialization="<%= spec.toLowerCase() %>">
                         <div>
                             <div class="doctor-card-top">
-                                <div class="doctor-avatar-box">
-                                    <%= initials %>
+                                <div class="avatar-info-group">
+                                    <div class="doctor-avatar-wrapper">
+                                        <img src="<%= photoUrl %>" alt="<%= displayName %>" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                        <div class="doctor-avatar-fallback" style="display:none;"><%= initials %></div>
+                                        <span class="active-status-dot"></span>
+                                    </div>
+                                    <div>
+                                        <span class="badge-doc-id">#<%= dentist.getDentistNumber() %></span>
+                                    </div>
                                 </div>
-                                <div class="doctor-name-title">
-                                    <h3>Dr. <%= dentist.getName() %></h3>
-                                    <span><%= dentist.getSpecialization() != null ? dentist.getSpecialization() : "Dental Surgeon" %></span>
+                                <div class="doc-header-badges">
+                                    <span class="badge-available">Available</span>
                                 </div>
                             </div>
 
-                            <ul class="doctor-details-list">
-                                <li>
-                                    <i class="bi bi-person-badge"></i>
-                                    <span>Dentist Number: <strong><%= dentist.getDentistNumber() %></strong></span>
+                            <div class="doctor-name-title">
+                                <h3><%= displayName %></h3>
+                                <span class="doc-spec-pill"><i class="bi bi-patch-check-fill"></i> <%= spec %></span>
+                            </div>
+
+                            <ul class="doctor-info-list">
+                                <li class="doctor-info-item">
+                                    <i class="bi bi-geo-alt-fill"></i>
+                                    <span>Assigned: <strong><%= room %></strong></span>
                                 </li>
-                                <li>
-                                    <i class="bi bi-telephone"></i>
-                                    <span><%= dentist.getContactNumber() != null ? dentist.getContactNumber() : "No contact provided" %></span>
+                                <li class="doctor-info-item">
+                                    <i class="bi bi-telephone-fill"></i>
+                                    <% if (dentist.getContactNumber() != null && !dentist.getContactNumber().isBlank()) { %>
+                                        <a href="tel:<%= dentist.getContactNumber() %>"><%= dentist.getContactNumber() %></a>
+                                    <% } else { %>
+                                        <span style="color:#94a3b8;">No contact on file</span>
+                                    <% } %>
                                 </li>
-                                <li>
-                                    <i class="bi bi-envelope"></i>
-                                    <span><%= dentist.getEmail() != null ? dentist.getEmail() : "No email provided" %></span>
+                                <li class="doctor-info-item">
+                                    <i class="bi bi-envelope-fill"></i>
+                                    <% if (dentist.getEmail() != null && !dentist.getEmail().isBlank()) { %>
+                                        <a href="mailto:<%= dentist.getEmail() %>" title="<%= dentist.getEmail() %>"><%= dentist.getEmail() %></a>
+                                    <% } else { %>
+                                        <span style="color:#94a3b8;">No email on file</span>
+                                    <% } %>
                                 </li>
                             </ul>
                         </div>
 
-                        <a href="${pageContext.request.contextPath}/reception/dentist-availability?dentistId=<%= dentist.getDentistId() %>" class="doctor-action-btn">
-                            <i class="bi bi-calendar-check"></i> View Available Slots
-                        </a>
+                        <div class="card-actions-row">
+                            <a href="${pageContext.request.contextPath}/reception/dentist-availability?dentistId=<%= dentist.getDentistId() %>" class="btn-view-slots">
+                                <i class="bi bi-calendar-check-fill"></i> View Available Slots
+                            </a>
+                        </div>
                     </article>
                 <%
                     }
@@ -423,6 +582,7 @@ if (searchInput) {
     });
 }
 </script>
+<script src="${pageContext.request.contextPath}/js/notifications.js"></script>
 
 </body>
 </html>

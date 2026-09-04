@@ -14,8 +14,9 @@
     }
 
     Dentist loggedInDentist = (Dentist) request.getAttribute("loggedInDentist");
-    String dentistName = (loggedInDentist != null && loggedInDentist.getName() != null && !loggedInDentist.getName().isBlank())
+    String rawDentistName = (loggedInDentist != null && loggedInDentist.getName() != null && !loggedInDentist.getName().isBlank())
             ? loggedInDentist.getName() : staffName;
+    String dentistName = "Dr. " + rawDentistName.replaceAll("^(?i)dr\\.?\\s*", "").trim();
     String specialization = (loggedInDentist != null && loggedInDentist.getSpecialization() != null)
             ? loggedInDentist.getSpecialization() : "Dental Specialist";
     String roomNumber = (loggedInDentist != null && loggedInDentist.getRoomNumber() != null)
@@ -367,8 +368,10 @@
         <!-- TOPBAR -->
         <header class="topbar">
             <div class="topbar-left">
-                <h1>My Availability</h1>
-                <p>Manage your consultation hours, active working days and slot capacities</p>
+                <div>
+                    <h1>Doctor Consultation Roster</h1>
+                    <p>Configured hours are automatically published to the reception booking desk as 30-minute reservation windows.</p>
+                </div>
             </div>
             <div class="topbar-right">
                 <div class="user-profile">
@@ -376,7 +379,7 @@
                         <i class="bi bi-person-fill"></i>
                     </div>
                     <div class="user-information">
-                        <strong>Dr. <%= dentistName %></strong>
+                        <strong><%= dentistName %></strong>
                         <span><%= specialization %></span>
                     </div>
                 </div>
@@ -385,17 +388,6 @@
 
         <!-- CONTENT -->
         <section class="dashboard-content">
-
-            <!-- Hero Banner -->
-            <div class="availability-header-card">
-                <div class="availability-header-text">
-                    <h2>Doctor Consultation Roster</h2>
-                    <p>
-                        Configured hours are automatically published to the reception booking desk as 30-minute reservation windows.
-                    </p>
-                </div>
-                <i class="bi bi-calendar-range" style="font-size: 55px; opacity: 0.85;"></i>
-            </div>
 
             <!-- Alerts -->
             <% if (success != null) { %>

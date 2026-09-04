@@ -200,7 +200,7 @@
                 </a>
                 <div>
                     <h1>Reschedule Appointment</h1>
-                    <p>Modify appointment doctor, time slot, and patient booking details</p>
+                    <p>Select a new dentist, date, and available time slot for the patient.</p>
                 </div>
             </div>
 
@@ -219,14 +219,6 @@
 
         <!-- DASHBOARD CONTENT -->
         <section class="dashboard-content">
-
-            <!-- Hero Banner -->
-            <div class="welcome-section">
-                <div>
-                    <h2>Reschedule Booking</h2>
-                    <p>Select a new dentist, date and available time slot for the patient.</p>
-                </div>
-            </div>
 
         <div class="page-heading">
 
@@ -472,7 +464,7 @@
                                         ? "selected"
                                         : "" %>>
 
-                                Dr. <%= d.getName() %>
+                                Dr. <%= (d.getName() != null ? d.getName().replaceAll("^(?i)dr\\.?\\s*", "").trim() : "") %>
 
                                 <%= d.getSpecialization() != null
                                         && !d.getSpecialization().isBlank()

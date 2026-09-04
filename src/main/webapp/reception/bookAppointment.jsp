@@ -498,21 +498,41 @@
         <!-- DASHBOARD CONTENT -->
         <section class="dashboard-content">
 
-            <!-- Hero Banner -->
-            <div class="welcome-section">
-                <div>
-                    <h2>Book Patient Appointment</h2>
-                    <p>Select patient, doctor, treatment type, consultation date, and available time slot.</p>
-                </div>
-                <div style="display: flex; align-items: center; gap: 12px;">
-                    <a href="<%= contextPath %>/reception/register-patient" class="btn-primary" style="background: rgba(255,255,255,0.22); border: 1px solid rgba(255,255,255,0.35); padding: 8px 16px; border-radius: 10px; color: #ffffff; text-decoration: none; font-weight: 600; font-size: 13px; display: inline-flex; align-items: center; gap: 7px;">
-                        <i class="bi bi-person-plus-fill"></i> Register New Patient
-                    </a>
-                </div>
-            </div>
-
-            <!-- SUCCESS MESSAGE -->
+            <!-- SUCCESS POPUP MODAL & MESSAGE -->
             <% if (successMessage != null) { %>
+                <div class="custom-confirm-overlay show" id="bookingSuccessModal" style="display:flex; z-index:99999;">
+                    <div class="custom-confirm-box" style="max-width: 480px; text-align: center; padding: 28px;">
+                        <div class="confirm-icon-wrap" style="background:#ecfdf5; color:#10b981; margin:0 auto 16px; width:64px; height:64px; font-size:32px; border-radius:50%; display:flex; align-items:center; justify-content:center;">
+                            <i class="bi bi-check2-circle"></i>
+                        </div>
+                        <h3 style="margin:0 0 8px; color:#0f2e3d; font-size:20px; font-weight:700;">Appointment Booked Successfully!</h3>
+                        <p style="color:#527382; font-size:13.5px; margin:0 0 16px;"><%= successMessage %></p>
+                        
+                        <% if (appointmentNumber != null) { %>
+                            <div style="background:#f0fdfa; border:1.5px dashed #14b8a6; padding:12px; border-radius:10px; margin-bottom:16px;">
+                                <span style="font-size:11.5px; color:#0f766e; text-transform:uppercase; letter-spacing:0.5px; font-weight:600; display:block;">Appointment Reference</span>
+                                <strong style="font-size:19px; color:#0f766e; letter-spacing:1px;"><%= appointmentNumber %></strong>
+                            </div>
+                        <% } %>
+
+                        <% if (emailMessage != null) { %>
+                            <div style="background:#f8fafc; border:1px solid #e2e8f0; padding:10px 14px; border-radius:8px; margin-bottom:20px; font-size:12.5px; color:#334155; display:flex; align-items:center; gap:8px; justify-content:center;">
+                                <i class="bi bi-envelope-check-fill" style="color:#10b981;"></i>
+                                <span><%= emailMessage %></span>
+                            </div>
+                        <% } %>
+
+                        <div style="display:flex; gap:10px; justify-content:center; margin-top:8px;">
+                            <a href="<%= contextPath %>/reception/view-appointments" class="btn-primary" style="padding:10px 18px; font-size:13.5px; text-decoration:none; border-radius:8px; display:inline-flex; align-items:center; gap:6px; background:#0ea5b4; color:#ffffff; font-weight:600;">
+                                <i class="bi bi-calendar-event"></i> View Appointments
+                            </a>
+                            <button type="button" class="btn-secondary" onclick="document.getElementById('bookingSuccessModal').remove();" style="padding:10px 18px; font-size:13.5px; border-radius:8px; border:1px solid #cbd5e1; background:#ffffff; color:#475569; font-weight:600; cursor:pointer;">
+                                <i class="bi bi-plus-lg"></i> Book Another
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="message success-message" role="alert">
                     <div class="message-icon">
                         <i class="bi bi-check-circle-fill"></i>
@@ -568,12 +588,7 @@
                             </div>
 
                             <div class="form-group">
-                                <div class="label-row">
-                                    <label for="patientSearch" style="margin: 0;">Patient <span class="required" aria-hidden="true">*</span></label>
-                                    <a href="<%= contextPath %>/reception/register-patient" class="register-new-patient-link">
-                                        <i class="bi bi-person-plus-fill"></i> + Register New Patient
-                                    </a>
-                                </div>
+                                <label for="patientSearch">Patient <span class="required" aria-hidden="true">*</span></label>
 
                                 <div class="search-select" id="patientSearchSelect">
                                     <div class="search-input-wrapper">
@@ -697,7 +712,7 @@
                                                     <i class="bi bi-person-badge"></i>
                                                 </div>
                                                 <div class="result-information">
-                                                    <strong>Dr. <%= dentist.getName() != null ? dentist.getName() : "Dentist" %></strong>
+                                                    <strong><%= dentist.getName() != null ? dentist.getName() : "Dentist" %></strong>
                                                     <span class="result-details">
                                                         <%= dentist.getDentistNumber() != null ? dentist.getDentistNumber() : "" %>
                                                         <% if (dentist.getRoomNumber() != null && !dentist.getRoomNumber().isBlank()) { %>
@@ -865,15 +880,6 @@
                                     <i class="bi bi-x-lg"></i> Cancel
                                 </a>
                             </div>
-                        </div>
-
-                        <!-- NEW PATIENT HELPER CARD -->
-                        <div class="quick-helper-card">
-                            <i class="bi bi-person-plus" style="font-size: 24px; color: #0ea5b4; display: block; margin-bottom: 6px;"></i>
-                            <p>Is this a new patient visiting the clinic for the first time?</p>
-                            <a href="<%= contextPath %>/reception/register-patient" class="quick-helper-btn">
-                                <i class="bi bi-plus-circle"></i> Register New Patient
-                            </a>
                         </div>
 
                     </div>
@@ -1059,8 +1065,8 @@ document.addEventListener("DOMContentLoaded", function () {
         const spec = item.dataset.specialization;
 
         dentistId.value = id;
-        dentistSearch.value = "Dr. " + name;
-        selectedDentistName.textContent = "Dr. " + name;
+        dentistSearch.value = " " + name;
+        selectedDentistName.textContent = " " + name;
         selectedDentistRoom.textContent = room ? ("Room " + room + " (" + spec + ")") : spec;
 
         selectedDentist.classList.add("visible");
@@ -1242,6 +1248,8 @@ document.addEventListener("DOMContentLoaded", function () {
         formValidationMessage.scrollIntoView({ behavior: "smooth", block: "center" });
     }
 
+    let isBookingConfirmed = false;
+
     bookingForm.addEventListener("submit", function (e) {
         formValidationMessage.style.display = "none";
 
@@ -1279,6 +1287,33 @@ document.addEventListener("DOMContentLoaded", function () {
             showFormError("Please specify the appointment reason.");
             otherReason.focus();
             return;
+        }
+
+        if (!isBookingConfirmed) {
+            e.preventDefault();
+            const pName = summaryPatientName && summaryPatientName.textContent.trim() !== "-" ? summaryPatientName.textContent.trim() : "Patient";
+            const dName = summaryDentistName && summaryDentistName.textContent.trim() !== "-" ? summaryDentistName.textContent.trim() : "Dentist";
+            const aDate = summaryDate && summaryDate.textContent.trim() !== "-" ? summaryDate.textContent.trim() : appointmentDate.value;
+            const aTime = summaryTime && summaryTime.textContent.trim() !== "-" ? summaryTime.textContent.trim() : "Selected Slot";
+
+            if (typeof window.showConfirmDialog === "function") {
+                window.showConfirmDialog({
+                    title: "Confirm Appointment Booking",
+                    message: "Book appointment for <strong>" + pName + "</strong> with <strong>" + dName + "</strong> on <strong>" + aDate + "</strong> (" + aTime + ")?",
+                    confirmBtnText: "Yes, Book Appointment",
+                    cancelBtnText: "Review Details",
+                    isDanger: false,
+                    onConfirm: function() {
+                        isBookingConfirmed = true;
+                        bookingForm.submit();
+                    }
+                });
+            } else {
+                if (confirm("Book appointment for " + pName + " with " + dName + " on " + aDate + "?")) {
+                    isBookingConfirmed = true;
+                    bookingForm.submit();
+                }
+            }
         }
     });
 

@@ -444,80 +444,33 @@
 
 
                 <div>
-
-                    <h1>
-                        Today's Schedule
-                    </h1>
-
-                    <p>
-                        Daily Reception Schedule
-                    </p>
-
+                    <h1>Today's Schedule</h1>
+                    <p>Complete appointment schedule for today.</p>
                 </div>
-
             </div>
 
-
-            <div class="topbar-right">
+            <div class="topbar-right" style="display: flex; align-items: center; gap: 14px;">
+                <div class="current-date" style="background: rgba(14, 165, 180, 0.18); border: 1px solid rgba(14, 165, 180, 0.35); padding: 7px 14px; border-radius: 9px; font-size: 13px; color: #ffffff; display: flex; align-items: center; gap: 8px;">
+                    <i class="bi bi-calendar3" style="color: #67e8f9;"></i>
+                    <span id="scheduleDate"></span>
+                </div>
 
                 <a
                     href="${pageContext.request.contextPath}/reception/profile"
                     class="user-profile"
                 >
-
                     <div class="user-avatar">
-
                         <i class="bi bi-person-fill"></i>
-
                     </div>
-
-
                     <div class="user-information">
-
-                        <strong>
-                            <%= staffName %>
-                        </strong>
-
-                        <span>
-                            Receptionist
-                        </span>
-
+                        <strong><%= staffName %></strong>
+                        <span>Receptionist</span>
                     </div>
-
                 </a>
-
             </div>
-
         </header>
 
-
         <section class="dashboard-content">
-
-
-            <div class="welcome-section">
-
-                <div>
-
-                    <h2>
-                        Today's Schedule
-                    </h2>
-
-                    <p>
-                        Complete appointment schedule for today.
-                    </p>
-
-                </div>
-
-
-                <div class="current-date">
-
-                    <i class="bi bi-calendar3"></i>
-
-                    <span id="scheduleDate"></span>
-
-                </div>
-
-            </div>
 
             <% 
                 String schedSuccess = request.getParameter("success");

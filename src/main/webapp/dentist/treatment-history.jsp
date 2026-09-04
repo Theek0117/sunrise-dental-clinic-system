@@ -12,8 +12,9 @@
     }
 
     Dentist loggedInDentist = (Dentist) request.getAttribute("loggedInDentist");
-    String dentistName = (loggedInDentist != null && loggedInDentist.getName() != null && !loggedInDentist.getName().isBlank())
+    String rawDentistName = (loggedInDentist != null && loggedInDentist.getName() != null && !loggedInDentist.getName().isBlank())
             ? loggedInDentist.getName() : staffName;
+    String dentistName = "Dr. " + rawDentistName.replaceAll("^(?i)dr\\.?\\s*", "").trim();
     String specialization = (loggedInDentist != null && loggedInDentist.getSpecialization() != null)
             ? loggedInDentist.getSpecialization() : "Dental Specialist";
 
@@ -47,17 +48,18 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
     <style>
-        .treatment-header-card {
-            background: linear-gradient(135deg, rgba(14, 165, 180, 0.9), rgba(8, 127, 140, 0.95));
-            border-radius: 20px;
-            padding: 30px 35px;
-            color: #ffffff;
-            margin-bottom: 30px;
-            box-shadow: 0 15px 35px rgba(8, 127, 140, 0.25);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 25px;
+        .statistics-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 22px;
+            margin-bottom: 25px;
+            width: 100%;
+        }
+
+        @media (max-width: 900px) {
+            .statistics-grid {
+                grid-template-columns: 1fr;
+            }
         }
 
         .treatment-header-text h2 {
@@ -260,8 +262,10 @@
         <!-- TOPBAR -->
         <header class="topbar">
             <div class="topbar-left">
-                <h1>Treatment History</h1>
-                <p>Comprehensive record of dental diagnoses, procedures, and patient notes</p>
+                <div>
+                    <h1>Clinical Treatment Archives</h1>
+                    <p>Review all documented dental treatments, medications prescribed, and scheduled patient follow-up sessions.</p>
+                </div>
             </div>
             <div class="topbar-right">
                 <div class="user-profile">
@@ -269,7 +273,7 @@
                         <i class="bi bi-person-fill"></i>
                     </div>
                     <div class="user-information">
-                        <strong>Dr. <%= dentistName %></strong>
+                        <strong><%= dentistName %></strong>
                         <span><%= specialization %></span>
                     </div>
                 </div>
@@ -278,17 +282,6 @@
 
         <!-- CONTENT -->
         <section class="dashboard-content">
-
-            <!-- Hero Banner -->
-            <div class="treatment-header-card">
-                <div class="treatment-header-text">
-                    <h2>Clinical Treatment Archives</h2>
-                    <p>
-                        Review all documented dental treatments, medications prescribed, and scheduled patient follow-up sessions.
-                    </p>
-                </div>
-                <i class="bi bi-journal-medical" style="font-size: 55px; opacity: 0.85;"></i>
-            </div>
 
             <!-- Stats Grid -->
             <section class="statistics-grid">
@@ -320,7 +313,7 @@
                     </div>
                     <div class="stat-information">
                         <span>Attending Surgeon</span>
-                        <strong>Dr. <%= dentistName %></strong>
+                        <strong><%= dentistName %></strong>
                         <small><%= specialization %></small>
                     </div>
                 </div>
@@ -432,6 +425,7 @@ function filterTreatments() {
     });
 }
 </script>
+<script src="${pageContext.request.contextPath}/js/notifications.js"></script>
 
 </body>
 </html>

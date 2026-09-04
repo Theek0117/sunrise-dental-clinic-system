@@ -329,40 +329,26 @@ public class StaffManagementServlet extends HttpServlet {
 
         boolean success = false;
 
-        /*
-         * RECEPTIONIST
-         */
+        /** RECEPTIONIST*/
 
         if ("RECEPTION".equals(role)
                 || "RECEPTIONIST".equals(role)) {
 
             success =
                     staffService.addReceptionist(
-                            name,
-                            username,
-                            contactNumber,
-                            email
-                    );
+                            name,username,contactNumber,email);
         }
 
-        /*
-         * CASHIER
-         */
+        /** CASHIER*/
 
         else if ("CASHIER".equals(role)) {
 
             success =
                     staffService.addCashier(
-                            name,
-                            username,
-                            contactNumber,
-                            email
-                    );
+                            name,username,contactNumber,email);
         }
 
-        /*
-         * DENTIST
-         */
+        /** DENTIST*/
 
         else if ("DENTIST".equals(role)) {
 
@@ -381,19 +367,10 @@ public class StaffManagementServlet extends HttpServlet {
 
             success =
                     staffService.addDentist(
-                            name,
-                            username,
-                            contactNumber,
-                            email,
-                            nic,
-                            specialization,
-                            roomNumber
-                    );
+                            name,username,contactNumber,email,nic,specialization,roomNumber);
         }
 
-        /*
-         * INVALID ROLE
-         */
+        /** INVALID ROLE*/
 
         else {
 
@@ -407,8 +384,7 @@ public class StaffManagementServlet extends HttpServlet {
             return;
         }
 
-        /*
-         * RESULT
+        /** RESULT
          */
 
         if (success) {

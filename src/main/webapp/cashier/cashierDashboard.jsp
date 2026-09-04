@@ -337,83 +337,52 @@
 
 
         .billing-table-container {
-
             width: 100%;
-
             overflow-x: auto;
-
             background: #ffffff;
-
-            border-radius: 16px;
-
-            border: 1px solid #e7eef2;
-
-            box-shadow:
-                0 5px 20px rgba(15, 55, 70, 0.05);
+            border-radius: 18px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 10px 30px rgba(15, 55, 70, 0.06);
         }
-
 
         .billing-table {
-
             width: 100%;
-
             border-collapse: collapse;
-
-            min-width: 1050px;
+            min-width: 1100px;
         }
-
 
         .billing-table th {
-
-            padding: 16px 18px;
-
+            padding: 16px 22px;
             text-align: left;
-
-            font-size: 11px;
-
+            font-size: 11.5px;
             font-weight: 700;
-
-            color: #718894;
-
+            color: #64748b;
             text-transform: uppercase;
-
             letter-spacing: 0.5px;
-
-            background: #f8fbfc;
-
-            border-bottom: 1px solid #e5edf0;
+            background: #f8fafc;
+            border-bottom: 1px solid #e2e8f0;
+            white-space: nowrap;
         }
-
 
         .billing-table td {
-
-            padding: 16px 18px;
-
-            border-bottom: 1px solid #edf2f4;
-
-            font-size: 13px;
-
-            color: #405762;
-
+            padding: 18px 22px;
+            border-bottom: 1px solid #f1f5f9;
+            font-size: 13.5px;
+            color: #334155;
             vertical-align: middle;
+            white-space: nowrap;
         }
 
-
         .billing-table tbody tr:last-child td {
-
             border-bottom: none;
         }
 
-
         .billing-table tbody tr {
-
-            transition: background 0.2s ease;
+            transition: background 0.15s ease;
         }
 
-
         .billing-table tbody tr:hover {
-
-            background: #f9fcfd;
+            background: #f8fafc;
         }
 
 
@@ -1190,10 +1159,6 @@
                                 </th>
 
                                 <th>
-                                    Time
-                                </th>
-
-                                <th>
                                     Status
                                 </th>
 
@@ -1281,7 +1246,8 @@
                                             ? p.getName().substring(0, 1).toUpperCase() : "P";
 
                                     Dentist d = (dentists != null) ? dentists.get(appointment.getDentistId()) : null;
-                                    String dentistLabel = (d != null && d.getName() != null) ? "Dr. " + d.getName() : "Dr. #" + appointment.getDentistId();
+                                    String rawDName = (d != null && d.getName() != null) ? d.getName().trim() : ("#" + appointment.getDentistId());
+                                    String dentistLabel = "Dr. " + rawDName.replaceAll("^(?i)dr\\.?\\s*", "").trim();
 
                                     /*
                                      * ======================================
@@ -1342,8 +1308,7 @@
                                             </strong>
 
                                             <span>
-                                                ID:
-                                                <%= appointment.getPatientId() %>
+                                                ID: <%= appointment.getPatientId() %>
                                             </span>
 
                                         </div>
@@ -1388,8 +1353,7 @@
 
                                     <span class="treatment-cost">
 
-                                        Rs.
-                                        <%= basicCost.setScale(2) %>
+                                        Rs. <%= basicCost.setScale(2) %>
 
                                     </span>
 
@@ -1401,22 +1365,7 @@
 
                                 <td>
 
-                                    <%= appointment
-                                            .getAppointmentDate() %>
-
-                                </td>
-
-
-
-                                <!-- TIME -->
-
-                                <td>
-
-                                    <%= appointment.getStartTime() %>
-
-                                    -
-
-                                    <%= appointment.getEndTime() %>
+                                    <%= appointment.getAppointmentDate() %>
 
                                 </td>
 
@@ -1468,7 +1417,7 @@
 
                             <tr>
 
-                                <td colspan="9">
+                                <td colspan="8">
 
                                     <div class="empty-billing-state">
 

@@ -681,8 +681,8 @@
                     <a href="#about">About</a>
                     <a href="#services">Services</a>
                     <a href="#doctors">Specialists</a>
-                    <a href="#gallery">Results</a>
-                    <a href="#contact">Contact</a>
+                    <a href="#gallery">Gallery</a>
+                    
                 </div>
 
                 <div class="nav-actions">
@@ -700,7 +700,7 @@
                 <div style="display:inline-flex; align-items:center; gap:8px; background:rgba(255,255,255,0.15); border:1px solid rgba(255,255,255,0.25); padding:6px 14px; border-radius:30px; font-size:12px; font-weight:700; color:#e0f7fa; margin-bottom:16px; backdrop-filter:blur(8px);">
                     <i class="bi bi-award-fill" style="color:#fcd34d;"></i> #1 Rated Modern Dental Clinic
                 </div>
-                <h1>Smiles<br />That Last<br />a Lifetime</h1>
+                <h1>Smiles That Last<br />a Lifetime</h1>
                 <p>
                     Experience world-class dental procedures, pain-free treatments, and award-winning specialist care in a luxurious and calming atmosphere.
                 </p>
@@ -753,213 +753,7 @@
             </div>
         </div>
 
-        <!-- ========================================================= -->
-        <!-- MEET OUR EXPERT DENTAL SPECIALISTS SECTION -->
-        <!-- ========================================================= -->
-        <section id="doctors" class="doctors-section" data-aos="fade-up" data-aos-duration="800">
-            <div style="text-align: center;">
-                <div class="section-kicker" style="color:var(--brand-teal); font-weight:700; letter-spacing:1px;">✦ Certified Medical Team ✦</div>
-                <h2 class="section-title" style="margin-bottom: 8px;">Meet Our Expert Dental Specialists</h2>
-                <p style="color:#64748b; font-size:14.5px; max-width:650px; margin:0 auto;">
-                    Our dedicated team of renowned surgeons, orthodontists, and aesthetic dentists combine gentle hands with cutting-edge medical technology.
-                </p>
-            </div>
-
-            <!-- SPECIALTY FILTER PILLS -->
-            <div class="doctors-filter-pills">
-                <button class="doctor-filter-btn active" onclick="filterDoctors('all', this)">All Specialists</button>
-                <button class="doctor-filter-btn" onclick="filterDoctors('orthodontics', this)">Orthodontics</button>
-                <button class="doctor-filter-btn" onclick="filterDoctors('cosmetic', this)">Cosmetic Dentistry</button>
-                <button class="doctor-filter-btn" onclick="filterDoctors('surgery', this)">Dental Surgery</button>
-                <button class="doctor-filter-btn" onclick="filterDoctors('general', this)">General & Pediatric</button>
-            </div>
-
-            <!-- DOCTORS GRID -->
-            <div class="doctors-grid" id="doctorsContainer">
-                <%
-                    String[] doctorPhotos = {
-                        "https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=400&auto=format&fit=crop&q=80",
-                        "https://images.unsplash.com/photo-1594824813590-389602e1c981?w=400&auto=format&fit=crop&q=80",
-                        "https://images.unsplash.com/photo-1537368910025-700350fe46c7?w=400&auto=format&fit=crop&q=80",
-                        "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=400&auto=format&fit=crop&q=80",
-                        "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=400&auto=format&fit=crop&q=80",
-                        "https://images.unsplash.com/photo-1622902046580-2b47f47f5471?w=400&auto=format&fit=crop&q=80"
-                    };
-                    int docIdx = 0;
-
-                    if (activeDentists != null && !activeDentists.isEmpty()) {
-                        for (Dentist d : activeDentists) {
-                            String docName = d.getName() != null ? d.getName() : "Specialist";
-                            String spec = d.getSpecialization() != null && !d.getSpecialization().isBlank() ? d.getSpecialization() : "Dental Surgeon & General Dentist";
-                            String room = d.getRoomNumber() != null && !d.getRoomNumber().isBlank() ? d.getRoomNumber() : "Room 101";
-                            String initial = docName.startsWith("Dr.") ? docName.substring(3).trim().substring(0,1).toUpperCase() : docName.substring(0,1).toUpperCase();
-                            String docPhone = d.getContactNumber() != null ? d.getContactNumber() : "+1 (800) 555-0199";
-                            String docEmail = d.getEmail() != null ? d.getEmail() : "doctor@sunrisedental.com";
-                            String photoUrl = doctorPhotos[docIdx % doctorPhotos.length];
-                            docIdx++;
-
-                            // Categorize for filtering
-                            String cat = "general";
-                            String lowerSpec = spec.toLowerCase();
-                            if (lowerSpec.contains("ortho") || lowerSpec.contains("brace") || lowerSpec.contains("align")) {
-                                cat = "orthodontics";
-                            } else if (lowerSpec.contains("cosmetic") || lowerSpec.contains("veneer") || lowerSpec.contains("whiten") || lowerSpec.contains("aesthetic")) {
-                                cat = "cosmetic";
-                            } else if (lowerSpec.contains("surg") || lowerSpec.contains("implant") || lowerSpec.contains("maxillofacial") || lowerSpec.contains("extract")) {
-                                cat = "surgery";
-                            }
-
-                            // Generate rich biography paragraph
-                            String bioParagraph = "Dr. " + docName + " is a distinguished " + spec + " at Sunrise Dental Clinic with extensive clinical experience. Renowned for a gentle and patient-centered approach, Dr. " + docName + " specializes in modern dental restorations, precision diagnostics, and painless treatments. Patients appreciate their meticulous attention to detail, calming chairside manner, and dedication to crafting natural, healthy smiles that boost confidence.";
-                %>
-                <div class="doctor-card" data-category="<%= cat %>" onclick="openDoctorModal('<%= docName.replace("'", "\\'") %>', '<%= spec.replace("'", "\\'") %>', '<%= room.replace("'", "\\'") %>', '<%= docPhone.replace("'", "\\'") %>', '<%= docEmail.replace("'", "\\'") %>', '<%= bioParagraph.replace("'", "\\'") %>', '<%= initial %>', '<%= photoUrl %>')">
-                    <div class="doctor-card-banner">
-                        <span class="doctor-badge-status"><i class="bi bi-circle-fill" style="color:#4ade80; font-size:8px;"></i> Available</span>
-                        <div class="doctor-avatar-wrap">
-                            <img src="<%= photoUrl %>" alt="Dr. <%= docName %>" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                            <span style="display:none; width:100%; height:100%; align-items:center; justify-content:center;"><%= initial %></span>
-                        </div>
-                    </div>
-
-                    <div class="doctor-card-body">
-                        <h3>Dr. <%= docName %></h3>
-                        <span class="doctor-spec-tag"><%= spec %></span>
-
-                        <div class="doctor-meta-row">
-                            <span><i class="bi bi-geo-alt-fill" style="color:var(--brand-teal);"></i> <strong><%= room %></strong></span>
-                            <span><i class="bi bi-star-fill" style="color:#f59e0b;"></i> 4.9 (140+ reviews)</span>
-                        </div>
-
-                        <p class="doctor-short-bio">
-                            Dedicated to excellence in <%= spec.toLowerCase() %>, providing gentle, precision clinical care for patients of all ages.
-                        </p>
-
-                        <button type="button" class="btn-view-doc-bio">
-                            <i class="bi bi-card-text"></i> View Profile & Description
-                        </button>
-                    </div>
-                </div>
-                <%
-                        }
-                    } else {
-                %>
-                <!-- FALLBACK SPECIALISTS WHEN DB HAS INITIAL DATA -->
-                <div class="doctor-card" data-category="orthodontics" onclick="openDoctorModal('Amila Perera', 'Consultant Orthodontist & Smile Architect', 'Room 102', '+1 (800) 555-0199', 'amila@sunrisedental.com', 'Dr. Amila Perera is a premier Consultant Orthodontist with over 12 years of specialized experience in clear aligners, Invisalign, and complex bite corrections. Known for crafting harmonious smile aesthetics, Dr. Perera combines 3D digital smile simulation with compassionate patient guidance.', 'A', 'https://images.unsplash.com/photo-1537368910025-700350fe46c7?w=400&auto=format&fit=crop&q=80')">
-                    <div class="doctor-card-banner">
-                        <span class="doctor-badge-status"><i class="bi bi-circle-fill" style="color:#4ade80; font-size:8px;"></i> Available</span>
-                        <div class="doctor-avatar-wrap">
-                            <img src="https://images.unsplash.com/photo-1537368910025-700350fe46c7?w=400&auto=format&fit=crop&q=80" alt="Dr. Amila Perera" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                            <span style="display:none; width:100%; height:100%; align-items:center; justify-content:center;">A</span>
-                        </div>
-                    </div>
-                    <div class="doctor-card-body">
-                        <h3>Dr. Amila Perera</h3>
-                        <span class="doctor-spec-tag">Consultant Orthodontist</span>
-                        <div class="doctor-meta-row">
-                            <span><i class="bi bi-geo-alt-fill" style="color:var(--brand-teal);"></i> <strong>Room 102</strong></span>
-                            <span><i class="bi bi-star-fill" style="color:#f59e0b;"></i> 4.9 (180+ reviews)</span>
-                        </div>
-                        <p class="doctor-short-bio">Certified Invisalign provider specializing in modern Damon braces and orthodontic aesthetics.</p>
-                        <button type="button" class="btn-view-doc-bio"><i class="bi bi-card-text"></i> View Profile & Description</button>
-                    </div>
-                </div>
-
-                <div class="doctor-card" data-category="surgery" onclick="openDoctorModal('Kasun Silva', 'Senior Oral & Maxillofacial Surgeon', 'Room 105', '+1 (800) 555-0199', 'kasun@sunrisedental.com', 'Dr. Kasun Silva is an esteemed Oral & Maxillofacial Surgeon specialized in dental implants, bone grafting, and gentle surgical extractions. He emphasizes zero-anxiety procedures utilizing cutting-edge computer-guided implantology.', 'K', 'https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=400&auto=format&fit=crop&q=80')">
-                    <div class="doctor-card-banner">
-                        <span class="doctor-badge-status"><i class="bi bi-circle-fill" style="color:#4ade80; font-size:8px;"></i> Available</span>
-                        <div class="doctor-avatar-wrap">
-                            <img src="https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=400&auto=format&fit=crop&q=80" alt="Dr. Kasun Silva" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                            <span style="display:none; width:100%; height:100%; align-items:center; justify-content:center;">K</span>
-                        </div>
-                    </div>
-                    <div class="doctor-card-body">
-                        <h3>Dr. Kasun Silva</h3>
-                        <span class="doctor-spec-tag">Dental Surgeon & Implantologist</span>
-                        <div class="doctor-meta-row">
-                            <span><i class="bi bi-geo-alt-fill" style="color:var(--brand-teal);"></i> <strong>Room 105</strong></span>
-                            <span><i class="bi bi-star-fill" style="color:#f59e0b;"></i> 5.0 (210+ reviews)</span>
-                        </div>
-                        <p class="doctor-short-bio">Expert in painless titanium dental implants and full-mouth cosmetic dental reconstruction.</p>
-                        <button type="button" class="btn-view-doc-bio"><i class="bi bi-card-text"></i> View Profile & Description</button>
-                    </div>
-                </div>
-
-                <div class="doctor-card" data-category="cosmetic" onclick="openDoctorModal('Sanduni Fernando', 'Cosmetic & Aesthetic Dental Specialist', 'Room 108', '+1 (800) 555-0199', 'sanduni@sunrisedental.com', 'Dr. Sanduni Fernando brings an artistic passion to cosmetic dentistry, specializing in porcelain veneers, laser teeth whitening, and composite bonding. Her personalized smile makeovers are celebrated for their natural brilliance.', 'S', 'https://images.unsplash.com/photo-1594824813590-389602e1c981?w=400&auto=format&fit=crop&q=80')">
-                    <div class="doctor-card-banner">
-                        <span class="doctor-badge-status"><i class="bi bi-circle-fill" style="color:#4ade80; font-size:8px;"></i> Available</span>
-                        <div class="doctor-avatar-wrap">
-                            <img src="https://images.unsplash.com/photo-1594824813590-389602e1c981?w=400&auto=format&fit=crop&q=80" alt="Dr. Sanduni Fernando" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                            <span style="display:none; width:100%; height:100%; align-items:center; justify-content:center;">S</span>
-                        </div>
-                    </div>
-                    <div class="doctor-card-body">
-                        <h3>Dr. Sanduni Fernando</h3>
-                        <span class="doctor-spec-tag">Cosmetic Dental Surgeon</span>
-                        <div class="doctor-meta-row">
-                            <span><i class="bi bi-geo-alt-fill" style="color:var(--brand-teal);"></i> <strong>Room 108</strong></span>
-                            <span><i class="bi bi-star-fill" style="color:#f59e0b;"></i> 4.9 (160+ reviews)</span>
-                        </div>
-                        <p class="doctor-short-bio">Passionate about porcelain veneers, professional laser whitening, and confidence makeovers.</p>
-                        <button type="button" class="btn-view-doc-bio"><i class="bi bi-card-text"></i> View Profile & Description</button>
-                    </div>
-                </div>
-                <% } %>
-            </div>
-        </section>
-
-        <!-- ========================================================= -->
-        <!-- DOCTOR DETAIL INTERACTIVE MODAL -->
-        <!-- ========================================================= -->
-        <div class="doctor-modal-overlay" id="doctorModal" onclick="closeDoctorModalOnOverlay(event)">
-            <div class="doctor-modal-box">
-                <div class="modal-banner">
-                    <button type="button" class="modal-close-btn" onclick="closeDoctorModal()">✕</button>
-                    <span style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:#d6f4f8;">Doctor Clinical Profile</span>
-                </div>
-
-                <div class="modal-body-scroll">
-                    <div class="modal-profile-header">
-                        <div class="modal-avatar-lg">
-                            <img id="modalDocPhoto" src="" alt="Doctor Photo" onerror="this.style.display='none'; document.getElementById('modalDocInitial').style.display='flex';">
-                            <span id="modalDocInitial" style="display:none; width:100%; height:100%; align-items:center; justify-content:center; font-size:36px; font-weight:800; color:var(--brand-teal);">D</span>
-                        </div>
-                        <div>
-                            <h2 style="margin:0; font-size:22px; font-weight:700; color:var(--brand-navy);" id="modalDocName">Dr. Specialist</h2>
-                            <span style="color:var(--brand-teal); font-size:13.5px; font-weight:600;" id="modalDocSpec">Specialist</span>
-                        </div>
-                    </div>
-
-                    <h4 style="margin:0 0 6px; font-size:14px; font-weight:700; color:var(--brand-navy);"><i class="bi bi-person-lines-fill" style="color:var(--brand-teal);"></i> Biography & Clinical Expertise</h4>
-                    <p class="modal-bio-para" id="modalDocBio">
-                        Detailed professional biography will load here.
-                    </p>
-
-                    <div class="modal-info-grid">
-                        <div class="modal-info-box">
-                            <span><i class="bi bi-door-open-fill" style="color:var(--brand-teal);"></i> Clinic Room</span>
-                            <strong id="modalDocRoom">Room 101</strong>
-                        </div>
-                        <div class="modal-info-box">
-                            <span><i class="bi bi-shield-check" style="color:var(--brand-teal);"></i> Status</span>
-                            <strong style="color:#16a34a;"><i class="bi bi-check-circle-fill"></i> Active & Accepting Patients</strong>
-                        </div>
-                        <div class="modal-info-box">
-                            <span><i class="bi bi-telephone-fill" style="color:var(--brand-teal);"></i> Direct Line</span>
-                            <strong id="modalDocPhone">+1 (800) 555-0199</strong>
-                        </div>
-                        <div class="modal-info-box">
-                            <span><i class="bi bi-envelope-at-fill" style="color:var(--brand-teal);"></i> Consultation Email</span>
-                            <strong id="modalDocEmail">hello@sunrisedental.com</strong>
-                        </div>
-                    </div>
-
-                    <a href="tel:+18005550199" class="btn-modal-book-cta">
-                        <i class="bi bi-telephone-fill"></i> Call Reception to Book (+1 800 555-0199)
-                    </a>
-                </div>
-            </div>
-        </div>
-
+       
         <!-- ========================================================= -->
         <!-- WHY CHOOSE US -->
         <!-- ========================================================= -->
@@ -1026,6 +820,211 @@
                 </article>
             </div>
         </section>
+
+
+ <!-- ========================================================= -->
+        <!-- MEET OUR EXPERT DENTAL SPECIALISTS SECTION -->
+        <!-- ========================================================= -->
+        <section id="doctors" class="doctors-section" data-aos="fade-up" data-aos-duration="800">
+            <div style="text-align: center;">
+                <div class="section-kicker" style="color:var(--brand-teal); font-weight:700; letter-spacing:1px;">✦ Certified Medical Team ✦</div>
+                <h2 class="section-title" style="margin-bottom: 8px;">Meet Our Expert Dental Specialists</h2>
+                <p style="color:#64748b; font-size:14.5px; max-width:650px; margin:0 auto;">
+                    Our dedicated team of renowned surgeons, orthodontists, and aesthetic dentists combine gentle hands with cutting-edge medical technology.
+                </p>
+            </div>
+
+            <!-- SPECIALTY FILTER PILLS -->
+            <div class="doctors-filter-pills">
+                <button class="doctor-filter-btn active" onclick="filterDoctors('all', this)">All Specialists</button>
+                <button class="doctor-filter-btn" onclick="filterDoctors('orthodontics', this)">Orthodontics</button>
+                <button class="doctor-filter-btn" onclick="filterDoctors('cosmetic', this)">Cosmetic Dentistry</button>
+                <button class="doctor-filter-btn" onclick="filterDoctors('surgery', this)">Dental Surgery</button>
+                <button class="doctor-filter-btn" onclick="filterDoctors('general', this)">General & Pediatric</button>
+            </div>
+
+            <!-- DOCTORS GRID -->
+            <div class="doctors-grid" id="doctorsContainer">
+                <%
+                    String[] doctorPhotos = {
+                        "https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=400&auto=format&fit=crop&q=80",
+                        "https://images.unsplash.com/photo-1594824813590-389602e1c981?w=400&auto=format&fit=crop&q=80",
+                        "https://images.unsplash.com/photo-1537368910025-700350fe46c7?w=400&auto=format&fit=crop&q=80",
+                        "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=400&auto=format&fit=crop&q=80",
+                        "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=400&auto=format&fit=crop&q=80",
+                        "https://images.unsplash.com/photo-1622902046580-2b47f47f5471?w=400&auto=format&fit=crop&q=80"
+                    };
+                    int docIdx = 0;
+
+                    if (activeDentists != null && !activeDentists.isEmpty()) {
+                        for (Dentist d : activeDentists) {
+                            String docName = d.getName() != null ? d.getName().replaceAll("^(?i)dr\\.?\\s*", "").trim() : "Specialist";
+                            String spec = d.getSpecialization() != null && !d.getSpecialization().isBlank() ? d.getSpecialization() : "Dental Surgeon & General Dentist";
+                            String room = d.getRoomNumber() != null && !d.getRoomNumber().isBlank() ? d.getRoomNumber() : "Room 101";
+                            String initial = docName.length() >= 1 ? docName.substring(0, 1).toUpperCase() : "D";
+                            String docPhone = d.getContactNumber() != null ? d.getContactNumber() : "+1 (800) 555-0199";
+                            String docEmail = d.getEmail() != null ? d.getEmail() : "doctor@sunrisedental.com";
+                            String photoUrl = doctorPhotos[docIdx % doctorPhotos.length];
+                            docIdx++;
+
+                            // Categorize for filtering
+                            String cat = "general";
+                            String lowerSpec = spec.toLowerCase();
+                            if (lowerSpec.contains("ortho") || lowerSpec.contains("brace") || lowerSpec.contains("align")) {
+                                cat = "orthodontics";
+                            } else if (lowerSpec.contains("cosmetic") || lowerSpec.contains("veneer") || lowerSpec.contains("whiten") || lowerSpec.contains("aesthetic")) {
+                                cat = "cosmetic";
+                            } else if (lowerSpec.contains("surg") || lowerSpec.contains("implant") || lowerSpec.contains("maxillofacial") || lowerSpec.contains("extract")) {
+                                cat = "surgery";
+                            }
+
+                            // Generate rich biography paragraph
+                            String bioParagraph = "Dr. " + docName + " is a distinguished " + spec + " at Sunrise Dental Clinic with extensive clinical experience. Renowned for a gentle and patient-centered approach, Dr. " + docName + " specializes in modern dental restorations, precision diagnostics, and painless treatments. Patients appreciate their meticulous attention to detail, calming chairside manner, and dedication to crafting natural, healthy smiles that boost confidence.";
+                %>
+                <div class="doctor-card" data-category="<%= cat %>" onclick="openDoctorModal('<%= docName.replace("'", "\\'") %>', '<%= spec.replace("'", "\\'") %>', '<%= room.replace("'", "\\'") %>', '<%= docPhone.replace("'", "\\'") %>', '<%= docEmail.replace("'", "\\'") %>', '<%= bioParagraph.replace("'", "\\'") %>', '<%= initial %>', '<%= photoUrl %>')">
+                    <div class="doctor-card-banner">
+                        <span class="doctor-badge-status"><i class="bi bi-circle-fill" style="color:#4ade80; font-size:8px;"></i> Available</span>
+                        <div class="doctor-avatar-wrap">
+                            <img src="<%= photoUrl %>" alt="Dr. <%= docName %>" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            <span style="display:none; width:100%; height:100%; align-items:center; justify-content:center;"><%= initial %></span>
+                        </div>
+                    </div>
+
+                    <div class="doctor-card-body">
+                        <h3>Dr. <%= docName %></h3>
+                        <span class="doctor-spec-tag"><%= spec %></span>
+
+                        <div class="doctor-meta-row">
+                            <span><i class="bi bi-shield-check" style="color:var(--brand-teal);"></i> <strong>Verified Specialist</strong></span>
+                            <span><i class="bi bi-star-fill" style="color:#f59e0b;"></i> 4.9 (140+ reviews)</span>
+                        </div>
+
+                        <p class="doctor-short-bio">
+                            Dedicated to excellence in <%= spec.toLowerCase() %>, providing gentle, precision clinical care for patients of all ages.
+                        </p>
+
+                        <button type="button" class="btn-view-doc-bio">
+                            <i class="bi bi-card-text"></i> View Profile & Description
+                        </button>
+                    </div>
+                </div>
+                <%
+                        }
+                    } else {
+                %>
+                <!-- FALLBACK SPECIALISTS WHEN DB HAS INITIAL DATA -->
+                <div class="doctor-card" data-category="orthodontics" onclick="openDoctorModal('Amila Perera', 'Consultant Orthodontist & Smile Architect', '', '+1 (800) 555-0199', 'amila@sunrisedental.com', 'Dr. Amila Perera is a premier Consultant Orthodontist with over 12 years of specialized experience in clear aligners, Invisalign, and complex bite corrections. Known for crafting harmonious smile aesthetics, Dr. Perera combines 3D digital smile simulation with compassionate patient guidance.', 'A', 'https://images.unsplash.com/photo-1537368910025-700350fe46c7?w=400&auto=format&fit=crop&q=80')">
+                    <div class="doctor-card-banner">
+                        <span class="doctor-badge-status"><i class="bi bi-circle-fill" style="color:#4ade80; font-size:8px;"></i> Available</span>
+                        <div class="doctor-avatar-wrap">
+                            <img src="https://images.unsplash.com/photo-1537368910025-700350fe46c7?w=400&auto=format&fit=crop&q=80" alt="Dr. Amila Perera" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            <span style="display:none; width:100%; height:100%; align-items:center; justify-content:center;">A</span>
+                        </div>
+                    </div>
+                    <div class="doctor-card-body">
+                        <h3>Dr. Amila Perera</h3>
+                        <span class="doctor-spec-tag">Consultant Orthodontist</span>
+                        <div class="doctor-meta-row">
+                            <span><i class="bi bi-shield-check" style="color:var(--brand-teal);"></i> <strong>Verified Specialist</strong></span>
+                            <span><i class="bi bi-star-fill" style="color:#f59e0b;"></i> 4.9 (180+ reviews)</span>
+                        </div>
+                        <p class="doctor-short-bio">Certified Invisalign provider specializing in modern Damon braces and orthodontic aesthetics.</p>
+                        <button type="button" class="btn-view-doc-bio"><i class="bi bi-card-text"></i> View Profile & Description</button>
+                    </div>
+                </div>
+
+                <div class="doctor-card" data-category="surgery" onclick="openDoctorModal('Kasun Silva', 'Senior Oral & Maxillofacial Surgeon', '', '+1 (800) 555-0199', 'kasun@sunrisedental.com', 'Dr. Kasun Silva is an esteemed Oral & Maxillofacial Surgeon specialized in dental implants, bone grafting, and gentle surgical extractions. He emphasizes zero-anxiety procedures utilizing cutting-edge computer-guided implantology.', 'K', 'https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=400&auto=format&fit=crop&q=80')">
+                    <div class="doctor-card-banner">
+                        <span class="doctor-badge-status"><i class="bi bi-circle-fill" style="color:#4ade80; font-size:8px;"></i> Available</span>
+                        <div class="doctor-avatar-wrap">
+                            <img src="https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=400&auto=format&fit=crop&q=80" alt="Dr. Kasun Silva" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            <span style="display:none; width:100%; height:100%; align-items:center; justify-content:center;">K</span>
+                        </div>
+                    </div>
+                    <div class="doctor-card-body">
+                        <h3>Dr. Kasun Silva</h3>
+                        <span class="doctor-spec-tag">Dental Surgeon & Implantologist</span>
+                        <div class="doctor-meta-row">
+                            <span><i class="bi bi-shield-check" style="color:var(--brand-teal);"></i> <strong>Verified Specialist</strong></span>
+                            <span><i class="bi bi-star-fill" style="color:#f59e0b;"></i> 5.0 (210+ reviews)</span>
+                        </div>
+                        <p class="doctor-short-bio">Expert in painless titanium dental implants and full-mouth cosmetic dental reconstruction.</p>
+                        <button type="button" class="btn-view-doc-bio"><i class="bi bi-card-text"></i> View Profile & Description</button>
+                    </div>
+                </div>
+
+                <div class="doctor-card" data-category="cosmetic" onclick="openDoctorModal('Sanduni Fernando', 'Cosmetic & Aesthetic Dental Specialist', '', '+1 (800) 555-0199', 'sanduni@sunrisedental.com', 'Dr. Sanduni Fernando brings an artistic passion to cosmetic dentistry, specializing in porcelain veneers, laser teeth whitening, and composite bonding. Her personalized smile makeovers are celebrated for their natural brilliance.', 'S', 'https://images.unsplash.com/photo-1594824813590-389602e1c981?w=400&auto=format&fit=crop&q=80')">
+                    <div class="doctor-card-banner">
+                        <span class="doctor-badge-status"><i class="bi bi-circle-fill" style="color:#4ade80; font-size:8px;"></i> Available</span>
+                        <div class="doctor-avatar-wrap">
+                            <img src="https://images.unsplash.com/photo-1594824813590-389602e1c981?w=400&auto=format&fit=crop&q=80" alt="Dr. Sanduni Fernando" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            <span style="display:none; width:100%; height:100%; align-items:center; justify-content:center;">S</span>
+                        </div>
+                    </div>
+                    <div class="doctor-card-body">
+                        <h3>Dr. Sanduni Fernando</h3>
+                        <span class="doctor-spec-tag">Cosmetic Dental Surgeon</span>
+                        <div class="doctor-meta-row">
+                            <span><i class="bi bi-shield-check" style="color:var(--brand-teal);"></i> <strong>Verified Specialist</strong></span>
+                            <span><i class="bi bi-star-fill" style="color:#f59e0b;"></i> 4.9 (160+ reviews)</span>
+                        </div>
+                        <p class="doctor-short-bio">Passionate about porcelain veneers, professional laser whitening, and confidence makeovers.</p>
+                        <button type="button" class="btn-view-doc-bio"><i class="bi bi-card-text"></i> View Profile & Description</button>
+                    </div>
+                </div>
+                <% } %>
+            </div>
+        </section>
+
+        <!-- ========================================================= -->
+        <!-- DOCTOR DETAIL INTERACTIVE MODAL -->
+        <!-- ========================================================= -->
+        <div class="doctor-modal-overlay" id="doctorModal" onclick="closeDoctorModalOnOverlay(event)">
+            <div class="doctor-modal-box">
+                <div class="modal-banner">
+                    <button type="button" class="modal-close-btn" onclick="closeDoctorModal()">✕</button>
+                    <span style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:#d6f4f8;">Doctor Clinical Profile</span>
+                </div>
+
+                <div class="modal-body-scroll">
+                    <div class="modal-profile-header">
+                        <div class="modal-avatar-lg">
+                            <img id="modalDocPhoto" src="" alt="Doctor Photo" onerror="this.style.display='none'; document.getElementById('modalDocInitial').style.display='flex';">
+                            <span id="modalDocInitial" style="display:none; width:100%; height:100%; align-items:center; justify-content:center; font-size:36px; font-weight:800; color:var(--brand-teal);">D</span>
+                        </div>
+                        <div>
+                            <h2 style="margin:0; font-size:22px; font-weight:700; color:var(--brand-navy);" id="modalDocName">Dr. Specialist</h2>
+                            <span style="color:var(--brand-teal); font-size:13.5px; font-weight:600;" id="modalDocSpec">Specialist</span>
+                        </div>
+                    </div>
+
+                    <h4 style="margin:0 0 6px; font-size:14px; font-weight:700; color:var(--brand-navy);"><i class="bi bi-person-lines-fill" style="color:var(--brand-teal);"></i> Biography & Clinical Expertise</h4>
+                    <p class="modal-bio-para" id="modalDocBio">
+                        Detailed professional biography will load here.
+                    </p>
+
+                    <div class="modal-info-grid">
+                        
+                        <div class="modal-info-box">
+                            <span><i class="bi bi-shield-check" style="color:var(--brand-teal);"></i> Status</span>
+                            <strong style="color:#16a34a;"><i class="bi bi-check-circle-fill"></i> Active & Accepting Patients</strong>
+                        </div>
+                        <div class="modal-info-box">
+                            <span><i class="bi bi-telephone-fill" style="color:var(--brand-teal);"></i> Direct Line</span>
+                            <strong id="modalDocPhone">+1 (800) 555-0199</strong>
+                        </div>
+                        <div class="modal-info-box">
+                            <span><i class="bi bi-envelope-at-fill" style="color:var(--brand-teal);"></i> Consultation Email</span>
+                            <strong id="modalDocEmail">hello@sunrisedental.com</strong>
+                        </div>
+                    </div>
+
+                    <a href="tel:+18005550199" class="btn-modal-book-cta">
+                        <i class="bi bi-telephone-fill"></i> Call Reception to Book (+1 800 555-0199)
+                    </a>
+                </div>
+            </div>
+        </div>
 
         <!-- ========================================================= -->
         <!-- GALLERY & RESULTS -->
@@ -1244,7 +1243,8 @@
             currentSelectedDoctorName = name;
             document.getElementById('modalDocName').textContent = "Dr. " + name;
             document.getElementById('modalDocSpec').textContent = spec;
-            document.getElementById('modalDocRoom').textContent = room;
+            const roomEl = document.getElementById('modalDocRoom');
+            if (roomEl) roomEl.textContent = room || "";
             document.getElementById('modalDocPhone').textContent = phone;
             document.getElementById('modalDocEmail').textContent = email;
             document.getElementById('modalDocBio').textContent = bio;

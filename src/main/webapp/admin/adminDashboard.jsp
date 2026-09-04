@@ -364,10 +364,11 @@
                                 for (Appointment appointment : todayAppointments) {
                                     String pName = (patientNames != null && patientNames.get(appointment.getPatientId()) != null)
                                             ? patientNames.get(appointment.getPatientId()) : "Patient #" + appointment.getPatientId();
-                                    String dName = (dentistNames != null && dentistNames.get(appointment.getDentistId()) != null)
-                                            ? dentistNames.get(appointment.getDentistId()) : "Dentist #" + appointment.getDentistId();
-                                    String status = appointment.getStatus() != null ? appointment.getStatus() : "PENDING";
-                                    String statusClass = status.trim().toLowerCase().replace(" ", "-");
+                                     String rawDName = (dentistNames != null && dentistNames.get(appointment.getDentistId()) != null)
+                                            ? dentistNames.get(appointment.getDentistId()).trim() : ("#" + appointment.getDentistId());
+                                     String dentistLabel = "Dr. " + rawDName.replaceAll("^(?i)dr\\.?\\s*", "").trim();
+                                     String status = appointment.getStatus() != null ? appointment.getStatus() : "PENDING";
+                                     String statusClass = status.trim().toLowerCase().replace(" ", "-");
                         %>
                             <tr>
                                 <td>
@@ -392,7 +393,7 @@
                                     </div>
                                 </td>
                                 <td>
-                                    <span style="color: #0ea5b4; font-weight: 600;">Dr. <%= dName %></span>
+                                    <span style="color: #0ea5b4; font-weight: 600;"><%= dentistLabel %></span>
                                 </td>
                                 <td>
                                     <span class="status <%= statusClass %>">

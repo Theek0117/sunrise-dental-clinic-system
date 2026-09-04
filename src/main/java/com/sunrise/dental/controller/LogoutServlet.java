@@ -29,7 +29,7 @@ public class LogoutServlet extends HttpServlet {
 
         response.sendRedirect(
                 request.getContextPath()
-                + "/login.jsp"
+                + "/login.jsp?logout=success"
         );
     }
 }

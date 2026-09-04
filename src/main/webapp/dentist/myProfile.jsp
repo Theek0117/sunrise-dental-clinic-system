@@ -11,7 +11,8 @@
     }
 
     Dentist dentist = (Dentist) request.getAttribute("loggedInDentist");
-    String dentistName = (dentist != null && dentist.getName() != null) ? dentist.getName() : staffName;
+    String rawName = (dentist != null && dentist.getName() != null) ? dentist.getName() : staffName;
+    String dentistName = "Dr. " + rawName.replaceAll("^(?i)dr\\.?\\s*", "").trim();
     String specialization = (dentist != null && dentist.getSpecialization() != null) ? dentist.getSpecialization() : "Dental Specialist";
     String dentistNumber = (dentist != null && dentist.getDentistNumber() != null) ? dentist.getDentistNumber() : "DEN-001";
     String roomNumber = (dentist != null && dentist.getRoomNumber() != null) ? dentist.getRoomNumber() : "Room 101";
@@ -283,7 +284,7 @@
                         <i class="bi bi-person-fill"></i>
                     </div>
                     <div class="user-information">
-                        <strong>Dr. <%= dentistName %></strong>
+                        <strong><%= dentistName %></strong>
                         <span><%= specialization %></span>
                     </div>
                 </div>
@@ -300,7 +301,7 @@
                     <div class="profile-avatar-large">
                         <i class="bi bi-person-badge"></i>
                     </div>
-                    <h2>Dr. <%= dentistName %></h2>
+                    <h2><%= dentistName %></h2>
                     <span class="profile-badge"><%= specialization %></span>
 
                     <ul class="profile-meta-list">
@@ -336,7 +337,7 @@
                         <div class="info-grid">
                             <div class="info-group">
                                 <label>Full Legal Name</label>
-                                <p>Dr. <%= dentistName %></p>
+                                <p><%= dentistName %></p>
                             </div>
 
                             <div class="info-group">
@@ -410,5 +411,6 @@
 
 </div>
 
+<script src="${pageContext.request.contextPath}/js/notifications.js"></script>
 </body>
 </html>

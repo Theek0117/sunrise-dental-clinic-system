@@ -561,9 +561,10 @@
                             <%
                                 if (activeDentists != null) {
                                     for (Dentist d : activeDentists) {
+                                        String dClean = (d.getName() != null) ? d.getName().replaceAll("^(?i)dr\\.?\\s*", "").trim() : "";
                             %>
                                 <option value="<%= d.getDentistId() %>" <%= filterDentistId == d.getDentistId() ? "selected" : "" %>>
-                                    Dr. <%= d.getName() %> (<%= d.getSpecialization() %>)
+                                    Dr. <%= dClean %> (<%= d.getSpecialization() %>)
                                 </option>
                             <%
                                     }
@@ -903,7 +904,7 @@
                         <tr>
                             <td><strong style="color:#0f172a;"><%= a.getAppointmentNumber() != null ? a.getAppointmentNumber() : "APT-" + a.getAppointmentId() %></strong></td>
                             <td><%= p != null ? p.getName() : "Patient #" + a.getPatientId() %></td>
-                            <td><span style="color:#0ea5b4; font-weight:600;">Dr. <%= d != null ? d.getName() : "#" + a.getDentistId() %></span></td>
+                            <td><span style="color:#0ea5b4; font-weight:600;"><%= d != null && d.getName() != null ? ("Dr. " + d.getName().replaceAll("^(?i)dr\\.?\\s*", "").trim()) : ("#" + a.getDentistId()) %></span></td>
                             <td><%= tt != null ? tt.getTreatmentName() : "General Treatment" %></td>
                             <td><%= a.getAppointmentDate() %></td>
                             <td><%= a.getStartTime() %> - <%= a.getEndTime() %></td>
@@ -961,12 +962,14 @@
                         <%
                             if (payments != null && !payments.isEmpty()) {
                                 for (Payment pay : payments) {
+                                    String pDocRaw = (pay.getDentistName() != null && !pay.getDentistName().isBlank()) ? pay.getDentistName().trim() : "-";
+                                    String pDocLabel = pDocRaw.equals("-") ? "-" : ("Dr. " + pDocRaw.replaceAll("^(?i)dr\\.?\\s*", "").trim());
                         %>
                         <tr>
                             <td><strong style="color:#0ea5b4;"><%= pay.getInvoiceNumber() %></strong></td>
                             <td><%= pay.getAppointmentNumber() != null ? pay.getAppointmentNumber() : "-" %></td>
                             <td><strong><%= pay.getPatientName() != null ? pay.getPatientName() : "Patient #" + pay.getPatientId() %></strong></td>
-                            <td>Dr. <%= pay.getDentistName() != null ? pay.getDentistName() : "-" %></td>
+                            <td><%= pDocLabel %></td>
                             <td>Rs. <%= String.format("%.2f", pay.getBasicAmount() != null ? pay.getBasicAmount() : BigDecimal.ZERO) %></td>
                             <td style="color:#0ea5b4; font-weight:600;">Rs. <%= String.format("%.2f", pay.getDoctorFee() != null ? pay.getDoctorFee() : BigDecimal.ZERO) %></td>
                             <td style="color:#2563eb;">Rs. <%= String.format("%.2f", pay.getTaxAmount() != null ? pay.getTaxAmount() : BigDecimal.ZERO) %></td>

@@ -40,35 +40,26 @@ public class LoginServlet extends HttpServlet {
 
         if (staff != null) {
 
-            /*
-             * Create a new session after successful authentication.
-             */
+            /** Create a new session after successful authentication.*/
             HttpSession session = request.getSession(true);
 
-            session.setAttribute(
-                    "staffId",
+            session.setAttribute("staffId",
                     staff.getStaffId()
             );
 
-            session.setAttribute(
-                    "staffName",
+            session.setAttribute("staffName",
                     staff.getName()
             );
 
-            session.setAttribute(
-                    "username",
+            session.setAttribute("username",
                     staff.getUsername()
             );
 
-            session.setAttribute(
-                    "role",
+            session.setAttribute("role",
                     staff.getRole()
             );
 
-            /*
-             * Session timeout:
-             * 30 minutes of inactivity.
-             */
+            /** Session timeout:* 30 minutes of inactivity.*/
             session.setMaxInactiveInterval(30 * 60);
 
             /*

@@ -384,12 +384,16 @@
                     <i class="bi bi-arrow-left"></i>
                 </a>
                 <div>
-                    <h1>Manage Patients</h1>
-                    <p>Search, review, and update registered patient profiles</p>
+                    <h1>Patient Directory</h1>
+                    <p>Comprehensive patient records with contact details and registration numbers.</p>
                 </div>
             </div>
 
-            <div class="topbar-right">
+            <div class="topbar-right" style="display: flex; align-items: center; gap: 14px;">
+                <a href="${pageContext.request.contextPath}/reception/register-patient" class="view-all-link" style="background: rgba(14, 165, 180, 0.22); border: 1px solid rgba(14, 165, 180, 0.45); padding: 8px 16px; border-radius: 10px; color: #ffffff; font-size: 13px; font-weight: 500; display: inline-flex; align-items: center; gap: 7px; text-decoration: none;">
+                    <i class="bi bi-person-plus-fill"></i> Register Patient
+                </a>
+
                 <a href="${pageContext.request.contextPath}/reception/profile" class="user-profile">
                     <div class="user-avatar">
                         <i class="bi bi-person-fill"></i>
@@ -404,19 +408,6 @@
 
         <!-- DASHBOARD CONTENT -->
         <section class="dashboard-content">
-
-            <!-- Hero Banner -->
-            <div class="welcome-section">
-                <div>
-                    <h2>Patient Directory</h2>
-                    <p>Comprehensive patient records with contact details and registration numbers.</p>
-                </div>
-                <div>
-                    <a href="${pageContext.request.contextPath}/reception/register-patient" class="view-all-link" style="background: rgba(255,255,255,0.2); padding: 8px 16px; border-radius: 10px; color: #ffffff;">
-                        <i class="bi bi-person-plus"></i> Register Patient
-                    </a>
-                </div>
-            </div>
 
             <!-- Notifications -->
             <% if ("updated".equals(success)) { %>

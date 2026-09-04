@@ -36,8 +36,8 @@
     String patientName = (patient != null && patient.getName() != null) ? patient.getName() : (payment.getPatientName() != null ? payment.getPatientName() : "Patient #" + payment.getPatientId());
     String patientEmail = (patient != null && patient.getEmail() != null) ? patient.getEmail() : (payment.getPatientEmail() != null ? payment.getPatientEmail() : "N/A");
     String patientContact = (patient != null && patient.getContactNumber() != null) ? patient.getContactNumber() : (payment.getPatientContact() != null ? payment.getPatientContact() : "N/A");
-
-    String dentistName = (dentist != null && dentist.getName() != null) ? dentist.getName() : (payment.getDentistName() != null ? payment.getDentistName() : "Dentist #" + (appointment != null ? appointment.getDentistId() : ""));
+    String rawDentist = (dentist != null && dentist.getName() != null) ? dentist.getName().trim() : (payment.getDentistName() != null ? payment.getDentistName().trim() : ("Dentist #" + (appointment != null ? appointment.getDentistId() : "")));
+    String dentistLabel = "Dr. " + rawDentist.replaceAll("^(?i)dr\\.?\\s*", "").trim();
     String dentistSpec = (dentist != null && dentist.getSpecialization() != null) ? dentist.getSpecialization() : "Dental Surgeon";
 
     String treatmentName = (treatmentType != null && treatmentType.getTreatmentName() != null) ? treatmentType.getTreatmentName() : (payment.getTreatmentName() != null ? payment.getTreatmentName() : "Dental Procedure");
@@ -370,7 +370,7 @@
                     <div class="info-col">
                         <h4>Appointment Details</h4>
                         <p><strong><%= appointmentNo %></strong></p>
-                        <p><i class="bi bi-person-heart"></i> Attending: Dr. <%= dentistName %></p>
+                        <p><i class="bi bi-person-heart"></i> Attending: <%= dentistLabel %></p>
                         <p><i class="bi bi-award"></i> <%= dentistSpec %></p>
                         <p><i class="bi bi-bandaid"></i> <%= treatmentName %></p>
                     </div>

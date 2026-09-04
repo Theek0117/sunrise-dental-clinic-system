@@ -231,7 +231,7 @@ public class AdminReportsServlet extends HttpServlet {
 
         Map<String, Integer> methodCount = new HashMap<>();
         Map<String, BigDecimal> methodAmount = new HashMap<>();
-        methodCount.put("CASH", 0);
+        methodCount.put("CASH", 0); 
         methodCount.put("CARD", 0);
         methodCount.put("BANK_TRANSFER", 0);
         methodAmount.put("CASH", BigDecimal.ZERO);

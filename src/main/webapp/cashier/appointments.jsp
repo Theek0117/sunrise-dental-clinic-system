@@ -97,11 +97,13 @@
             background: #ffffff;
             border-radius: 20px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
-            overflow: hidden;
+            overflow-x: auto;
+            border: 1px solid #e2e8f0;
         }
 
         .table-custom {
             width: 100%;
+            min-width: 1000px;
             border-collapse: collapse;
         }
 
@@ -115,14 +117,16 @@
             letter-spacing: 0.5px;
             background: #f8fafc;
             border-bottom: 1px solid #e2e8f0;
+            white-space: nowrap;
         }
 
         .table-custom td {
-            padding: 16px 20px;
+            padding: 18px 20px;
             font-size: 13.5px;
             color: #334155;
             border-bottom: 1px solid #f1f5f9;
             vertical-align: middle;
+            white-space: nowrap;
         }
 
         .table-custom tr:hover td {
@@ -244,7 +248,14 @@
                                     String pName = (p != null && p.getName() != null) ? p.getName() : "Patient #" + a.getPatientId();
 
                                     Dentist d = (dentists != null) ? dentists.get(a.getDentistId()) : null;
-                                    String dName = (d != null && d.getName() != null) ? d.getName() : "Dentist #" + a.getDentistId();
+                                    String rawDName = (d != null && d.getName() != null) ? d.getName().trim() : ("#" + a.getDentistId());
+                                    String dentistLabel = "Dr. " + rawDName.replaceAll("^(?i)dr\\.?\\s*", "").trim();
+
+                                    String sTime = a.getStartTime() != null ? a.getStartTime().toString() : "";
+                                    String eTime = a.getEndTime() != null ? a.getEndTime().toString() : "";
+                                    if (sTime.length() >= 5) sTime = sTime.substring(0, 5);
+                                    if (eTime.length() >= 5) eTime = eTime.substring(0, 5);
+                                    String timeDisplay = !sTime.isEmpty() && !eTime.isEmpty() ? (sTime + " - " + eTime) : "-";
 
                                     String status = a.getStatus() != null ? a.getStatus().toUpperCase() : "SCHEDULED";
                                     String statusBg = "#eff6ff";
@@ -263,9 +274,9 @@
                                 <strong style="display:block; color:#1e293b;"><%= pName %></strong>
                                 <span style="font-size:11px; color:#94a3b8;">ID: #<%= a.getPatientId() %></span>
                             </td>
-                            <td><span style="color:#0ea5b4; font-weight:600;">Dr. <%= dName %></span></td>
+                            <td><span style="color:#0ea5b4; font-weight:600;"><%= dentistLabel %></span></td>
                             <td><%= a.getAppointmentDate() %></td>
-                            <td><%= a.getStartTime() %> - <%= a.getEndTime() %></td>
+                            <td><%= timeDisplay %></td>
                             <td>
                                 <span style="background:<%= statusBg %>; color:<%= statusColor %>; padding:4px 10px; border-radius:20px; font-size:11.5px; font-weight:600;">
                                     <%= status %>
@@ -301,5 +312,6 @@
 
 </div>
 
+<script src="<%= contextPath %>/js/notifications.js"></script>
 </body>
 </html>

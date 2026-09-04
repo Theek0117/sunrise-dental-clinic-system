@@ -243,12 +243,17 @@
                     <i class="bi bi-arrow-left"></i>
                 </a>
                 <div>
-                    <h1>Dentist Availability</h1>
-                    <p>Query doctor consultation time slots and availability status</p>
+                    <h1>Doctor Schedule Query</h1>
+                    <p>Select a dentist and consultation date to see working windows and available appointment capacity.</p>
                 </div>
             </div>
 
-            <div class="topbar-right">
+            <div class="topbar-right" style="display: flex; align-items: center; gap: 14px;">
+                <div class="current-date" style="background: rgba(14, 165, 180, 0.18); border: 1px solid rgba(14, 165, 180, 0.35); padding: 7px 14px; border-radius: 9px; font-size: 13px; color: #ffffff; display: flex; align-items: center; gap: 8px;">
+                    <i class="bi bi-calendar3" style="color: #67e8f9;"></i>
+                    <span><%= selectedDate != null && !selectedDate.isBlank() ? selectedDate : "Today" %></span>
+                </div>
+
                 <a href="${pageContext.request.contextPath}/reception/profile" class="user-profile">
                     <div class="user-avatar">
                         <i class="bi bi-person-fill"></i>
@@ -264,18 +269,6 @@
         <!-- DASHBOARD CONTENT -->
         <section class="dashboard-content">
 
-            <!-- Hero Banner -->
-            <div class="welcome-section">
-                <div>
-                    <h2>Doctor Schedule Query</h2>
-                    <p>Select a dentist and consultation date to see working windows and available appointment capacity.</p>
-                </div>
-                <div class="current-date">
-                    <i class="bi bi-calendar3"></i>
-                    <span><%= selectedDate != null && !selectedDate.isBlank() ? selectedDate : "Today" %></span>
-                </div>
-            </div>
-
             <!-- Filter Card -->
             <div class="filter-card">
                 <form method="get" action="${pageContext.request.contextPath}/reception/dentist-availability" class="filter-form-grid">
@@ -284,9 +277,11 @@
                         <select id="dentistId" name="dentistId" required>
                             <option value="">-- Choose a Dentist --</option>
                             <% if (dentists != null) {
-                                for (Dentist d : dentists) { %>
+                                for (Dentist d : dentists) { 
+                                    String dClean = d.getName() != null ? d.getName().replaceAll("^(?i)dr\\.?\\s*", "").trim() : "";
+                                %>
                                     <option value="<%= d.getDentistId() %>" <%= String.valueOf(d.getDentistId()).equals(selectedDentistId) ? "selected" : "" %>>
-                                        Dr. <%= d.getName() %> (<%= d.getSpecialization() %>)
+                                        Dr. <%= dClean %> (<%= d.getSpecialization() %>)
                                     </option>
                             <%  }
                             } %>
@@ -385,5 +380,6 @@
 
 </div>
 
+<script src="${pageContext.request.contextPath}/js/notifications.js"></script>
 </body>
 </html>

@@ -1862,60 +1862,46 @@
                         >
 
                         <div class="form-group">
-
-                            <label>
-                                Diagnosis
-                            </label>
-
+                            <label>Diagnosis <span style="color:#ef4444;">*</span></label>
                             <textarea
                                 class="form-control"
                                 name="diagnosis"
-                                placeholder="Enter diagnosis..."
+                                placeholder="Enter clinical diagnosis (e.g. Dental Caries, Pulpitis)..."
+                                maxlength="500"
+                                required
                             ><%= diagnosis %></textarea>
-
                         </div>
 
                         <div class="form-group">
-
-                            <label>
-                                Treatment Provided
-                            </label>
-
+                            <label>Treatment Provided <span style="color:#ef4444;">*</span></label>
                             <textarea
                                 class="form-control"
                                 name="treatmentProvided"
-                                placeholder="Describe the treatment provided..."
+                                placeholder="Describe the treatment provided (e.g. Composite Restoration)..."
+                                maxlength="1000"
+                                required
                             ><%= treatmentProvided %></textarea>
-
                         </div>
 
                         <div class="form-group">
-
-                            <label>
-                                Clinical Notes
-                            </label>
-
+                            <label>Clinical Notes</label>
                             <textarea
                                 class="form-control"
                                 name="treatmentNotes"
-                                placeholder="Enter additional clinical notes..."
+                                placeholder="Enter additional clinical or prescription notes..."
+                                maxlength="1000"
                             ><%= treatmentNotes %></textarea>
-
                         </div>
 
                         <div class="form-group">
-
-                            <label>
-                                Next Appointment Date
-                            </label>
-
+                            <label>Next Follow-Up Date</label>
                             <input
                                 type="date"
                                 class="form-control"
                                 name="nextAppointmentDate"
+                                min="<%= java.time.LocalDate.now() %>"
                                 value="<%= nextAppointmentDate %>"
                             >
-
                         </div>
 
                         <button

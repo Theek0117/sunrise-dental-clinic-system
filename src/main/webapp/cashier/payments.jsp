@@ -124,11 +124,13 @@
             background: #ffffff;
             border-radius: 20px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
-            overflow: hidden;
+            overflow-x: auto;
+            border: 1px solid #e2e8f0;
         }
 
         .table-custom {
             width: 100%;
+            min-width: 1200px;
             border-collapse: collapse;
         }
 
@@ -142,14 +144,16 @@
             letter-spacing: 0.5px;
             background: #f8fafc;
             border-bottom: 1px solid #e2e8f0;
+            white-space: nowrap;
         }
 
         .table-custom td {
-            padding: 16px 20px;
+            padding: 18px 20px;
             font-size: 13.5px;
             color: #334155;
             border-bottom: 1px solid #f1f5f9;
             vertical-align: middle;
+            white-space: nowrap;
         }
 
         .table-custom tr:hover td {
@@ -321,7 +325,20 @@
                     <tbody>
                         <%
                             if (payments != null && !payments.isEmpty()) {
+                                java.text.SimpleDateFormat payDateFormat = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm");
                                 for (Payment p : payments) {
+                                    String docRaw = (p.getDentistName() != null && !p.getDentistName().isBlank()) ? p.getDentistName().trim() : "-";
+                                    String docDisplay = docRaw.equals("-") ? "-" : ("Dr. " + docRaw.replaceAll("^(?i)dr\\.?\\s*", "").trim());
+
+                                    java.sql.Timestamp paidTs = p.getPaidAt() != null ? p.getPaidAt() : p.getCreatedAt();
+                                    String paidStr = "-";
+                                    if (paidTs != null) {
+                                        try {
+                                            paidStr = payDateFormat.format(paidTs);
+                                        } catch (Exception ignored) {
+                                            paidStr = paidTs.toString();
+                                        }
+                                    }
                         %>
                         <tr>
                             <td><strong style="color:#0ea5b4;"><%= p.getInvoiceNumber() %></strong></td>
@@ -332,7 +349,7 @@
                                     <span style="font-size:11px; color:#94a3b8;"><%= p.getPatientContact() != null ? p.getPatientContact() : "" %></span>
                                 </div>
                             </td>
-                            <td><span style="color:#0f766e; font-weight:500;">Dr. <%= p.getDentistName() != null ? p.getDentistName() : "-" %></span></td>
+                            <td><span style="color:#0f766e; font-weight:600;"><%= docDisplay %></span></td>
                             <td><%= p.getTreatmentName() != null ? p.getTreatmentName() : "Dental Service" %></td>
                             <td>Rs. <%= String.format("%.2f", p.getDoctorFee() != null ? p.getDoctorFee() : BigDecimal.ZERO) %></td>
                             <td style="color:#0284c7; font-weight:600;">Rs. <%= String.format("%.2f", p.getTaxAmount() != null ? p.getTaxAmount() : BigDecimal.ZERO) %></td>
@@ -342,9 +359,9 @@
                                     <%= p.getPaymentMethod() %>
                                 </span>
                             </td>
-                            <td style="font-size:12px; color:#64748b;"><%= p.getPaidAt() != null ? p.getPaidAt() : p.getCreatedAt() %></td>
+                            <td style="font-size:12.5px; color:#64748b; font-weight:500;"><%= paidStr %></td>
                             <td>
-                                <a href="<%= contextPath %>/cashier/invoice?paymentId=<%= p.getPaymentId() %>" class="btn-view-invoice">
+                                <a href="<%= contextPath %>/cashier/invoice?paymentId=<%= p.getPaymentId() %>" class="btn-view-invoice" style="white-space:nowrap;">
                                     <i class="bi bi-file-earmark-pdf"></i> View & Print
                                 </a>
                             </td>
@@ -370,5 +387,6 @@
 
 </div>
 
+<script src="<%= contextPath %>/js/notifications.js"></script>
 </body>
 </html>
